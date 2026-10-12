@@ -1,0 +1,206 @@
+import React, { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
+const Login = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const [formData, setFormData] = useState({
+        email: "",
+        password: "",
+    });
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+
+        setError("");
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        setError("");
+
+        if (!formData.email || !formData.password) {
+            setError("Please enter your email and password.");
+            return;
+        }
+
+        setLoading(true);
+
+        // Demo login
+        // Frontend-only authentication
+        const user = {
+            name: formData.email.split("@")[0],
+            email: formData.email,
+        };
+
+        localStorage.setItem("Halla Bol_user", JSON.stringify(user));
+
+        const from = location.state?.from?.pathname || "/";
+
+        setTimeout(() => {
+            setLoading(false);
+            navigate(from, { replace: true });
+        }, 500);
+    };
+
+    return (
+        <div className="min-h-screen bg-[#f5f7f2] flex items-center justify-center px-4 py-6">
+
+            <div className="w-full max-w-lg bg-white rounded-2xl shadow-lg p-6 sm:p-8">
+
+                <div className="mb-7">
+
+                    <h1 className="text-2xl sm:text-3xl font-serif font-bold text-center text-gray-900">
+                        Welcome Back
+                        <br />
+                        to Halla Bol
+                    </h1>
+
+                    <p className="text-sm text-center text-gray-500 mt-3 leading-6">
+                        Login to your account and continue
+                        <br />
+                        your natural journey with us.
+                    </p>
+
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-5">
+
+                    <div>
+
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Email Address
+                        </label>
+
+                        <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            placeholder="Enter your email"
+                            autoComplete="email"
+                            required
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm outline-none transition focus:border-green-700 focus:ring-2 focus:ring-green-100"
+                        />
+
+                    </div>
+
+                    <div>
+
+                        <div className="flex items-center justify-between mb-2">
+
+                            <label className="text-sm font-medium text-gray-700">
+                                Password
+                            </label>
+
+                            <Link
+                                to="/forgot-password"
+                                className="text-xs text-green-700 hover:underline"
+                            >
+                                Forgot Password?
+                            </Link>
+
+                        </div>
+
+                        <div className="relative">
+
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                placeholder="Enter your password"
+                                autoComplete="current-password"
+                                required
+                                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg text-sm outline-none transition focus:border-green-700 focus:ring-2 focus:ring-green-100"
+                            />
+
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-green-700 transition"
+                                aria-label={
+                                    showPassword
+                                        ? "Hide password"
+                                        : "Show password"
+                                }
+                            >
+                                {showPassword ? "🙈" : "👁️"}
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    {error && (
+                        <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-lg">
+                            {error}
+                        </div>
+                    )}
+
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full bg-[#245d24] hover:bg-[#1c4d1c] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-lg transition duration-200"
+                    >
+                        {loading ? "Logging in..." : "Login"}
+                    </button>
+
+                </form>
+
+                <div className="flex items-center gap-3 my-6">
+
+                    <div className="flex-1 h-px bg-gray-200"></div>
+
+                    <span className="text-xs text-gray-400">
+                        OR
+                    </span>
+
+                    <div className="flex-1 h-px bg-gray-200"></div>
+
+                </div>
+
+                <button
+                    type="button"
+                    className="w-full border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium py-3 rounded-lg transition text-sm"
+                >
+                    Continue with Google
+                </button>
+
+                <p className="text-center text-sm text-gray-500 mt-7">
+
+                    Don't have an account?{" "}
+
+                    <Link
+                        to="/register"
+                        state={{
+                            from: location.state?.from,
+                        }}
+                        className="text-green-700 font-semibold hover:underline"
+                    >
+                        Create Account
+                    </Link>
+
+                </p>
+
+                <p className="text-center text-[11px] text-gray-400 mt-6 leading-5">
+                    By continuing, you agree to our Terms of Service
+                    and Privacy Policy.
+                </p>
+
+            </div>
+
+        </div>
+    );
+};
+
+export default Login;
