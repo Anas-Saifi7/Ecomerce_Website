@@ -14,7 +14,7 @@ const About = () => {
 
         <img
           src="/images/about-hero.jpg"
-          alt="About XYZ"
+          alt="Halla Bol"
           className="absolute inset-0 w-full h-full object-cover"
         />
 
@@ -25,7 +25,7 @@ const About = () => {
           <div className="max-w-2xl text-white py-16 lg:py-0">
 
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
-              About XYZ
+              About Halla Bol
             </h1>
 
             <p className="text-lg sm:text-xl mt-3 font-medium">
@@ -118,7 +118,7 @@ const About = () => {
               </p>
 
               <p className="text-sm text-gray-500 mt-5">
-                — Team XYZ
+                — Team Halla Bol
               </p>
 
             </div>

@@ -154,7 +154,6 @@ const OurStory = () => {
           </div>
         </section>
 
-        {/* Purpose */}
         <section className="bg-[#fafaf7]">
           <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16 lg:px-6 lg:py-20">
             <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
@@ -198,7 +197,6 @@ const OurStory = () => {
           </div>
         </section>
 
-        {/* Journey */}
         <section className="bg-white">
           <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16 lg:px-6 lg:py-20">
             <div className="mx-auto max-w-3xl text-center">
@@ -372,7 +370,6 @@ const OurStory = () => {
           </div>
         </section>
 
-        {/* Impact numbers */}
         <section className="bg-white">
           <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16 lg:px-6">
             <div className="text-center">
@@ -454,7 +451,6 @@ const OurStory = () => {
           </div>
         </section>
 
-        {/* Certifications */}
         <section className="border-t border-gray-200 bg-white">
           <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:px-6">
             <div className="grid gap-7 lg:grid-cols-[1fr_2fr] lg:items-center">
@@ -492,7 +488,6 @@ const OurStory = () => {
           </div>
         </section>
 
-        {/* Newsletter */}
         <section className="relative overflow-hidden">
           <img
             src="/images/newsletter-bg.jpg"

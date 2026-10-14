@@ -24,8 +24,7 @@ const Hero = () => {
   return (
     <section
       className="relative min-h-140 sm:min-h-150 lg:h-125 lg:min-h-0 
-      overflow-hidden"
-    >
+      overflow-hidden">
 
       <img
         src={images[count]}
@@ -37,8 +36,8 @@ const Hero = () => {
 
       <div
         className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 lg:px-5 
-        h-full flex items-center"
-      >
+        h-full flex items-center">
+
         <div className="max-w-xl text-white py-16 sm:py-20 lg:py-0">
 
           <p
@@ -59,8 +58,7 @@ const Hero = () => {
 
           <p
             className="mt-4 sm:mt-5 text-sm sm:text-base lg:text-lg 
-            text-gray-100 sm:leading-7 max-w-lg"
-          >
+            text-gray-100 sm:leading-7 max-w-lg" >
             From traditional spices to handcrafted treasures,
             we bring authentic Indian products to the world.
           </p>
@@ -156,7 +154,6 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Slider Controls */}
       <div
         className="absolute bottom-5 right-5 sm:right-8 lg:right-10 
         flex items-center gap-3 sm:gap-4 text-white z-20"

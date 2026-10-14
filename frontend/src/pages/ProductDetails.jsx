@@ -75,7 +75,6 @@ const ProductDetails = () => {
       ? Math.round(((oldPrice - price) / oldPrice) * 100)
       : 0
 
-  // Quantity
   const increaseQuantity = () => {
     setQuantity((current) => current + 1)
   }
@@ -84,7 +83,6 @@ const ProductDetails = () => {
     setQuantity((current) => Math.max(1, current - 1))
   }
 
-  // Add to cart
   const handleAddToCart = () => {
     if (!product || !product.inStock || isAdding) return
 
@@ -103,7 +101,6 @@ const ProductDetails = () => {
     }, 2500)
   }
 
-  // Buy Now
   const handleBuyNow = () => {
     if (!product || !product.inStock) return
 
@@ -120,7 +117,6 @@ const ProductDetails = () => {
     'Shipping & Returns',
   ]
 
-  // Related products
   const relatedProducts = products
     .filter((item) => item.id !== product.id)
     .filter(
@@ -134,8 +130,6 @@ const ProductDetails = () => {
     <div className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
 
       <Navbar />
-
-      {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-gray-500">
 
@@ -196,7 +190,6 @@ const ProductDetails = () => {
 
             </div>
 
-            {/* Thumbnails */}
             {images.length > 1 && (
               <div className="grid grid-cols-4 sm:grid-cols-5 gap-3 mt-4">
 
@@ -241,7 +234,6 @@ const ProductDetails = () => {
               </p>
             )}
 
-            {/* Rating */}
             <div className="flex flex-wrap items-center gap-3 mt-4">
 
               <div className="flex items-center gap-1">
@@ -272,7 +264,6 @@ const ProductDetails = () => {
 
             </div>
 
-            {/* Price */}
             <div className="flex items-center flex-wrap gap-3 mt-6">
 
               <span className="text-3xl font-bold text-[#075631]">
@@ -293,7 +284,6 @@ const ProductDetails = () => {
 
             </div>
 
-            {/* Stock */}
             <div className="mt-5">
 
               {product.inStock ? (
@@ -311,7 +301,6 @@ const ProductDetails = () => {
 
             <div className="border-t border-gray-200 my-6" />
 
-            {/* Region / Product Type */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
               <div className="bg-gray-50 rounded-xl p-4">
@@ -359,7 +348,6 @@ const ProductDetails = () => {
               </div>
             )}
 
-            {/* Size */}
             <div className="mt-6">
 
               <div className="flex items-center justify-between mb-3">
@@ -386,7 +374,6 @@ const ProductDetails = () => {
 
             </div>
 
-            {/* Quantity */}
             <div className="mt-6">
 
               <p className="font-semibold mb-3">
@@ -421,7 +408,6 @@ const ProductDetails = () => {
 
             </div>
 
-            {/* Buttons */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-7">
 
               <button
@@ -444,7 +430,6 @@ const ProductDetails = () => {
 
             </div>
 
-            {/* Success Message */}
             {addedMessage && (
               <div className="mt-4 bg-green-50 border border-green-200 text-green-700 rounded-lg px-4 py-3 text-sm flex items-center justify-between gap-3">
 
@@ -462,7 +447,6 @@ const ProductDetails = () => {
               </div>
             )}
 
-            {/* Features */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-8">
 
               <div className="text-center p-3 bg-gray-50 rounded-xl">
@@ -501,7 +485,6 @@ const ProductDetails = () => {
 
       </section>
 
-      {/* ================= TABS ================= */}
       <section className="border-t border-gray-200">
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -527,7 +510,6 @@ const ProductDetails = () => {
 
           <div className="max-w-4xl pt-8">
 
-            {/* Description */}
             {activeTab === 'Description' && (
               <div>
                 <h2 className="text-xl font-bold mb-4">
@@ -541,7 +523,6 @@ const ProductDetails = () => {
               </div>
             )}
 
-            {/* Benefits */}
             {activeTab === 'Benefits' && (
               <div>
 
@@ -577,7 +558,6 @@ const ProductDetails = () => {
               </div>
             )}
 
-            {/* Usage */}
             {activeTab === 'Usage' && (
               <div>
 
@@ -593,7 +573,6 @@ const ProductDetails = () => {
               </div>
             )}
 
-            {/* Reviews */}
             {activeTab === 'Reviews' && (
               <div>
 
@@ -624,7 +603,6 @@ const ProductDetails = () => {
               </div>
             )}
 
-            {/* Shipping */}
             {activeTab === 'Shipping & Returns' && (
               <div>
 
@@ -677,7 +655,7 @@ const ProductDetails = () => {
               </div>
 
               <Link
-                to="/products"
+                to="/product"
                 className="hidden sm:block text-sm font-semibold text-[#075631] hover:underline"
               >
                 View All

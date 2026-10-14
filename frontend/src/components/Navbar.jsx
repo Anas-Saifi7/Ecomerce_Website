@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState("false");
+  const [isMenuOpen, setIsMenuOpen] = useState("");
 
   return (
 
@@ -127,7 +127,9 @@ const Navbar = () => {
               className="text-xl hover:text-[#073b25] transition"
               title="Account"
             >
-              ♙
+              {/* ♙ */}
+              👨🏻
+              
             </Link>
 
             <Link to='wishlist'

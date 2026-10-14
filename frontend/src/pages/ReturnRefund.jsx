@@ -138,7 +138,6 @@ const ReturnRefund = () => {
           </div>
         </section>
 
-        {/* Introduction */}
         <section className="bg-[#f5f7f2]">
           <div className="mx-auto max-w-7xl px-5 py-12 text-center sm:px-8 sm:py-16">
             <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#073b25] text-xl text-[#f4df91]">
@@ -157,7 +156,6 @@ const ReturnRefund = () => {
           </div>
         </section>
 
-        {/* Policy cards */}
         <section className="bg-white">
           <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16">
             <div className="grid gap-6 md:grid-cols-2">
@@ -195,7 +193,6 @@ const ReturnRefund = () => {
           </div>
         </section>
 
-        {/* Eligibility */}
         <section className="bg-[#f5f7f2]">
           <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16">
             <div className="mx-auto max-w-3xl text-center">
@@ -356,7 +353,6 @@ const ReturnRefund = () => {
           </div>
         </section>
 
-        {/* Damaged product CTA */}
         <section className="bg-white">
           <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16">
             <div className="rounded-2xl bg-[#073b25] p-6 text-white sm:p-8 lg:p-10">
@@ -595,7 +591,6 @@ const ReturnRefund = () => {
           </div>
         </section>
 
-        {/* Final CTA */}
         <section className="bg-[#073b25]">
           <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-14">
             <div className="text-center text-white">

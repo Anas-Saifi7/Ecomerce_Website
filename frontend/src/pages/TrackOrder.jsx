@@ -442,7 +442,7 @@ const TrackOrder = () => {
               onClick={handlePrintInvoice}
               className="self-start text-xs font-medium text-[#073b25] transition hover:text-[#a77c32] sm:text-sm print:hidden"
             >
-              ▣ Download / Print Invoice
+              ▣ Download Invoice
             </button>
           </div>
 
@@ -604,7 +604,6 @@ const TrackOrder = () => {
               </div>
             </article>
 
-            {/* MAP-STYLE TRACKING PANEL */}
             <article className="rounded-xl border border-gray-200 p-4 sm:p-5">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
@@ -743,10 +742,10 @@ const TrackOrder = () => {
           </div>
         </section>
 
-        {/* ORDER DETAILS */}
+      
         <section className="pb-7">
           <div className="grid gap-4 lg:grid-cols-[1.6fr_0.8fr_0.8fr]">
-            {/* PRODUCTS */}
+          
             <article className="rounded-xl border border-gray-200 p-4 sm:p-5">
               <h2 className="mb-4 font-serif text-xl font-bold">
                 Products in This Order
@@ -799,7 +798,7 @@ const TrackOrder = () => {
               )}
             </article>
 
-            {/* SHIPPING ADDRESS */}
+        
             <article className="rounded-xl border border-gray-200 p-4 sm:p-5">
               <div className="flex items-center gap-3">
                 <span className="text-2xl text-[#075631]">⌖</span>
@@ -823,7 +822,7 @@ const TrackOrder = () => {
               </div>
             </article>
 
-            {/* BILLING */}
+            
             <article className="rounded-xl border border-gray-200 p-4 sm:p-5">
               <div className="flex items-center gap-3">
                 <span className="text-2xl text-[#075631]">▤</span>
@@ -860,7 +859,7 @@ const TrackOrder = () => {
           </div>
         </section>
 
-        {/* RECOMMENDATIONS */}
+      
         <section className="pb-10">
           <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="font-serif text-2xl font-bold sm:text-3xl">
@@ -982,7 +981,7 @@ const TrackOrder = () => {
 
       <Footer />
 
-      {/* PRINT-ONLY STYLES */}
+      {/*  and Download Invoice */}
       <style>{`
         @media print {
           nav,

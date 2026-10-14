@@ -429,7 +429,7 @@ export default function Dashboard() {
                   <span className="hidden text-left sm:block">
                     <span className="block text-sm font-semibold">Doremon Shab</span>
                     <span className="block text-[10px] text-gray-500">
-                      Admin demo
+                      Admin
                     </span>
                   </span>
                   <span className="hidden sm:block">⌄</span>
@@ -466,12 +466,11 @@ export default function Dashboard() {
         </header>
 
         <main className="space-y-5 p-4 sm:p-5 lg:p-6">
-          {/* Page heading */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-3xl font-bold sm:text-4xl">Dashboard</h1>
               <p className="mt-1 text-sm text-gray-500">
-                Welcome back, Anas! Here's your Halla Bol store overview.
+                Welcome back,! Here's your Halla Bol store overview.
               </p>
               {query && (
                 <p className="mt-2 text-xs text-[#075631]">

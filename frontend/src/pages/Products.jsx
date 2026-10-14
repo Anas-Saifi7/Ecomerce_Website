@@ -55,7 +55,6 @@ const ProductCard = ({
   return (
     <div className="group bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-xl transition duration-300">
 
-      {/* IMAGE */}
       <div className="relative aspect-[1.35/1] bg-gray-100 overflow-hidden">
 
         <Link
@@ -70,7 +69,6 @@ const ProductCard = ({
           />
         </Link>
 
-        {/* TAG */}
         {product.tags?.length > 0 && (
           <div className="absolute top-3 left-3 flex flex-wrap gap-1 pointer-events-none">
             {product.tags.slice(0, 1).map((tag) => (
@@ -84,7 +82,6 @@ const ProductCard = ({
           </div>
         )}
 
-        {/* WISHLIST */}
         <button
           type="button"
           onClick={(event) => {
@@ -102,7 +99,6 @@ const ProductCard = ({
           {isWishlisted ? '♥' : '♡'}
         </button>
 
-        {/* OUT OF STOCK */}
         {!product.inStock && (
           <div className="absolute inset-0 bg-black/35 flex items-center justify-center pointer-events-none">
             <span className="bg-white text-red-600 font-semibold text-xs px-3 py-2 rounded-full">
@@ -113,7 +109,6 @@ const ProductCard = ({
 
       </div>
 
-      {/* CONTENT */}
       <div className="p-4">
 
         <Link to={`/product/${product.id}`}>
@@ -126,7 +121,6 @@ const ProductCard = ({
           </h3>
         </Link>
 
-        {/* RATING */}
         <div className="flex items-center gap-2 mt-2">
           <span className="text-yellow-500 text-sm">
             ★
@@ -141,7 +135,7 @@ const ProductCard = ({
           </span>
         </div>
 
-        {/* PRICE */}
+    
         <div className="flex items-center gap-2 mt-3">
 
           <span className="text-lg font-bold text-[#075631]">
@@ -156,7 +150,7 @@ const ProductCard = ({
 
         </div>
 
-        {/* BOTTOM */}
+      
         <div className="flex items-center justify-between gap-2 mt-4">
 
           <span

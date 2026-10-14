@@ -96,7 +96,6 @@ const FeaturedProducts = () => {
               className="group bg-white rounded-lg overflow-hidden border border-gray-200 
               hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
 
-              {/* image  */}
               <div className="relative overflow-hidden bg-gray-100">
                 <img
                   src={product.image}
@@ -121,19 +120,15 @@ const FeaturedProducts = () => {
 
               </div>
 
-
-              {/* product info*/}
               <div className="p-3">
                 <h3 className="font-semibold text-xs sm:text-sm text-gray-900 leading-5 line-clamp-2 min-h-10">
                   {product.name}
                 </h3>
 
-                {/* Category */}
                 <p className="text-[10px] sm:text-[11px] text-gray-500 mt-1">
                   {product.category}
                 </p>
 
-                {/* Rating */}
                 <div className="flex items-center gap-1 mt-2 text-xs">
                 <span className="text-yellow-500">
                     ★
@@ -154,14 +149,6 @@ const FeaturedProducts = () => {
                   <span className="flex flex-col sm:flex-row gap-3 mt-6 sm:mt-7">                                
                     {product.price}
                   </span>
-
-                  {/* <button
-                    type="button"
-                    aria-label={`Add ${product.name} to cart`}
-                    className="bg-[#073b25] hover:bg-[#064524] text-white w-8 h-8 sm:w-8 sm:h-9 rounded-md 
-                      flex items-center justify-center transition shrink-0">
-                    🛒
-                  </button> */}
 
                 </div>
 

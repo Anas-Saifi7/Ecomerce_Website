@@ -502,7 +502,6 @@ const ExportInquiry = () => {
 
                             </div>
 
-                            {/* Product Requirement */}
                             <div className="border-t border-gray-100 pt-8">
 
                                 <h3 className="font-serif text-2xl font-bold">
@@ -673,7 +672,7 @@ const ExportInquiry = () => {
 
                             </div>
 
-                            {/* Shipping */}
+            
                             <div className="border-t border-gray-100 pt-8">
 
                                 <h3 className="font-serif text-2xl font-bold">
@@ -757,7 +756,7 @@ const ExportInquiry = () => {
 
                             </div>
 
-                            {/* Submit */}
+                           
                             <div className="border-t border-gray-100 pt-7">
 
                                 <button

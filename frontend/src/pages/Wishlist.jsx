@@ -622,7 +622,8 @@ const Wishlist = () => {
 
                     {product.oldPrice && (
                       <span className="text-xs text-gray-400 line-through">
-                        ₹
+                        ₹ 
+                        {/* $ */}
                         {Number(
                           product.oldPrice
                         ).toLocaleString(
@@ -715,7 +716,7 @@ const Wishlist = () => {
             </p>
 
             <Link
-              to="/products"
+              to="/product"
               className="inline-flex bg-[#073b25] hover:bg-[#052d1c] text-white px-6 py-3 rounded-md mt-6 text-sm font-medium transition"
             >
               Explore Products →
@@ -761,7 +762,7 @@ const Wishlist = () => {
               </p>
 
               <Link
-                to="/products"
+                to="/product"
                 className="inline-flex bg-[#073b25] hover:bg-[#052d1c] text-white px-5 py-2.5 rounded-md mt-4 text-sm font-medium transition"
               >
                 Explore All Products →
@@ -776,7 +777,7 @@ const Wishlist = () => {
 
                   <Link
                     key={item.name}
-                    to="/products"
+                    to="/product"
                     className="text-center group"
                   >
 

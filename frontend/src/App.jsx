@@ -97,7 +97,10 @@ const App = () => {
                     element={<Categories />}
                 />
 
-                <Route path="/categories/:slug" element={<CategoryProducts />} />
+                <Route 
+                path="/categories/:slug" 
+                element={<CategoryProducts />}
+                 />
 
                 <Route
                     path="/faq"
@@ -126,7 +129,11 @@ const App = () => {
 
                 <Route
                     path="/account"
-                    element={<Account />}
+                    element={
+                        <ProtectedRoute>
+                           <Account />
+                        </ProtectedRoute>
+                    }
                 />
 
 
@@ -172,7 +179,10 @@ const App = () => {
                     path="/return-refund"
                     element={<ReturnRefund/>}
                 />
-                <Route path="/regions/:regionSlug" element={<RegionDetail />} />
+                <Route 
+                 path="/regions/:regionSlug" 
+                 element={<RegionDetail />}
+                  />
 
             </Routes>
         </div>
