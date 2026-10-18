@@ -879,8 +879,6 @@ const Products = () => {
 
             </div>
 
-            {/* CERTIFICATIONS */}
-
             <FilterSection
               title="Certifications"
               items={certifications}
@@ -893,8 +891,6 @@ const Products = () => {
               }
             />
 
-            {/* PRODUCT TYPE */}
-
             <FilterSection
               title="Product Type"
               items={productTypes}
@@ -906,8 +902,6 @@ const Products = () => {
                 )
               }
             />
-
-            {/* ACTIONS */}
 
             <div className="grid grid-cols-2 gap-2 mt-3">
 
@@ -934,8 +928,6 @@ const Products = () => {
           </aside>
 
           <section className="min-w-0">
-
-            {/* TOP BAR */}
 
             <div className="flex items-center justify-between gap-3 mb-4">
 
@@ -993,8 +985,6 @@ const Products = () => {
 
             </div>
 
-            {/* ACTIVE FILTERS */}
-
             {(search ||
               selectedCategories.length > 0 ||
               selectedRegions.length > 0 ||
@@ -1046,8 +1036,6 @@ const Products = () => {
               </div>
             )}
 
-            {/* GRID */}
-
             {currentProducts.length > 0 ? (
 
               <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
@@ -1096,12 +1084,8 @@ const Products = () => {
 
             )}
 
-            {/* PAGINATION */}
-
             {filteredProducts.length > 0 && (
               <div className="flex items-center justify-center gap-1.5 mt-7 flex-wrap">
-
-                {/* PREVIOUS */}
 
                 <button
                   type="button"
@@ -1115,8 +1099,6 @@ const Products = () => {
                 >
                   ‹
                 </button>
-
-                {/* PAGE NUMBERS */}
 
                 {Array.from(
                   { length: totalPages },
@@ -1164,8 +1146,6 @@ const Products = () => {
                   </>
                 )}
 
-                {/* NEXT */}
-
                 <button
                   type="button"
                   disabled={safePage === totalPages}
@@ -1198,7 +1178,6 @@ const Products = () => {
             to="/cart"
             className="bg-[#073b25] hover:bg-[#052d1c] text-white rounded-full shadow-xl px-5 py-3 flex items-center gap-2 text-sm font-medium transition"
           >
-
             🛒
 
             <span>

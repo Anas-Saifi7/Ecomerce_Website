@@ -93,13 +93,14 @@ const Support = () => {
           <img
             src={supportImages.hero}
             alt="Halla Bol customer support"
-            className="absolute inset-0 h-full w-full object-cover"
+             loading="lazy"
+            className="absolute inset-0 h-full w-full object-fit-cover"
             onError={(event) => {
               event.currentTarget.style.display = "none";
             }}
           />
 
-          <div className="absolute inset-0 bg-[#073b25]/80" />
+          <div className="absolute inset-0" />
 
           <div className="relative z-10 mx-auto max-w-7xl px-5 py-24 sm:px-8 sm:py-28">
             <div className="max-w-3xl text-white">

@@ -62,7 +62,7 @@ const Login = () => {
         email: matchedUser.email,
       };
 
-      // Use the same key as ProtectedRoute.jsx.
+     
       localStorage.setItem("Halla_user", JSON.stringify(user));
 
       const requestedPath = location.state?.from?.pathname;

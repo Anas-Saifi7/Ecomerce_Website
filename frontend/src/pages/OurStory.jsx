@@ -94,6 +94,7 @@ const OurStory = () => {
           <img
             src={storyHero.image}
             alt="Indian farming landscape"
+            loading="lazy"
             className="absolute inset-0 h-full w-full object-fitcover"
             fetchPriority="high"
           />
@@ -165,7 +166,7 @@ const OurStory = () => {
                 />
 
                 <Link
-                  to="/contact"
+                  to="/about"
                   className="mt-7 inline-flex items-center rounded-md bg-[#075631] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#064524]"
                 >
                   Learn More About Halla Bol <span className="ml-2">→</span>
@@ -378,13 +379,13 @@ const OurStory = () => {
               <h2 className="mt-3 font-serif text-3xl font-bold sm:text-4xl">
                 A Vision for Meaningful Impact
               </h2>
-
+{/* 
               {impactStatsAreDemo && (
                 <p className="mx-auto mt-3 max-w-2xl text-xs leading-5 text-amber-700">
                   Demo statistics from the supplied design. Verify the
                   figures before publishing them as actual company results.
                 </p>
-              )}
+              )} */}
             </div>
 
             <div className="mt-10 grid grid-cols-2 gap-y-6 lg:grid-cols-4">
@@ -418,7 +419,6 @@ const OurStory = () => {
           </div>
         </section>
 
-        {/* Global presence */}
         <section className="bg-[#fafaf7]">
           <div className="mx-auto grid max-w-7xl items-center gap-8 px-5 py-12 sm:px-8 sm:py-16 lg:grid-cols-2 lg:gap-12 lg:px-6">
             <div className="relative">
@@ -557,12 +557,13 @@ const OurStory = () => {
                     {newsletterStatus.message}
                   </p>
                 )}
-
+{/* 
                 <p className="mt-3 text-xs leading-5 text-white/75">
                   Demo mode: this form saves the email in this browser only.
                   It does not send emails or subscribe anyone to a mailing
                   service.
-                </p>
+                </p> */}
+
               </div>
             </div>
           </div>

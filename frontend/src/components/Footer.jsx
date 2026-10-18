@@ -185,7 +185,7 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-[10px] sm:text-xs text-gray-400">
 
             <p className="text-center md:text-left">
-              © 2026 Company Name. All rights reserved.
+              © 2026 Halla Bol. All rights reserved.
             </p>
 
             <div className="flex flex-wrap justify-center md:justify-end gap-x-5 gap-y-2">

@@ -1,13 +1,11 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 
-// Auth Pages
 import Register from './pages/Register.jsx'
 import Login from './pages/Login.jsx'
 import ForgotPassword from './pages/ForgotPassword.jsx'
 import ResetPassword from './pages/ResetPassword.jsx'
 
-// Customer Pages
 import Home from './pages/Home.jsx'
 import OurStory from './pages/OurStory.jsx'
 import Contact from './pages/Contact.jsx'
@@ -25,16 +23,20 @@ import Wishlist from './pages/Wishlist.jsx'
 import About from './pages/About.jsx'
 import CategoryProducts from "./pages/CategoryProducts";
 import RegionDetail from "./pages/RegionDetail";
-
-// Admin
-import Dashboard from './pages/Dashboard.jsx'
-
-// Protected Route
-import ProtectedRoute from './components/ProtectedRoute.jsx'
 import Support from './pages/Support.jsx'
 import ExportInquiry from './pages/ExportInquiry.jsx'
 import ShippingPolicy from './pages/ShippingPolicy.jsx'
 import ReturnRefund from './pages/ReturnRefund.jsx'
+
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import Sitemap from "./pages/Sitemap";
+import Impact from "./pages/Impact.jsx";
+
+import Dashboard from './pages/admin/Dashboard.jsx'
+
+import ProtectedRoute from './components/ProtectedRoute.jsx'
+
 
 const App = () => {
     return (
@@ -97,10 +99,10 @@ const App = () => {
                     element={<Categories />}
                 />
 
-                <Route 
-                path="/categories/:slug" 
-                element={<CategoryProducts />}
-                 />
+                <Route
+                    path="/categories/:slug"
+                    element={<CategoryProducts />}
+                />
 
                 <Route
                     path="/faq"
@@ -131,11 +133,10 @@ const App = () => {
                     path="/account"
                     element={
                         <ProtectedRoute>
-                           <Account />
+                            <Account />
                         </ProtectedRoute>
                     }
                 />
-
 
                 <Route
                     path="/track-order"
@@ -152,38 +153,47 @@ const App = () => {
                 />
 
                 <Route
-                    path="/dashboard"
+                    path="/admin"
                     element={<Dashboard />}
                 />
-  
-                <Route 
+
+                <Route
                     path="/export-inquiry"
-                    element={<ExportInquiry/>}/>
+                    element={<ExportInquiry />} />
 
-                <Route 
+                <Route
                     path="/support"
-                    element={<Support/>}
+                    element={<Support />}
                 />
 
-               <Route 
+                <Route
                     path="/shipping-policy"
-                    element={<ShippingPolicy/>}
+                    element={<ShippingPolicy />}
                 />
 
-                <Route 
+                <Route
                     path="/support"
-                    element={<Support/>}
+                    element={<Support />}
                 />
- 
-                 <Route 
-                    path="/return-refund"
-                    element={<ReturnRefund/>}
-                />
-                <Route 
-                 path="/regions/:regionSlug" 
-                 element={<RegionDetail />}
-                  />
 
+                <Route
+                    path="/return-refund"
+                    element={<ReturnRefund />}
+                />
+                <Route
+                    path="/regions/:regionSlug"
+                    element={<RegionDetail />}
+                />
+
+
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route
+                    path="/terms-and-conditions"
+                    element={<TermsAndConditions />}
+                />
+                <Route path="/sitemap" element={<Sitemap />} />
+
+<Route path="/impact" element={<Impact />} />
             </Routes>
         </div>
     )

@@ -418,7 +418,7 @@ const FAQ = () => {
                     >
                       {faqSupport.email}
                     </a>
-
+                    
                     <p className="mt-1 text-xs text-gray-500">
                       {faqSupport.responseTime}
                     </p>

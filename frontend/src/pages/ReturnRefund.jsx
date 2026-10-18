@@ -98,13 +98,14 @@ const ReturnRefund = () => {
           <img
             src={returnRefundImages.hero}
             alt="Halla Bol returns and refunds"
+             loading="lazy"
             className="absolute inset-0 h-full w-full object-cover"
             onError={(event) => {
               event.currentTarget.style.display = "none";
             }}
           />
 
-          <div className="absolute inset-0 bg-[#073b25]/80" />
+          <div className="absolute inset-0" />
 
           <div className="relative z-10 mx-auto w-full max-w-7xl px-5 py-20 sm:px-8 lg:px-8">
             <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-[#f4df91] sm:text-sm">
@@ -238,7 +239,6 @@ const ReturnRefund = () => {
           </div>
         </section>
 
-        {/* Process */}
         <section className="bg-white">
           <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 py-12 sm:px-8 sm:py-16 lg:grid-cols-2 lg:gap-16">
             <div>
@@ -291,7 +291,7 @@ const ReturnRefund = () => {
                 }}
               />
 
-              <div className="absolute inset-0 bg-[#073b25]/75" />
+              <div className="absolute inset-0 " />
 
               <div className="relative flex min-h-90 flex-col justify-end p-7 text-white sm:p-10">
                 <p className="text-sm font-semibold uppercase tracking-wider text-[#f4df91]">
@@ -311,7 +311,6 @@ const ReturnRefund = () => {
           </div>
         </section>
 
-        {/* Non-returnable items */}
         <section className="bg-[#f5f7f2]">
           <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16">
             <div className="mx-auto max-w-4xl rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
@@ -533,7 +532,6 @@ const ReturnRefund = () => {
           </div>
         </section>
 
-        {/* FAQs */}
         <section className="bg-[#f5f7f2]">
           <div className="mx-auto max-w-4xl px-5 py-12 sm:px-8 sm:py-16">
             <div className="text-center">

@@ -144,7 +144,6 @@ const FeaturedProducts = () => {
 
                 </div>
 
-                {/* Price and Add to Cart */}
                 <div className="flex items-ceneter justify-between gap-2 mt-3">
                   <span className="flex flex-col sm:flex-row gap-3 mt-6 sm:mt-7">                                
                     {product.price}

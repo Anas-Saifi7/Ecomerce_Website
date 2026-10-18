@@ -522,7 +522,7 @@ export default function Contact() {
                   </p>
                 </div>
 
-                {/* Highlights */}
+
                 <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1">
                   {contactHighlights.map((item) => (
                     <article
@@ -533,7 +533,7 @@ export default function Contact() {
                         src={item.image}
                         alt={item.title}
                         loading="lazy"
-                        className="h-44 w-full object-cover sm:h-48"
+                        className="h-44 w-full object-fit-cover sm:h-48"
                       />
                       <div className="p-5">
                         <span className="text-xl text-[#075631]">♧</span>

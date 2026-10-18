@@ -121,6 +121,7 @@ const Blog = () => {
       <section className="relative flex min-h-75 items-center overflow-hidden sm:min-h-90 lg:min-h-105">
         <BlogImage
           src="/images/blog-hero.jpg"
+           loading="lazy"
           alt="Indian spices and traditional products"
           className="absolute inset-0 h-full w-full object-cover"
         />
@@ -281,6 +282,7 @@ const Blog = () => {
                       <BlogImage
                         src={article.image}
                         alt={article.title}
+                         loading="lazy"
                         className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                       />
 

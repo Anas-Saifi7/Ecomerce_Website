@@ -1,86 +1,173 @@
-const CART_KEY = 'cart key '
+import { STORAGE_KEYS } from "../components/config/storageKeys.js";
+
+const LEGACY_CART_KEYS = ["Halla_cart", "cart key "];
+
+const isBrowser = typeof window !== "undefined";
 
 export const getCart = () => {
+  if (!isBrowser) return [];
+
   try {
-    const cart = localStorage.getItem(CART_KEY)
-    return cart ? JSON.parse(cart) : []
+    const currentCart = localStorage.getItem(STORAGE_KEYS.CART);
+
+    if (currentCart !== null) {
+      const parsed = JSON.parse(currentCart);
+      return Array.isArray(parsed) ? parsed : [];
+    }
+
+    
+    for (const key of LEGACY_CART_KEYS) {
+      const oldCart = localStorage.getItem(key);
+
+      if (oldCart) {
+        const parsed = JSON.parse(oldCart);
+
+        if (Array.isArray(parsed)) {
+          localStorage.setItem(
+            STORAGE_KEYS.CART,
+            JSON.stringify(parsed)
+          );
+
+          return parsed;
+        }
+      }
+    }
+
+    return [];
   } catch (error) {
-    console.error('Error reading cart:', error)
-    return []
+    console.error("Error reading cart:", error);
+    return [];
   }
-}
+};
 
 export const saveCart = (cart) => {
-  localStorage.setItem(CART_KEY, JSON.stringify(cart))
-  window.dispatchEvent(new Event('cartUpdated'))
-}
+  if (!isBrowser) return;
 
-export const addToCart = (product, quantity = 1, size = 'Standard') => {
-  const cart = getCart()
+  if (!Array.isArray(cart)) {
+    throw new Error("Cart must be an array.");
+  }
+
+  localStorage.setItem(
+    STORAGE_KEYS.CART,
+    JSON.stringify(cart)
+  );
+
+  window.dispatchEvent(new Event("cartUpdated"));
+};
+
+export const addToCart = (
+  product,
+  quantity = 1,
+  size = "Standard"
+) => {
+  if (!product || product.id == null) {
+    throw new Error("Valid product is required.");
+  }
+
+  if (product.inStock === false) {
+    throw new Error("Product is out of stock.");
+  }
+
+  const safeQuantity = Math.max(
+    1,
+    Math.floor(Number(quantity) || 1)
+  );
+
+  const cart = getCart();
 
   const existingIndex = cart.findIndex(
-    (item) => item.id === product.id && item.size === size
-  )
+    (item) =>
+      String(item.id) === String(product.id) &&
+      (item.size || "Standard") === size
+  );
 
   if (existingIndex !== -1) {
-    cart[existingIndex].quantity += quantity
+    cart[existingIndex] = {
+      ...cart[existingIndex],
+      quantity:
+        Math.max(
+          1,
+          Number(cart[existingIndex].quantity) || 1
+        ) + safeQuantity,
+    };
   } else {
-    cart.push({
-      id: product.id,
-      name: product.name,
-      image: product.image,
-      price: product.price,
-      oldPrice: product.oldPrice || null,
-      size,
-      quantity,
-    })
+cart.push({
+  id: product.id,
+  name: product.name,
+  image: product.image,
+  price: Number(product.price) || 0,
+  oldPrice: product.oldPrice ?? null,
+  size,
+  quantity: safeQuantity,
+  tags: product.tags ?? [],
+  rating: product.rating ?? 0,
+  reviews: product.reviews ?? 0,
+});
   }
 
-  saveCart(cart)
+  saveCart(cart);
 
-  return cart
-}
+  return cart;
+};
 
-export const removeFromCart = (id, size = 'Standard') => {
+export const removeFromCart = (
+  id,
+  size = "Standard"
+) => {
   const cart = getCart().filter(
-    (item) => !(item.id === id && item.size === size)
-  )
+    (item) =>
+      !(
+        String(item.id) === String(id) &&
+        (item.size || "Standard") === size
+      )
+  );
 
-  saveCart(cart)
+  saveCart(cart);
 
-  return cart
-}
+  return cart;
+};
 
-export const updateCartQuantity = (id, size, quantity) => {
-  const cart = getCart()
+export const updateCartQuantity = (
+  id,
+  size = "Standard",
+  quantity
+) => {
+  const safeQuantity = Math.floor(Number(quantity));
 
-  const item = cart.find(
-    (item) => item.id === id && item.size === size
-  )
-
-  if (item) {
-    item.quantity = Math.max(1, quantity)
+  if (!Number.isFinite(safeQuantity) || safeQuantity < 1) {
+    return removeFromCart(id, size);
   }
 
-  saveCart(cart)
+  const cart = getCart().map((item) =>
+    String(item.id) === String(id) &&
+    (item.size || "Standard") === size
+      ? { ...item, quantity: safeQuantity }
+      : item
+  );
 
-  return cart
-}
+  saveCart(cart);
+
+  return cart;
+};
 
 export const clearCart = () => {
-  saveCart([])
-}
+  saveCart([]);
+};
 
 export const getCartCount = () => {
   return getCart().reduce(
-    (total, item) => total + item.quantity,
+    (total, item) =>
+      total + Math.max(0, Number(item.quantity) || 0),
     0
-  )
-}
+  );
+};
 
 export const getCartTotal = () => {
   return getCart().reduce(
-    (total, item) => total + item.price * item.quantity,
+    (total, item) =>
+      total +
+      Math.max(0, Number(item.price) || 0) *
+        Math.max(0, Number(item.quantity) || 0),
     0
-  )
-}
+  );
+};

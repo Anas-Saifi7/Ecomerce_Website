@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-// import regions from '../data/regions'
+// import regions from/ '../data/regions'
 
 const regions = [
   ['Uttar Pradesh', '/images/region-1.jpg'],

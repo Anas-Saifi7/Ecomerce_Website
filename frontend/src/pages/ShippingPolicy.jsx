@@ -31,13 +31,14 @@ const ShippingPolicy = () => {
           <img
             src={shippingPolicyImages.hero}
             alt="Halla Bol shipping and delivery"
+             loading="lazy"
             className="absolute inset-0 h-full w-full object-cover"
             onError={(event) => {
               event.currentTarget.style.display = "none";
             }}
           />
 
-          <div className="absolute inset-0 bg-[#073b25]/75" />
+          <div className="absolute inset-0" />
 
           <div className="relative z-10 mx-auto max-w-7xl px-5 py-24 sm:px-8 sm:py-28">
             <div className="max-w-3xl text-white">
@@ -158,16 +159,17 @@ const ShippingPolicy = () => {
                 <img
                   src={shippingPolicyImages.delivery}
                   alt="Halla Bol shipping and global delivery"
+                   loading="lazy"
                   className="absolute inset-0 h-full w-full object-cover"
                   onError={(event) => {
                     event.currentTarget.style.display = "none";
                   }}
                 />
 
-                <div className="absolute inset-0 bg-[#073b25]/70" />
+                <div className="absolute inset-0" />
 
                 <div className="relative z-10 flex min-h-85 flex-col justify-end p-7 text-white sm:p-10">
-                  <p className="text-sm font-semibold uppercase tracking-wider text-[#f4df91]">
+                  <p className="text-sm font-semibold uppercase tracking-wider text-[#2f2709]">
                     From India to the World
                   </p>
 
@@ -184,8 +186,7 @@ const ShippingPolicy = () => {
             </div>
           </div>
         </section>
-
-      
+     
         <section className="bg-[#f5f7f2]">
           <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16">
             <div className="mx-auto max-w-4xl text-center">

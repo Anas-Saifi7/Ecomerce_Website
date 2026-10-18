@@ -132,13 +132,13 @@ const ExportInquiry = () => {
                 <img
                     src="/images/Export_SupportHero.jpg"
                     alt="Halla Bol Export Inquiry"
-                    className="absolute inset-0 w-full h-full object-cover"
+                    className="absolute inset-0 w-full h-full object-fit-cover"
                     onError={(e) => {
                         e.currentTarget.style.display = "none";
                     }}
                 />
 
-                <div className="absolute inset-0 bg-[#073b25]/85"></div>
+                <div className="absolute inset-0"></div>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 lg:px-8 py-24 sm:py-32">
 

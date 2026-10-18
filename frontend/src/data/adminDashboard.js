@@ -1,4 +1,3 @@
-
 export const ADMIN_STORAGE_KEY = "Halla Bol_admin_data";
 
 export const adminMenu = [

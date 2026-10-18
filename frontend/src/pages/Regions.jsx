@@ -399,15 +399,16 @@ const Regions = () => {
       <section className="relative isolate overflow-hidden bg-[#073b25]">
         <img
           src="/images/regions-cta.jpg"
-          alt=""
+          alt="region"
+           loading="lazy"
           aria-hidden="true"
-          className="absolute inset-0 -z-20 h-full w-full object-cover opacity-40"
+          className="absolute inset-0 -z-20 h-full w-full object-cover"
           onError={(event) => {
             event.currentTarget.style.display = 'none'
           }}
         />
 
-        <div className="absolute inset-0 -z-10 bg-[#073b25]/70" />
+        <div className="absolute inset-0 -z-10" />
 
         <div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-12 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-6 lg:py-16">
           <div className="max-w-2xl text-white">

@@ -15,6 +15,7 @@ const About = () => {
         <img
           src="/images/about-hero.jpg"
           alt="Halla Bol"
+          loading="lazy"
           className="absolute inset-0 w-full h-full object-cover"
         />
 
@@ -33,7 +34,7 @@ const About = () => {
             </p>
 
             <p className="text-sm sm:text-base lg:text-lg text-gray-100 leading-6 sm:leading-7 mt-3 max-w-xl">
-              At company Name, we bring the purity, heritage, and richness of
+              At Halla bol, we bring the purity, heritage, and richness of
               India's natural products to homes around the world — while
               empowering farmers, supporting communities, and promoting
               a healthier, more sustainable future.
@@ -54,6 +55,7 @@ const About = () => {
             <img
               src="/images/about-story.jpg"
               alt="Indian Farmer"
+               loading="lazy"
               className="w-full h-full object-cover"
             />
 
@@ -84,7 +86,7 @@ const About = () => {
             </h2>
 
             <p className="text-sm sm:text-base text-gray-600 leading-6 mt-4">
-              Company Name was founded with a simple yet powerful mission —
+              Halla Bol was founded with a simple yet powerful mission —
               to share the authentic, natural goodness of India with
               the world. What started as a small initiative to support
               local farmers has grown into a global brand, trusted by
@@ -246,6 +248,7 @@ const About = () => {
         <img
           src="/images/about-impact.jpg"
           alt="Sustainable farming"
+           loading="lazy"
           className="absolute inset-0 w-full h-full object-cover opacity-45"
         />
 
@@ -356,7 +359,8 @@ const About = () => {
 
             <img
               src="/images/global-map.jpg"
-              alt="XYZ Global Presence"
+              alt="Halla Bol Global Presence"
+               loading="lazy"
               className="w-full h-auto object-contain"
             />
 
@@ -373,6 +377,7 @@ const About = () => {
           <img
             src="/images/farmers-community.jpg"
             alt="Farmers and Communities"
+             loading="lazy"
             className="absolute inset-0 w-full h-full object-cover"
           />
 

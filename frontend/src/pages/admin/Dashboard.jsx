@@ -5,7 +5,7 @@ import {
   defaultAdminData,
   loadAdminData,
   saveAdminData,
-} from "../data/adminDashboard";
+} from "../../data/adminDashboard";
 
 const money = (value) =>
   `₹${Number(value || 0).toLocaleString("en-IN")}`;
