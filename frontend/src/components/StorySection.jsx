@@ -74,7 +74,7 @@ const StorySection = () => {
               </p>
 
               <Link
-                // to="/impact"
+                to="/impact"
                 className="inline-flex items-center bg-white hover:bg-gray-100 text-[#073b25] px-5 py-2.5 rounded-md text-sm mt-5 font-medium transition"
               >
                 Our Impact

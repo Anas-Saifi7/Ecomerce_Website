@@ -11,8 +11,8 @@ import {
   supportContactInfo,
   supportSubjects,
   supportImages,
-  saveSupportEnquiry,
 } from "../data/supportData";
+import { createEnquiry } from "../services/enquiryService.js";
 
 const initialFormData = {
   name: "",
@@ -31,6 +31,7 @@ const Support = () => {
   const [formData, setFormData] = useState(initialFormData);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const filteredFaqs = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -40,7 +41,7 @@ const Support = () => {
     return supportFaqs.filter(
       (faq) =>
         faq.question.toLowerCase().includes(query) ||
-        faq.answer.toLowerCase().includes(query)
+        faq.answer.toLowerCase().includes(query),
     );
   }, [search]);
 
@@ -56,16 +57,17 @@ const Support = () => {
     setSubmitError("");
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setSubmitError("");
-
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
-      saveSupportEnquiry({
+      await createEnquiry({
+        type: "support",
         name: formData.name.trim(),
         email: formData.email.trim(),
-        orderNumber: formData.orderNumber.trim(),
-        subject: formData.subject,
+        subject: `${formData.subject}${formData.orderNumber.trim() ? ` — Order ${formData.orderNumber.trim()}` : ""}`,
         message: formData.message.trim(),
       });
 
@@ -73,9 +75,9 @@ const Support = () => {
       setFormData(initialFormData);
       setOpenFaq(null);
     } catch {
-      setSubmitError(
-        "Your request could not be saved in this browser. Please try again."
-      );
+      setSubmitError("Your request could not be sent. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -88,12 +90,11 @@ const Support = () => {
       <Navbar />
 
       <main>
-       
         <section className="relative min-h-100 overflow-hidden sm:min-h-115">
           <img
             src={supportImages.hero}
             alt="Halla Bol customer support"
-             loading="lazy"
+            loading="lazy"
             className="absolute inset-0 h-full w-full object-fit-cover"
             onError={(event) => {
               event.currentTarget.style.display = "none";
@@ -145,7 +146,6 @@ const Support = () => {
           </div>
         </section>
 
-       
         <section className="bg-[#f5f7f2]">
           <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16">
             <div className="mx-auto max-w-3xl text-center">
@@ -158,8 +158,8 @@ const Support = () => {
               </h2>
 
               <p className="mt-4 text-sm leading-7 text-gray-600 sm:text-base">
-                Choose a support category to quickly find the information
-                you need.
+                Choose a support category to quickly find the information you
+                need.
               </p>
             </div>
 
@@ -191,7 +191,6 @@ const Support = () => {
           </div>
         </section>
 
-        
         <section className="bg-white">
           <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16">
             <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
@@ -217,7 +216,6 @@ const Support = () => {
           </div>
         </section>
 
-       
         <section className="bg-[#f5f7f2]">
           <div className="mx-auto max-w-4xl px-5 py-12 sm:px-8 sm:py-16">
             <div className="text-center">
@@ -280,8 +278,8 @@ const Support = () => {
                   </h3>
 
                   <p className="mt-2 text-sm text-gray-500">
-                    Try searching for another question or contact our
-                    support team.
+                    Try searching for another question or contact our support
+                    team.
                   </p>
 
                   <button
@@ -297,11 +295,9 @@ const Support = () => {
           </div>
         </section>
 
-       
         <section id="contact-support" className="bg-white scroll-mt-24">
           <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16">
             <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-             
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#245d24]">
                   Contact Support
@@ -369,7 +365,6 @@ const Support = () => {
                 </p>
               </div>
 
-            
               <div className="rounded-2xl bg-[#f5f7f2] p-6 sm:p-8">
                 <h3 className="font-serif text-2xl font-bold">
                   Send Us a Message
@@ -385,10 +380,10 @@ const Support = () => {
                     className="mt-5 rounded-lg border border-green-200 bg-green-50 p-4"
                   >
                     <p className="text-sm font-medium text-green-800">
-                      Your support request has been saved in this browser.
+                      Your request has been received by our support team.
                     </p>
                     <p className="mt-1 text-xs text-green-700">
-                      This demo does not send your message to Halla BOl.
+                      Your message is saved for the support team to review.
                     </p>
                   </div>
                 )}
@@ -534,7 +529,6 @@ const Support = () => {
             </div>
           </div>
         </section>
-
 
         <section className="bg-[#073b25]">
           <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-14">

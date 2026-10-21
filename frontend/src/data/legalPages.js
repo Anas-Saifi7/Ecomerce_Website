@@ -2,7 +2,7 @@
 export const privacyPolicy = {
   title: "Privacy Policy",
   subtitle:
-    "Your privacy matters. Learn how MOLOG handles your information.",
+    "Your privacy matters. Learn how Halla Bol handles your information.",
   lastUpdated: "October 18, 2026",
   sections: [
     {
@@ -38,7 +38,7 @@ export const privacyPolicy = {
     {
       title: "7. Third-Party Websites",
       content:
-        "External websites linked from MOLOG may have their own privacy policies and practices.",
+        "External websites linked from Halla Bol may have their own privacy policies and practices.",
     },
     {
       title: "8. Policy Updates",
@@ -51,13 +51,13 @@ export const privacyPolicy = {
 export const termsAndConditions = {
   title: "Terms & Conditions",
   subtitle:
-    "Please read the terms that apply when using the MOLOG website.",
+    "Please read the terms that apply when using the Halla Bol website.",
   lastUpdated: "October 18, 2026",
   sections: [
     {
       title: "1. Acceptance of Terms",
       content:
-        "By accessing or using the MOLOG website, you agree to these Terms & Conditions and the applicable policies published on our website.",
+        "By accessing or using the Halla Bol website, you agree to these Terms & Conditions and the applicable policies published on our website.",
     },
     {
       title: "2. Customer Accounts",
@@ -109,7 +109,7 @@ export const termsAndConditions = {
 
 export const sitemapSections = [
   {
-    title: "Explore MOLOG",
+    title: "Explore Halla Bol",
     links: [
       { label: "Home", to: "/" },
       { label: "About Us", to: "/about" },
@@ -120,7 +120,7 @@ export const sitemapSections = [
   {
     title: "Shop",
     links: [
-      { label: "All Products", to: "/products" },
+      { label: "All Products", to: "/product" },
       { label: "Categories", to: "/categories" },
       { label: "Regions", to: "/regions" },
     ],

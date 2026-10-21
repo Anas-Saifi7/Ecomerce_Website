@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const TrustSection = () => {
   return (
@@ -16,11 +17,11 @@ const TrustSection = () => {
 
               <div>
                 <h3 className="font-bold text-base sm:text-lg">
-                  200+
+                  Authentic
                 </h3>
 
                 <p className="text-[10px] sm:text-xs text-gray-500">
-                  Verified Producers
+                  Indian products
                 </p>
               </div>
             </div>
@@ -32,11 +33,11 @@ const TrustSection = () => {
 
               <div>
                 <h3 className="font-bold text-base sm:text-lg">
-                  20+
+                  INR & USD
                 </h3>
 
                 <p className="text-[10px] sm:text-xs text-gray-500">
-                  Countries
+                  Independent prices
                 </p>
               </div>
             </div>
@@ -48,11 +49,11 @@ const TrustSection = () => {
 
               <div>
                 <h3 className="font-bold text-base sm:text-lg">
-                  1000+
+                  Live
                 </h3>
 
                 <p className="text-[10px] sm:text-xs text-gray-500">
-                  Authentic Products
+                  Stock checks
                 </p>
               </div>
             </div>
@@ -64,11 +65,11 @@ const TrustSection = () => {
 
               <div>
                 <h3 className="font-bold text-base sm:text-lg">
-                  50+
+                  Customer
                 </h3>
 
                 <p className="text-[10px] sm:text-xs text-gray-500">
-                  Indian Regions
+                  Support
                 </p>
               </div>
             </div>
@@ -86,32 +87,10 @@ const TrustSection = () => {
           <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-5 sm:gap-8 lg:gap-10">
 
             <span className="font-serif font-bold text-sm sm:text-base text-gray-800 text-center">
-              Trusted by Global Partners
+              Explore the collection
             </span>
-
-            <span className="font-bold text-lg sm:text-xl text-gray-800">
-              amazon
-            </span>
-
-            <span className="text-orange-500 font-bold text-lg sm:text-xl">
-              Etsy
-            </span>
-
-            <span className="text-blue-600 font-bold text-base sm:text-lg">
-              Walmart
-            </span>
-
-            <span className="text-green-600 font-bold text-lg sm:text-xl">
-              Shopify
-            </span>
-
-            <span className="text-orange-500 font-bold text-base sm:text-lg">
-              Alibaba.com
-            </span>
-
-            <span className="text-red-600 font-bold text-base sm:text-lg">
-              indiamart
-            </span>
+            <p className="text-sm text-gray-600 text-center">Browse products by category and region.</p>
+            <Link to="/categories" className="rounded border border-[#073b25] px-4 py-2 text-sm font-semibold text-[#073b25] hover:bg-green-50">Browse categories</Link>
 
           </div>
 

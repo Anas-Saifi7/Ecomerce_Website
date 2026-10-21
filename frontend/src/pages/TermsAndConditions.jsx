@@ -1,4 +1,3 @@
-
 import LegalDocument from "../components/LegalDocument";
 import { termsAndConditions } from "../data/legalPages";
 

@@ -1,5 +1,4 @@
 export const returnPolicy = {
-  returnWindowDays: 7,
   title: "Return Policy",
   description:
     "If your product is eligible for return, submit your request within the applicable return period.",
@@ -9,7 +8,6 @@ export const returnPolicy = {
     "Return requests are subject to review and approval.",
   ],
 };
-
 export const refundPolicy = {
   title: "Refund Policy",
   description:
@@ -24,8 +22,8 @@ export const refundPolicy = {
 export const returnEligibility = [
   {
     number: "01",
-    title: "Within 7 Days",
-    text: "Submit your request within the applicable return period.",
+    title: "Request timing",
+    text: "Submit promptly. Eligibility depends on the published store policy and applicable law.",
   },
   {
     number: "02",
@@ -80,7 +78,7 @@ export const returnFaqs = [
   {
     question: "How many days do I have to return a product?",
     answer:
-      "The supplied demo policy uses a 7-day return window from delivery, subject to eligibility. Confirm Halla Bol's actual policy before publishing this period.",
+      "The applicable return window must follow the store's published policy and local law. Contact support with your order details to confirm eligibility.",
   },
   {
     question: "What if I receive a damaged product?",
@@ -105,7 +103,7 @@ export const returnFaqs = [
   {
     question: "How do I start a return request?",
     answer:
-      "Use the demo request form on this page or contact the support team. A submitted demo request is saved in this browser only and is not sent to Halla Bol.",
+      "Use the request form on this page or submit a return request from your account for an eligible delivered order. The team will review it and follow up.",
   },
 ];
 
@@ -113,33 +111,3 @@ export const returnRefundImages = {
   hero: "/images/return-refund-hero.jpg",
   process: "/images/return-refund.jpg",
 };
-
-export const returnRefundStorageKey = "Halla Bol_return_requests";
-
-export function getReturnRequests() {
-  try {
-    const stored = localStorage.getItem(returnRefundStorageKey);
-    const parsed = stored ? JSON.parse(stored) : [];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-export function saveReturnRequest(request) {
-  const requests = getReturnRequests();
-
-  const newRequest = {
-    ...request,
-    id: `RET-${Date.now()}`,
-    status: "Demo request submitted",
-    createdAt: new Date().toISOString(),
-  };
-
-  localStorage.setItem(
-    returnRefundStorageKey,
-    JSON.stringify([newRequest, ...requests])
-  );
-
-  return newRequest;
-}

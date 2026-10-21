@@ -1,11 +1,27 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import categories from "../data/categories.js";
+import { getCategories } from "../services/categoryService.js";
 
 const Categories = () => {
   const [search, setSearch] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    let active = true;
+    getCategories()
+      .then((data) => {
+        if (active) setCategories(data.categories || []);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const filteredCategories = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -13,9 +29,9 @@ const Categories = () => {
     return categories.filter(
       (category) =>
         category.name.toLowerCase().includes(query) ||
-        category.description.toLowerCase().includes(query)
+        (category.description || "").toLowerCase().includes(query),
     );
-  }, [search]);
+  }, [search, categories]);
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
@@ -47,14 +63,11 @@ const Categories = () => {
             diversity of Indian culture.
           </p>
 
-          <p className="mt-5 text-sm text-green-100">
-          
-          </p>
+          <p className="mt-5 text-sm text-green-100"></p>
         </div>
       </section>
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-5">
-
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <h2 className="font-serif text-2xl font-bold sm:text-3xl">
@@ -80,11 +93,15 @@ const Categories = () => {
           </div>
         </div>
 
-        {filteredCategories.length > 0 ? (
+        {loading ? (
+          <p className="mt-8 text-center text-sm text-gray-500">
+            Loading categories…
+          </p>
+        ) : filteredCategories.length > 0 ? (
           <div className="mt-7 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {filteredCategories.map((category) => (
               <Link
-                key={category.id}
+                key={category._id}
                 to={`/categories/${category.slug}`}
                 className="group overflow-hidden rounded-xl border border-gray-200 bg-white transition duration-300 hover:-translate-y-1 hover:shadow-lg"
               >

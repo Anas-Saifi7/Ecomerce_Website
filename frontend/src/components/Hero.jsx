@@ -1,13 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { getBanners } from '../services/bannerService.js';
 
 const Hero = () => {
   const [count, setCount] = useState(0);
-
-  const images = [
+  const [images, setImages] = useState([
     "/images/hero-1.jpg",
     "/images/hero-2.jpg",
-  ];
+  ]);
+  const [banners, setBanners] = useState([]);
+  const [activeBanner, setActiveBanner] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    getBanners({ placement: 'home-hero' }).then((result) => {
+      const entries = (result.banners || []).filter((banner) => banner.image);
+      if (active && entries.length) {
+        setBanners(entries);
+        setImages(entries.map((banner) => banner.image));
+      }
+    }).catch(() => {});
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    if (banners.length > 0) setActiveBanner(banners[count % banners.length]);
+  }, [banners, count]);
 
   const handlePrev = () => {
     setCount((prev) =>
@@ -27,10 +45,12 @@ const Hero = () => {
       overflow-hidden">
 
       <img
-        src={images[count]}
+        src={images[count % images.length]}
         alt="Indian natural products"
         className="absolute inset-0 w-full h-full object-cover"
       />
+
+      {activeBanner?.link && <a href={activeBanner.link} aria-label={activeBanner.title} className="absolute inset-0 z-0" />}
 
       <div className="absolute inset-0 bg-black/45"></div>
 
@@ -113,11 +133,11 @@ const Hero = () => {
 
               <div>
                 <p className="font-semibold text-sm sm:text-base">
-                  Verified
+                  Curated
                 </p>
 
                 <p className="text-[11px] sm:text-xs text-gray-200">
-                  Producers
+                  Products
                 </p>
               </div>
             </div>
@@ -127,11 +147,11 @@ const Hero = () => {
 
               <div>
                 <p className="font-semibold text-sm sm:text-base">
-                  Global
+                  Shipping
                 </p>
 
                 <p className="text-[11px] sm:text-xs text-gray-200">
-                  Shipping
+                  Options
                 </p>
               </div>
             </div>
@@ -141,11 +161,11 @@ const Hero = () => {
 
               <div>
                 <p className="font-semibold text-sm sm:text-base">
-                  Sustainable
+                  Regional
                 </p>
 
                 <p className="text-[11px] sm:text-xs text-gray-200">
-                  Choices
+                  Stories
                 </p>
               </div>
             </div>

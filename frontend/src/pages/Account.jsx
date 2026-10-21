@@ -1,75 +1,194 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import {
   sidebarItems,
-  orders,
-  initialAddresses,
-  initialWishlist,
-  initialProfile,
-  initialReviews,
-  initialPaymentMethods,
   initialNotificationPreferences,
 } from "../data/Account.js";
+import {
+  cancelOrder,
+  getMyOrders,
+  requestReturn,
+} from "../services/orderService.js";
+import {
+  addAddress,
+  deleteAddress,
+  getAddresses,
+  updateAddress,
+  updateMe,
+} from "../services/authService.js";
+import { useAuth } from "../context/AuthContext.jsx";
+import {
+  getWishlist,
+  removeFromWishlist,
+} from "../services/wishlistService.js";
+import { mapApiProducts } from "../utils/productMapper.js";
+import { useCurrency } from "../context/CurrencyContext.jsx";
+import { getMyReviews } from "../services/reviewService.js";
 
 const Account = () => {
   const navigate = useNavigate();
+  const { user, logout: clearSession } = useAuth();
+  const { currency, formatPrice } = useCurrency();
 
   const [activeItem, setActiveItem] = useState("Dashboard");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [customerOrders, setCustomerOrders] = useState([]);
+  const [customerReviews, setCustomerReviews] = useState([]);
+  const [ordersError, setOrdersError] = useState("");
+  const [addressError, setAddressError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    getMyOrders()
+      .then((data) => {
+        if (active) setCustomerOrders(data.orders || []);
+      })
+      .catch((error) => {
+        if (active) setOrdersError(error.message || "Unable to load orders.");
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    getMyReviews()
+      .then((data) => {
+        if (active) setCustomerReviews(data.reviews || []);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    getWishlist()
+      .then((data) => {
+        if (active) setWishlist(mapApiProducts(data.wishlist || [], currency));
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [currency]);
+
+  useEffect(() => {
+    let active = true;
+    getAddresses()
+      .then((data) => {
+        if (!active) return;
+        setAddresses(
+          (data.addresses || []).map((a) => ({
+            id: a._id,
+            title: a.label || "Address",
+            name: a.fullName,
+            address: [
+              a.line1,
+              a.line2,
+              a.city,
+              a.state,
+              a.postalCode,
+              a.country,
+            ].filter(Boolean),
+            phone: a.phone,
+            default: a.isDefault,
+            icon: "⌂",
+            ...a,
+          })),
+        );
+      })
+      .catch((error) => {
+        if (active)
+          setAddressError(error.message || "Unable to load saved addresses.");
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const orders = customerOrders.map((order) => ({
+    id: order.orderNumber,
+    mongoId: order._id,
+    date: new Date(order.createdAt).toLocaleDateString(),
+    images: (order.items || [])
+      .slice(0, 3)
+      .map((item) => item.image || "/images/product-1.jpg"),
+    total: new Intl.NumberFormat(order.currency === "INR" ? "en-IN" : "en-US", {
+      style: "currency",
+      currency: order.currency,
+    }).format(order.pricing?.total || 0),
+    status: order.status,
+  }));
 
   const [profile, setProfile] = useState(() => {
-    try {
-      return {
-        ...initialProfile,
-        ...JSON.parse(localStorage.getItem("Halla_account_profile") || "{}"),
-      };
-    } catch {
-      return initialProfile;
-    }
+    return { name: "", email: "", phone: "" };
   });
 
-  const [addresses, setAddresses] = useState(() => {
-    try {
-      return (
-        JSON.parse(localStorage.getItem("Halla Bol_account_addresses") || "null") ||
-        initialAddresses
-      );
-    } catch {
-      return initialAddresses;
-    }
-  });
+  const [addresses, setAddresses] = useState([]);
 
-  const [wishlist, setWishlist] = useState(() => {
+  useEffect(() => {
+    if (!user) return;
+    const next = {
+      name: user.name || "",
+      email: user.email || "",
+      phone: user.phone || "",
+    };
+    setProfile(next);
+    setProfileForm(next);
+    const prefs = user.preferences || {};
+    setEmailNotifications(
+      prefs.emailNotifications ??
+        initialNotificationPreferences.emailNotifications,
+    );
+    setOrderNotifications(
+      prefs.orderUpdates ?? initialNotificationPreferences.orderUpdates,
+    );
+    setOfferNotifications(
+      prefs.offersPromotions ?? initialNotificationPreferences.offersPromotions,
+    );
+  }, [user]);
+
+  const savePreference = async (key, value) => {
+    const next = {
+      emailNotifications,
+      orderUpdates: orderNotifications,
+      offersPromotions: offerNotifications,
+      [key]: value,
+    };
     try {
-      return (
-        JSON.parse(localStorage.getItem("Halla Bol_account_wishlist") || "null") ||
-        initialWishlist
-      );
-    } catch {
-      return initialWishlist;
+      await updateMe({ preferences: next });
+      setNotification("Notification preference saved.");
+    } catch (error) {
+      setNotification(error.message || "Unable to save preference.");
     }
-  });
+  };
+
+  const [wishlist, setWishlist] = useState([]);
 
   const [notification, setNotification] = useState("");
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
+  const [returnOrder, setReturnOrder] = useState(null);
+  const [returnReason, setReturnReason] = useState("");
+  const [returnSubmitting, setReturnSubmitting] = useState(false);
 
   const [emailNotifications, setEmailNotifications] = useState(
-    initialNotificationPreferences.emailNotifications
+    initialNotificationPreferences.emailNotifications,
   );
   const [orderNotifications, setOrderNotifications] = useState(
-    initialNotificationPreferences.orderUpdates
+    initialNotificationPreferences.orderUpdates,
   );
   const [offerNotifications, setOfferNotifications] = useState(
-    initialNotificationPreferences.offersPromotions
+    initialNotificationPreferences.offersPromotions,
   );
 
-  const [paymentMethods, setPaymentMethods] = useState(initialPaymentMethods);
   const [profileForm, setProfileForm] = useState(profile);
 
   const [addressForm, setAddressForm] = useState({
@@ -78,13 +197,11 @@ const Account = () => {
     address1: "",
     address2: "",
     phone: "",
-  });
-
-  const [paymentForm, setPaymentForm] = useState({
-    cardNumber: "",
-    expiry: "",
-    cvv: "",
-    cardholder: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    country: "India",
+    isDefault: false,
   });
 
   const showMessage = (message) => {
@@ -92,14 +209,38 @@ const Account = () => {
     window.setTimeout(() => setNotification(""), 2800);
   };
 
-  const persistAddresses = (next) => {
-    setAddresses(next);
-    localStorage.setItem("Halla Bol_account_addresses", JSON.stringify(next));
+  const handleCancelOrder = async (order) => {
+    if (!window.confirm(`Cancel order ${order.id}?`)) return;
+    try {
+      await cancelOrder(order.mongoId);
+      const data = await getMyOrders();
+      setCustomerOrders(data.orders || []);
+      showMessage("Order cancelled and stock released.");
+    } catch (error) {
+      showMessage(error.message || "This order could not be cancelled.");
+    }
   };
 
-  const persistWishlist = (next) => {
-    setWishlist(next);
-    localStorage.setItem("Halla Bol_account_wishlist", JSON.stringify(next));
+  const handleReturnOrder = async (order) => {
+    setReturnOrder(order);
+    setReturnReason("");
+  };
+
+  const submitReturnRequest = async (event) => {
+    event.preventDefault();
+    if (!returnOrder || !returnReason.trim() || returnSubmitting) return;
+    setReturnSubmitting(true);
+    try {
+      await requestReturn(returnOrder.mongoId, { reason: returnReason.trim() });
+      const data = await getMyOrders();
+      setCustomerOrders(data.orders || []);
+      setReturnOrder(null);
+      showMessage("Return request submitted for review.");
+    } catch (error) {
+      showMessage(error.message || "Unable to submit a return request.");
+    } finally {
+      setReturnSubmitting(false);
+    }
   };
 
   const handleSidebarClick = (label) => {
@@ -119,7 +260,7 @@ const Account = () => {
     });
   };
 
-  const saveProfile = (e) => {
+  const saveProfile = async (e) => {
     e.preventDefault();
 
     const updated = {
@@ -128,10 +269,16 @@ const Account = () => {
       phone: profileForm.phone.trim(),
     };
 
-    setProfile(updated);
-    localStorage.setItem("Halla Bol_account_profile", JSON.stringify(updated));
-    setShowProfileModal(false);
-    showMessage("Profile updated successfully");
+    try {
+      const data = await updateMe({ name: updated.name, phone: updated.phone });
+      const saved = { ...updated, ...data.user };
+      setProfile(saved);
+      localStorage.setItem("Halla Bol_account_profile", JSON.stringify(saved));
+      setShowProfileModal(false);
+      showMessage("Profile updated successfully");
+    } catch (error) {
+      showMessage(error.message || "Could not update your profile.");
+    }
   };
 
   const openAddressEdit = (address) => {
@@ -143,6 +290,11 @@ const Account = () => {
       address1: address.address[0] || "",
       address2: address.address[1] || "",
       phone: address.phone,
+      city: address.city || "",
+      state: address.state || "",
+      postalCode: address.postalCode || "",
+      country: address.country || "India",
+      isDefault: Boolean(address.isDefault),
     });
 
     setShowAddressModal(true);
@@ -155,35 +307,91 @@ const Account = () => {
     });
   };
 
-  const saveAddress = (e) => {
+  const saveAddress = async (e) => {
     e.preventDefault();
 
-    if (!editingAddress) return;
-
-    const updated = addresses.map((item) =>
-      item.id === editingAddress.id
-        ? {
-            ...item,
-            title: addressForm.title.trim(),
-            name: addressForm.name.trim(),
-            address: [
-              addressForm.address1.trim(),
-              addressForm.address2.trim(),
-            ].filter(Boolean),
-            phone: addressForm.phone.trim(),
-          }
-        : item
-    );
-
-    persistAddresses(updated);
-    setShowAddressModal(false);
-    setEditingAddress(null);
-    showMessage("Address updated successfully");
+    setAddressError("");
+    const payload = {
+      label: addressForm.title.trim(),
+      fullName: addressForm.name.trim(),
+      line1: addressForm.address1.trim(),
+      line2: addressForm.address2.trim(),
+      phone: addressForm.phone.trim(),
+      city: addressForm.city.trim(),
+      state: addressForm.state.trim(),
+      postalCode: addressForm.postalCode.trim(),
+      country: addressForm.country.trim(),
+      isDefault: Boolean(addressForm.isDefault),
+    };
+    try {
+      const data = editingAddress
+        ? await updateAddress(editingAddress.id, payload)
+        : await addAddress(payload);
+      setAddresses(
+        (data.addresses || []).map((a) => ({
+          id: a._id,
+          title: a.label || "Address",
+          name: a.fullName,
+          address: [
+            a.line1,
+            a.line2,
+            a.city,
+            a.state,
+            a.postalCode,
+            a.country,
+          ].filter(Boolean),
+          phone: a.phone,
+          default: a.isDefault,
+          icon: "⌂",
+          ...a,
+        })),
+      );
+      setShowAddressModal(false);
+      setEditingAddress(null);
+      showMessage("Address saved successfully");
+    } catch (error) {
+      setAddressError(error.message || "Unable to save address.");
+    }
   };
 
-  const removeWishlist = (id) => {
-    persistWishlist(wishlist.filter((item) => item.id !== id));
-    showMessage("Product removed from wishlist");
+  const removeAddress = async (address) => {
+    try {
+      const data = await deleteAddress(address.id);
+      setAddresses(
+        (data.addresses || []).map((a) => ({
+          id: a._id,
+          title: a.label || "Address",
+          name: a.fullName,
+          address: [
+            a.line1,
+            a.line2,
+            a.city,
+            a.state,
+            a.postalCode,
+            a.country,
+          ].filter(Boolean),
+          phone: a.phone,
+          default: a.isDefault,
+          icon: "⌂",
+          ...a,
+        })),
+      );
+      showMessage("Address removed");
+    } catch (error) {
+      setAddressError(error.message || "Unable to remove address.");
+    }
+  };
+
+  const removeWishlist = async (id) => {
+    try {
+      await removeFromWishlist(id);
+      setWishlist((current) =>
+        current.filter((item) => String(item.id) !== String(id)),
+      );
+      showMessage("Product removed from wishlist");
+    } catch (error) {
+      showMessage(error.message || "Could not update your wishlist.");
+    }
   };
 
   const addToCart = (product) => {
@@ -203,11 +411,10 @@ const Account = () => {
     showMessage(`${product.name} added to cart`);
   };
 
-  const logout = () => {
+  const logout = async () => {
     setShowLogoutModal(false);
-    localStorage.removeItem("Halla Bol_user");
-    showMessage("Logging out...");
-    window.setTimeout(() => navigate("/login"), 500);
+    await clearSession();
+    navigate("/login", { replace: true });
   };
 
   const getStatusClass = (status) => {
@@ -241,9 +448,7 @@ const Account = () => {
     <div className="flex items-center gap-3 border-b border-gray-200 p-3 last:border-r-0 sm:border-b-0 sm:border-r">
       <span
         className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-xl ${
-          red
-            ? "bg-red-50 text-red-500"
-            : "bg-[#eff7e9] text-[#073b25]"
+          red ? "bg-red-50 text-red-500" : "bg-[#eff7e9] text-[#073b25]"
         }`}
       >
         {icon}
@@ -270,12 +475,7 @@ const Account = () => {
     </div>
   );
 
-  const NotificationToggle = ({
-    title,
-    description,
-    checked,
-    onChange,
-  }) => (
+  const NotificationToggle = ({ title, description, checked, onChange }) => (
     <div className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 p-4">
       <div>
         <h3 className="text-sm font-semibold">{title}</h3>
@@ -359,6 +559,11 @@ const Account = () => {
       </div>
 
       <div className="hidden overflow-x-auto md:block">
+        {ordersError && (
+          <p role="alert" className="p-4 text-sm text-red-700">
+            {ordersError}
+          </p>
+        )}
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b text-left text-xs text-gray-500">
@@ -399,25 +604,43 @@ const Account = () => {
                 <td className="px-3 py-4">
                   <span
                     className={`rounded px-2.5 py-1 text-[10px] font-semibold ${getStatusClass(
-                      order.status
+                      order.status,
                     )}`}
                   >
                     {order.status}
                   </span>
                 </td>
                 <td className="px-5 py-4 text-right">
-                  <button
-                    onClick={() =>
-                      order.status === "In Transit"
-                        ? navigate("/track-order")
-                        : showMessage(`Demo order ${order.id}`)
-                    }
-                    className="rounded-md border border-[#9bb9ac] px-3 py-2 text-xs font-semibold text-[#073b25] transition hover:bg-[#073b25] hover:text-white"
-                  >
-                    {order.status === "In Transit"
-                      ? "Track Order"
-                      : "View Details"}
-                  </button>
+                  <div className="flex flex-wrap justify-end gap-2">
+                    <button
+                      onClick={() =>
+                        navigate(
+                          `/track-order?order=${encodeURIComponent(order.id)}`,
+                        )
+                      }
+                      className="rounded-md border border-[#9bb9ac] px-3 py-2 text-xs font-semibold text-[#073b25] transition hover:bg-[#073b25] hover:text-white"
+                    >
+                      Track
+                    </button>
+                    {["pending", "confirmed", "processing"].includes(
+                      order.status,
+                    ) && (
+                      <button
+                        onClick={() => handleCancelOrder(order)}
+                        className="rounded-md border border-red-200 px-3 py-2 text-xs text-red-700"
+                      >
+                        Cancel
+                      </button>
+                    )}
+                    {order.status === "delivered" && (
+                      <button
+                        onClick={() => handleReturnOrder(order)}
+                        className="rounded-md border border-amber-200 px-3 py-2 text-xs text-amber-800"
+                      >
+                        Return
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
@@ -435,7 +658,7 @@ const Account = () => {
               </div>
               <span
                 className={`h-fit rounded px-2 py-1 text-[10px] font-semibold ${getStatusClass(
-                  order.status
+                  order.status,
                 )}`}
               >
                 {order.status}
@@ -457,16 +680,36 @@ const Account = () => {
               </div>
               <div className="text-right">
                 <p className="font-bold">{order.total}</p>
-                <button
-                  onClick={() =>
-                    order.status === "In Transit"
-                      ? navigate("/track-order")
-                      : showMessage(`Demo order ${order.id}`)
-                  }
-                  className="mt-1 text-xs font-semibold text-[#073b25]"
-                >
-                  View →
-                </button>
+                <div className="mt-1 flex flex-wrap justify-end gap-2">
+                  <button
+                    onClick={() =>
+                      navigate(
+                        `/track-order?order=${encodeURIComponent(order.id)}`,
+                      )
+                    }
+                    className="text-xs font-semibold text-[#073b25]"
+                  >
+                    Track
+                  </button>
+                  {["pending", "confirmed", "processing"].includes(
+                    order.status,
+                  ) && (
+                    <button
+                      onClick={() => handleCancelOrder(order)}
+                      className="text-xs text-red-700"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                  {order.status === "delivered" && (
+                    <button
+                      onClick={() => handleReturnOrder(order)}
+                      className="text-xs text-amber-800"
+                    >
+                      Return
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -515,7 +758,7 @@ const Account = () => {
             <Stat icon="⌖" value={addresses.length} label="Saved Addresses" />
             <Stat
               icon="☆"
-              value={initialReviews.length}
+              value={customerReviews.length}
               label="Product Reviews"
             />
           </div>
@@ -539,7 +782,7 @@ const Account = () => {
               </div>
               <span
                 className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${getStatusClass(
-                  order.status
+                  order.status,
                 )}`}
               >
                 {order.status}
@@ -564,13 +807,11 @@ const Account = () => {
               <span className="font-bold">{order.total}</span>
               <button
                 onClick={() =>
-                  order.status === "In Transit"
-                    ? navigate("/track-order")
-                    : showMessage(`Demo order ${order.id}`)
+                  navigate(`/track-order?order=${encodeURIComponent(order.id)}`)
                 }
                 className="rounded-md border border-[#073b25] px-4 py-2 text-xs font-semibold text-[#073b25] hover:bg-[#073b25] hover:text-white"
               >
-                {order.status === "In Transit" ? "Track Order" : "View Details"}
+                Track Order
               </button>
             </div>
           </div>
@@ -584,6 +825,38 @@ const Account = () => {
       title="My Addresses"
       subtitle="Manage your saved delivery addresses."
     >
+      <div className="mb-4 flex justify-end">
+        <button
+          onClick={() => {
+            setEditingAddress(null);
+            setAddressForm({
+              title: "",
+              name: profile.name || "",
+              address1: "",
+              address2: "",
+              phone: profile.phone || "",
+              city: "",
+              state: "",
+              postalCode: "",
+              country: "India",
+              isDefault: addresses.length === 0,
+            });
+            setAddressError("");
+            setShowAddressModal(true);
+          }}
+          className="rounded-md bg-[#073b25] px-4 py-2 text-sm font-semibold text-white"
+        >
+          Add Address
+        </button>
+      </div>
+      {addressError && (
+        <p
+          role="alert"
+          className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700"
+        >
+          {addressError}
+        </p>
+      )}
       <div className="grid gap-4 md:grid-cols-2">
         {addresses.map((address) => (
           <div
@@ -610,9 +883,7 @@ const Account = () => {
                       {line}
                     </p>
                   ))}
-                  <p className="mt-1 text-xs text-gray-500">
-                    {address.phone}
-                  </p>
+                  <p className="mt-1 text-xs text-gray-500">{address.phone}</p>
                 </div>
               </div>
               {address.default && (
@@ -628,8 +899,19 @@ const Account = () => {
             >
               Edit Address
             </button>
+            <button
+              onClick={() => removeAddress(address)}
+              className="mt-2 w-full rounded-md border border-red-200 py-2 text-xs font-semibold text-red-600 hover:bg-red-50"
+            >
+              Remove Address
+            </button>
           </div>
         ))}
+        {!addresses.length && (
+          <p className="rounded-lg border border-dashed p-6 text-center text-sm text-gray-500">
+            No saved addresses yet.
+          </p>
+        )}
       </div>
     </PageCard>
   );
@@ -680,7 +962,7 @@ const Account = () => {
                 <h3 className="line-clamp-2 text-sm font-semibold">
                   {product.name}
                 </h3>
-                <p className="mt-2 font-bold">{product.price}</p>
+                <p className="mt-2 font-bold">{formatPrice(product)}</p>
                 <button
                   onClick={() => addToCart(product)}
                   className="mt-3 w-full rounded-md bg-[#073b25] py-2 text-xs font-semibold text-white"
@@ -697,21 +979,30 @@ const Account = () => {
 
   const ReviewsPage = () => (
     <PageCard title="My Reviews" subtitle="Manage your product reviews.">
-      {initialReviews.map((review) => (
-        <div key={review.id} className="border-b py-4 last:border-0">
+      {customerReviews.map((review) => (
+        <div key={review._id} className="border-b py-4 last:border-0">
           <div className="flex justify-between gap-3">
             <div>
-              <h3 className="text-sm font-semibold">{review.productName}</h3>
+              <h3 className="text-sm font-semibold">
+                {review.product?.name || "Product"}
+              </h3>
               <div className="mt-1 text-yellow-500">
                 {"★".repeat(review.rating)}
                 {"☆".repeat(5 - review.rating)}
               </div>
             </div>
-            <span className="text-xs text-gray-400">{review.date}</span>
+            <span className="text-xs text-gray-400">
+              {review.isApproved ? "Published" : "Pending review"}
+            </span>
           </div>
           <p className="mt-2 text-sm text-gray-600">{review.comment}</p>
         </div>
       ))}
+      {!customerReviews.length && (
+        <p className="py-6 text-sm text-gray-500">
+          You have not submitted any reviews yet.
+        </p>
+      )}
     </PageCard>
   );
 
@@ -746,20 +1037,10 @@ const Account = () => {
           action="Change Password"
           onClick={() => navigate("/forgot-password")}
         />
-        <SecurityRow
-          title="Two-Factor Authentication"
-          description="Add an extra layer of security."
-          action="Learn More"
-          onClick={() =>
-            showMessage("Two-factor authentication is not connected yet.")
-          }
-        />
-        <SecurityRow
-          title="Login Activity"
-          description="Review recent account activity."
-          action="View Activity"
-          onClick={() => showMessage("Login activity is not connected yet.")}
-        />
+        <p className="rounded-lg border border-gray-200 p-4 text-sm leading-6 text-gray-600">
+          Two-factor authentication and login history are not available yet. Use
+          a unique password and reset it if you suspect unauthorized access.
+        </p>
       </div>
     </PageCard>
   );
@@ -774,24 +1055,47 @@ const Account = () => {
           title="Email Notifications"
           description="Receive order and account updates."
           checked={emailNotifications}
-          onChange={() => setEmailNotifications((v) => !v)}
+          onChange={() => {
+            const next = !emailNotifications;
+            setEmailNotifications(next);
+            savePreference("emailNotifications", next);
+          }}
         />
         <NotificationToggle
           title="Order Updates"
           description="Get shipping and delivery notifications."
           checked={orderNotifications}
-          onChange={() => setOrderNotifications((v) => !v)}
+          onChange={() => {
+            const next = !orderNotifications;
+            setOrderNotifications(next);
+            savePreference("orderUpdates", next);
+          }}
         />
         <NotificationToggle
           title="Offers & Promotions"
           description="Receive special offers and product updates."
           checked={offerNotifications}
-          onChange={() => setOfferNotifications((v) => !v)}
+          onChange={() => {
+            const next = !offerNotifications;
+            setOfferNotifications(next);
+            savePreference("offersPromotions", next);
+          }}
         />
         <button
-          onClick={() =>
-            showMessage("Notification preferences updated for this session.")
-          }
+          onClick={async () => {
+            try {
+              await updateMe({
+                preferences: {
+                  emailNotifications,
+                  orderUpdates: orderNotifications,
+                  offersPromotions: offerNotifications,
+                },
+              });
+              showMessage("Notification preferences saved to your account.");
+            } catch (error) {
+              showMessage(error.message || "Unable to save preferences.");
+            }
+          }}
           className="rounded-md bg-[#073b25] px-5 py-2.5 text-sm font-semibold text-white"
         >
           Save Preferences
@@ -803,45 +1107,19 @@ const Account = () => {
   const PaymentPage = () => (
     <PageCard
       title="Payment Methods"
-      subtitle="Manage your saved payment methods."
+      subtitle="Payments are securely authorized at checkout."
     >
-      <div className="max-w-xl space-y-4">
-        {paymentMethods.map((method) => (
-          <div
-            key={method.id}
-            className="rounded-xl border border-gray-200 p-5"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="text-xl font-bold italic text-blue-700">
-                  {method.type}
-                </div>
-                <div>
-                  <p className="font-semibold">•••• {method.lastFour}</p>
-                  <p className="text-xs text-gray-500">
-                    Expires {method.expiry}
-                  </p>
-                </div>
-              </div>
-              {method.isDefault && (
-                <span className="rounded bg-green-100 px-2 py-1 text-xs text-green-700">
-                  Default
-                </span>
-              )}
-            </div>
-          </div>
-        ))}
-
-        <button
-          onClick={() => setShowPaymentModal(true)}
-          className="w-full rounded-md border border-[#073b25] py-3 text-sm font-semibold text-[#073b25] transition hover:bg-[#073b25] hover:text-white"
-        >
-          + Add New Payment Method
-        </button>
+      <div className="max-w-xl space-y-4 rounded-xl border border-gray-200 p-5">
         <p className="text-xs text-gray-500">
-          Demo only: do not enter real card details. Payment data is not sent
-          to a payment provider.
+          MOLOG does not store card numbers or CVVs. Choose an available payment
+          method at checkout; online payments are handled by Razorpay.
         </p>
+        <Link
+          to="/check-out"
+          className="inline-flex rounded-md bg-[#073b25] px-5 py-2.5 text-sm font-semibold text-white"
+        >
+          Continue to checkout
+        </Link>
       </div>
     </PageCard>
   );
@@ -886,9 +1164,7 @@ const Account = () => {
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#eff7e9] text-2xl text-[#073b25]">
               {item.icon}
             </div>
-            <h3 className="mt-4 font-serif text-xl font-bold">
-              {item.title}
-            </h3>
+            <h3 className="mt-4 font-serif text-xl font-bold">{item.title}</h3>
             <p className="mt-1 text-sm text-gray-500">{item.description}</p>
             <Link
               to={item.to}
@@ -952,9 +1228,7 @@ const Account = () => {
         <div className="absolute inset-0 bg-black/55" />
         <div className="relative z-10 mx-auto flex h-full max-w-7xl items-center px-5 sm:px-8 lg:px-5">
           <div className="text-white">
-            <p className="mb-3 text-xs text-gray-200 sm:text-sm">
-              
-            </p>
+            <p className="mb-3 text-xs text-gray-200 sm:text-sm"></p>
             <h1 className="font-serif text-4xl font-bold sm:text-5xl">
               My Account
             </h1>
@@ -1025,10 +1299,7 @@ const Account = () => {
             ["◇", "Easy Returns", "See our return policy"],
             ["◉", "Customer Support", "We're here to help"],
           ].map(([icon, title, text]) => (
-            <div
-              key={title}
-              className="flex items-center justify-center gap-3"
-            >
+            <div key={title} className="flex items-center justify-center gap-3">
               <span className="text-3xl text-[#073b25]">{icon}</span>
               <div>
                 <h3 className="text-xs font-semibold sm:text-sm">{title}</h3>
@@ -1042,10 +1313,7 @@ const Account = () => {
       <Footer />
 
       {showProfileModal && (
-        <Modal
-          title="Edit Profile"
-          onClose={() => setShowProfileModal(false)}
-        >
+        <Modal title="Edit Profile" onClose={() => setShowProfileModal(false)}>
           <form onSubmit={saveProfile} className="space-y-4">
             <Input
               label="Full Name"
@@ -1060,6 +1328,7 @@ const Account = () => {
               name="email"
               value={profileForm.email}
               onChange={handleProfileChange}
+              disabled
               required
             />
             <Input
@@ -1089,10 +1358,18 @@ const Account = () => {
 
       {showAddressModal && (
         <Modal
-          title="Edit Address"
+          title={editingAddress ? "Edit Address" : "Add Address"}
           onClose={() => setShowAddressModal(false)}
         >
           <form onSubmit={saveAddress} className="space-y-4">
+            {addressError && (
+              <p
+                role="alert"
+                className="rounded bg-red-50 p-2 text-sm text-red-700"
+              >
+                {addressError}
+              </p>
+            )}
             <Input
               label="Address Name"
               name="title"
@@ -1115,11 +1392,54 @@ const Account = () => {
               required
             />
             <Input
-              label="City / State / PIN"
+              label="Address Line 2 (optional)"
               name="address2"
               value={addressForm.address2}
               onChange={handleAddressChange}
             />
+            <Input
+              label="City"
+              name="city"
+              value={addressForm.city}
+              onChange={handleAddressChange}
+              required
+            />
+            <div className="grid grid-cols-2 gap-3">
+              <Input
+                label="State / Province"
+                name="state"
+                value={addressForm.state}
+                onChange={handleAddressChange}
+                required
+              />
+              <Input
+                label="Postal code"
+                name="postalCode"
+                value={addressForm.postalCode}
+                onChange={handleAddressChange}
+                required
+              />
+            </div>
+            <Input
+              label="Country"
+              name="country"
+              value={addressForm.country}
+              onChange={handleAddressChange}
+              required
+            />
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={addressForm.isDefault}
+                onChange={(e) =>
+                  setAddressForm({
+                    ...addressForm,
+                    isDefault: e.target.checked,
+                  })
+                }
+              />{" "}
+              Make this my default address
+            </label>
             <Input
               label="Phone"
               name="phone"
@@ -1146,125 +1466,6 @@ const Account = () => {
         </Modal>
       )}
 
-      {showPaymentModal && (
-        <Modal
-          title="Add Demo Payment Method"
-          onClose={() => setShowPaymentModal(false)}
-        >
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-
-              const digits = paymentForm.cardNumber.replace(/\D/g, "");
-
-              if (
-                digits.length < 4 ||
-                !paymentForm.expiry.trim() ||
-                !paymentForm.cardholder.trim()
-              ) {
-                showMessage(
-                  "Enter a card number, expiry and cardholder name for this demo."
-                );
-                return;
-              }
-
-              const next = [
-                ...paymentMethods,
-                {
-                  id: Date.now(),
-                  type: digits.startsWith("4") ? "VISA" : "CARD",
-                  lastFour: digits.slice(-4),
-                  expiry: paymentForm.expiry,
-                  isDefault: paymentMethods.length === 0,
-                },
-              ];
-
-              setPaymentMethods(next);
-              setPaymentForm({
-                cardNumber: "",
-                expiry: "",
-                cvv: "",
-                cardholder: "",
-              });
-              setShowPaymentModal(false);
-              showMessage(
-                "Demo payment method added. No card details were sent or stored."
-              );
-            }}
-            className="space-y-4"
-          >
-            <p className="rounded-lg bg-amber-50 p-3 text-xs text-amber-800">
-              Demo only. Please do not enter real payment card details. This
-              form does not connect to a payment gateway.
-            </p>
-
-            <Input
-              label="Card Number (demo)"
-              name="cardNumber"
-              inputMode="numeric"
-              value={paymentForm.cardNumber}
-              onChange={(e) =>
-                setPaymentForm({
-                  ...paymentForm,
-                  cardNumber: e.target.value,
-                })
-              }
-              placeholder="Use a fictional number"
-              required
-            />
-
-            <div className="grid grid-cols-2 gap-3">
-              <Input
-                label="Expiry"
-                name="expiry"
-                value={paymentForm.expiry}
-                onChange={(e) =>
-                  setPaymentForm({
-                    ...paymentForm,
-                    expiry: e.target.value,
-                  })
-                }
-                placeholder="MM/YY"
-                required
-              />
-              <Input
-                label="CVV (not stored)"
-                name="cvv"
-                type="password"
-                value={paymentForm.cvv}
-                onChange={(e) =>
-                  setPaymentForm({
-                    ...paymentForm,
-                    cvv: e.target.value,
-                  })
-                }
-                placeholder="Demo only"
-              />
-            </div>
-
-            <Input
-              label="Cardholder Name"
-              name="cardholder"
-              value={paymentForm.cardholder}
-              onChange={(e) =>
-                setPaymentForm({
-                  ...paymentForm,
-                  cardholder: e.target.value,
-                })
-              }
-              required
-            />
-
-            <button
-              type="submit"
-              className="w-full rounded-md bg-[#073b25] py-3 text-sm font-semibold text-white"
-            >
-              Add Demo Method
-            </button>
-          </form>
-        </Modal>
-      )}
-
       {showLogoutModal && (
         <Modal title="Logout?" onClose={() => setShowLogoutModal(false)}>
           <p className="text-sm text-gray-600">
@@ -1284,6 +1485,48 @@ const Account = () => {
               Logout
             </button>
           </div>
+        </Modal>
+      )}
+      {returnOrder && (
+        <Modal
+          title={`Request return for ${returnOrder.id}`}
+          onClose={() => setReturnOrder(null)}
+        >
+          <form onSubmit={submitReturnRequest}>
+            <label
+              htmlFor="return-reason"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Why are you requesting a return?
+            </label>
+            <textarea
+              id="return-reason"
+              value={returnReason}
+              onChange={(event) => setReturnReason(event.target.value)}
+              minLength={5}
+              maxLength={1000}
+              required
+              rows={4}
+              className="mt-2 w-full rounded-md border border-gray-300 p-3 text-sm"
+              placeholder="Describe the issue with your order"
+            />
+            <div className="mt-5 flex gap-3">
+              <button
+                type="button"
+                onClick={() => setReturnOrder(null)}
+                className="flex-1 rounded-md border border-gray-300 py-2.5 text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={returnSubmitting || returnReason.trim().length < 5}
+                className="flex-1 rounded-md bg-[#073b25] py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+              >
+                {returnSubmitting ? "Submitting…" : "Submit return request"}
+              </button>
+            </div>
+          </form>
         </Modal>
       )}
     </div>

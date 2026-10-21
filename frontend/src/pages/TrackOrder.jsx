@@ -1,84 +1,74 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-import products from "../data/products";
 import { addToCart } from "../utils/cart";
-
 import {
-  demoOrder,
-  fallbackRecommendations,
-  formatCurrency,
-  findOrderByNumber,
-  getLatestOrder,
-  normalizeOrder,
-  WISHLIST_KEY,
-} from "../data/trackOrderData";
+  getOrder,
+  trackOrder as fetchTrackedOrder,
+} from "../services/orderService.js";
+import { getProducts } from "../services/productService.js";
+import { mapApiProducts } from "../utils/productMapper.js";
+import { useAuth } from "../context/AuthContext.jsx";
+import { useWishlist } from "../context/WishlistContext.jsx";
 
-const placeholderEvents = [
-  {
-    title: "Order Confirmed",
-    description: "Order confirmation details are not available yet.",
-  },
-  {
-    title: "Packed",
-    description: "Packing information is not available yet.",
-  },
-  {
-    title: "Shipped",
-    description: "Shipment information is not available yet.",
-  },
-  {
-    title: "Out for Delivery",
-    description: "Waiting for delivery information.",
-  },
-  {
-    title: "Delivered",
-    description: "Delivery confirmation is not available yet.",
-  },
-];
+import { formatCurrency, normalizeOrder } from "../data/trackOrderData";
 
 const TrackOrder = () => {
-  const [orderNumber, setOrderNumber] = useState("");
-  const [order, setOrder] = useState(null);
+  const [searchParams] = useSearchParams();
+  const { isAuthenticated, user } = useAuth();
+  const { ids: wishlist, toggle: toggleWishlist } = useWishlist();
+  const [orderNumber, setOrderNumber] = useState(
+    searchParams.get("order") || "",
+  );
+  const [email, setEmail] = useState(user?.email || "");
+  const [order, setOrder] = useState(() =>
+    normalizeOrder({
+      orderNumber: "",
+      status: "Enter an order number above",
+      items: [],
+    }),
+  );
+  const [catalogProducts, setCatalogProducts] = useState([]);
   const [searched, setSearched] = useState(false);
   const [searchError, setSearchError] = useState("");
   const [copied, setCopied] = useState(false);
   const [toast, setToast] = useState("");
-  const [wishlist, setWishlist] = useState([]);
   const [zoom, setZoom] = useState(1);
+  const money = (amount) =>
+    new Intl.NumberFormat(order?.currency === "USD" ? "en-US" : "en-IN", {
+      style: "currency",
+      currency: order?.currency || "INR",
+    }).format(Number(amount) || 0);
 
   useEffect(() => {
-    const savedOrder = getLatestOrder();
+    setEmail(user?.email || "");
+  }, [user?.email]);
 
-    const initialOrder = savedOrder ?? demoOrder;
-
-    setOrder(initialOrder);
-    setOrderNumber(initialOrder.orderNumber ?? "");
-
-    try {
-      const savedWishlist = JSON.parse(
-        localStorage.getItem(WISHLIST_KEY) || "[]"
-      );
-
-      setWishlist(
-        Array.isArray(savedWishlist)
-          ? savedWishlist.map(String)
-          : []
-      );
-    } catch {
-      setWishlist([]);
-    }
-  }, []);
+  useEffect(() => {
+    let active = true;
+    getProducts({ limit: 50, currency: order?.currency || "INR" })
+      .then((data) => {
+        if (active)
+          setCatalogProducts(
+            mapApiProducts(data.products || [], order?.currency || "INR"),
+          );
+      })
+      .catch(() => {
+        if (active) setCatalogProducts([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, [order?.currency]);
 
   const showToast = (message) => {
     setToast(message);
-   
   };
 
-  const handleTrack = (event) => {
+  const handleTrack = async (event) => {
     event.preventDefault();
 
     const query = orderNumber.trim();
@@ -89,22 +79,53 @@ const TrackOrder = () => {
       return;
     }
 
-    const result = findOrderByNumber(query);
-
-    if (!result) {
-      setOrder(null);
-      setSearchError(
-        `Order "${query}" was not found. Check your order number or sign in to view your orders.`
-      );
+    try {
+      if (!isAuthenticated && !email.trim())
+        throw new Error("Enter the email address used for this order.");
+      const response = isAuthenticated
+        ? await getOrder(query)
+        : await fetchTrackedOrder(query, email.trim());
+      const raw = response.order;
+      const mapped = normalizeOrder({
+        ...raw,
+        total: raw.pricing?.total,
+        shippingCost: raw.pricing?.shipping,
+        tax: raw.pricing?.tax,
+        paymentMethod: raw.payment?.method,
+        trackingEvents: (raw.tracking || []).map((event) => ({
+          title: event.status,
+          description: event.note,
+          date: new Date(event.at).toLocaleDateString(),
+          time: new Date(event.at).toLocaleTimeString(),
+          location: "",
+          completed: true,
+          active: event.status === raw.status,
+          icon: "◇",
+        })),
+        items: (raw.items || []).map((item) => {
+          const product =
+            item.product && typeof item.product === "object"
+              ? item.product
+              : null;
+          return {
+            ...item,
+            id: product?._id || item.product,
+            name: item.name || product?.name,
+            image: item.image || product?.image || product?.images?.[0],
+            detail: item.size,
+            price: item.price,
+          };
+        }),
+      });
+      setOrder(mapped);
+      setOrderNumber(mapped.orderNumber);
+      setSearchError("");
+      setSearched(true);
+      setToast("");
+    } catch (err) {
+      setSearchError(err.message || "Order could not be found.");
       setSearched(false);
-      return;
     }
-
-    setOrder(result);
-    setOrderNumber(result.orderNumber);
-    setSearchError("");
-    setSearched(true);
-    setToast("");
   };
 
   const handleCopyTracking = async () => {
@@ -138,9 +159,7 @@ const TrackOrder = () => {
   };
 
   const getSharedProduct = (id) =>
-    products.find(
-      (product) => String(product.id) === String(id)
-    );
+    catalogProducts.find((product) => String(product.id) === String(id));
 
   const handleBuyAgain = (item) => {
     const sharedProduct = getSharedProduct(item.id);
@@ -157,7 +176,7 @@ const TrackOrder = () => {
       addToCart(
         productToAdd,
         Math.max(1, Number(item.quantity || 1)),
-        item.detail || "Standard"
+        item.detail || "Standard",
       );
 
       showToast(`${item.name} added to cart.`);
@@ -167,94 +186,55 @@ const TrackOrder = () => {
     }
   };
 
-  const handleWishlist = (product) => {
-    const id = String(product.id);
-
-    const nextWishlist = wishlist.includes(id)
-      ? wishlist.filter((item) => item !== id)
-      : [...wishlist, id];
-
-    setWishlist(nextWishlist);
-
+  const handleWishlist = async (product) => {
     try {
-      localStorage.setItem(
-        WISHLIST_KEY,
-        JSON.stringify(nextWishlist)
-      );
-
-      window.dispatchEvent(new Event("wishlistUpdated"));
-
+      await toggleWishlist(product.id);
       showToast(
-        wishlist.includes(id)
+        wishlist.includes(String(product.id))
           ? `${product.name} removed from wishlist.`
-          : `${product.name} added to wishlist.`
+          : `${product.name} added to wishlist.`,
       );
-    } catch {
-      showToast("Could not update your wishlist.");
+    } catch (error) {
+      showToast(error.message || "Could not update your wishlist.");
     }
   };
 
   const recommendations = useMemo(() => {
     const purchasedIds = new Set(
-      (order?.items ?? []).map((item) => String(item.id))
+      (order?.items ?? []).map((item) => String(item.id)),
     );
 
-    const shared = products
+    const shared = catalogProducts
       .filter((product) => !purchasedIds.has(String(product.id)))
       .slice(0, 6);
 
-    if (shared.length >= 6) return shared;
-
-    const combined = [...shared];
-    const existingIds = new Set(
-      combined.map((product) => String(product.id))
-    );
-
-    fallbackRecommendations.forEach((product) => {
-      if (
-        combined.length < 6 &&
-        !purchasedIds.has(String(product.id)) &&
-        !existingIds.has(String(product.id))
-      ) {
-        combined.push(product);
-        existingIds.add(String(product.id));
-      }
-    });
-
-    return combined;
-  }, [order]);
+    return shared;
+  }, [catalogProducts, order]);
 
   const orderItemCount = useMemo(
     () =>
       (order?.items ?? []).reduce(
         (total, item) => total + Number(item.quantity || 0),
-        0
+        0,
       ),
-    [order]
+    [order],
   );
 
-  const trackingEvents =
-    order?.trackingEvents?.length > 0
-      ? order.trackingEvents
-      : placeholderEvents.map((event) => ({
-          ...event,
-          date: "Not available",
-          time: "",
-          location: "",
-          completed: false,
-          active: false,
-          icon: "◇",
-        }));
+  const trackingEvents = order?.trackingEvents || [];
 
   const handlePrintInvoice = () => {
     window.print();
   };
 
   const resetToLatestOrder = () => {
-    const latest = getLatestOrder();
-
-    setOrder(latest ?? demoOrder);
-    setOrderNumber((latest ?? demoOrder).orderNumber ?? "");
+    setOrder(
+      normalizeOrder({
+        orderNumber: "",
+        status: "Enter an order number above",
+        items: [],
+      }),
+    );
+    setOrderNumber("");
     setSearchError("");
     setSearched(false);
     setToast("");
@@ -267,9 +247,7 @@ const TrackOrder = () => {
         <div className="flex min-h-[60vh] items-center justify-center px-5">
           <div className="max-w-md text-center">
             <div className="mb-4 text-5xl">📦</div>
-            <h1 className="font-serif text-3xl font-bold">
-              Order Not Found
-            </h1>
+            <h1 className="font-serif text-3xl font-bold">Order Not Found</h1>
             <p className="mt-3 text-sm leading-6 text-gray-500">
               Try another order number or check your saved orders.
             </p>
@@ -307,7 +285,6 @@ const TrackOrder = () => {
         </div>
       )}
 
-     
       <section className="relative overflow-hidden bg-[#073b25]">
         <div className="relative min-h-110 sm:min-h-120">
           <img
@@ -332,14 +309,25 @@ const TrackOrder = () => {
               </h1>
 
               <p className="mt-3 max-w-2xl text-sm leading-7 text-white/90 sm:text-base lg:text-lg">
-                Enter your order number to check saved order details and
-                any available shipment information.
+                Enter your order number to check saved order details and any
+                available shipment information.
               </p>
 
               <form
                 onSubmit={handleTrack}
                 className="mt-7 flex max-w-6xl flex-col gap-2 rounded-xl bg-white p-2 text-gray-900 shadow-xl lg:flex-row lg:items-center"
               >
+                {!isAuthenticated && (
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    placeholder="Email used for the order"
+                    autoComplete="email"
+                    className="rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none"
+                  />
+                )}
                 <div className="flex min-w-0 flex-1 items-center overflow-hidden rounded-lg border border-gray-300">
                   <span className="flex h-12 w-11 shrink-0 items-center justify-center text-xl text-gray-500">
                     ▣
@@ -387,9 +375,9 @@ const TrackOrder = () => {
                 </div>
               ) : (
                 <p className="mt-3 text-xs text-white/80">
-                  {order.isDemo
-                    ? "Sample order loaded for frontend testing. It is not a real shipment."
-                    : "Showing an order saved in this browser."}
+                  {isAuthenticated
+                    ? "Order details are loaded from your account."
+                    : "Enter your order number and matching email to view its current status."}
                 </p>
               )}
             </div>
@@ -401,14 +389,6 @@ const TrackOrder = () => {
         {searched && (
           <div className="mt-5 rounded-lg border border-[#d7e8d3] bg-[#eff7e9] px-4 py-3 text-sm text-[#075631]">
             Showing information for <strong>{order.orderNumber}</strong>.
-          </div>
-        )}
-
-        {order.isDemo && (
-          <div className="mt-5 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
-            <strong>Demo data:</strong> The sample tracking ID, timeline,
-            prices, locations and estimated delivery are illustrative.
-            They are not connected to a courier.
           </div>
         )}
 
@@ -431,9 +411,7 @@ const TrackOrder = () => {
                 {orderItemCount} item{orderItemCount !== 1 ? "s" : ""}
                 <span className="mx-2">|</span>
                 Total:{" "}
-                <strong className="text-gray-800">
-                  {formatCurrency(order.total)}
-                </strong>
+                <strong className="text-gray-800">{money(order.total)}</strong>
               </p>
             </div>
 
@@ -456,8 +434,7 @@ const TrackOrder = () => {
                   {index < trackingEvents.length - 1 && (
                     <div
                       className={`absolute left-[60%] top-6 hidden w-[80%] border-t-2 sm:block ${
-                        step.completed &&
-                        trackingEvents[index + 1]?.completed
+                        step.completed && trackingEvents[index + 1]?.completed
                           ? "border-[#075631]"
                           : "border-gray-300"
                       }`}
@@ -496,17 +473,15 @@ const TrackOrder = () => {
 
           {!order.trackingEvents?.length && (
             <p className="mt-6 rounded-lg bg-gray-50 p-4 text-sm leading-6 text-gray-600">
-              Detailed tracking events are not available for this order
-              yet. The timeline above shows the steps used by the tracking
-              interface, not confirmed shipment updates.
+              Detailed tracking events are not available for this order yet. The
+              timeline above shows the steps used by the tracking interface, not
+              confirmed shipment updates.
             </p>
           )}
         </section>
 
-       
         <section className="py-6">
           <div className="grid gap-4 lg:grid-cols-3">
-           
             <article className="rounded-xl border border-gray-200 p-4 sm:p-5">
               <div className="flex items-center gap-3">
                 <span className="text-2xl text-[#075631]">▣</span>
@@ -578,9 +553,7 @@ const TrackOrder = () => {
                         {event.completed ? "✓" : "◇"}
                       </span>
 
-                      <h3 className="text-sm font-semibold">
-                        {event.title}
-                      </h3>
+                      <h3 className="text-sm font-semibold">{event.title}</h3>
 
                       <p className="text-[10px] text-gray-500">
                         {event.date}
@@ -609,16 +582,16 @@ const TrackOrder = () => {
                 <div className="flex items-center gap-3">
                   <span className="text-2xl text-[#075631]">⌖</span>
                   <h2 className="font-serif text-xl font-bold">
-                    Shipment Route
+                    Carrier Tracking
                   </h2>
                 </div>
 
                 <span className="rounded-full bg-gray-100 px-2 py-1 text-[10px] text-gray-600">
-                  {order.isDemo ? "Demo" : "Saved data"}
+                  Order status
                 </span>
               </div>
 
-              <div className="relative mt-4 h-64 overflow-hidden rounded-lg bg-[#e6f0e5] sm:h-72">
+              <div className="hidden">
                 <img
                   src="/images/tracking-map.jpg"
                   alt=""
@@ -689,9 +662,7 @@ const TrackOrder = () => {
 
                   <button
                     type="button"
-                    onClick={() =>
-                      setZoom((value) => Math.max(value - 0.1, 1))
-                    }
+                    onClick={() => setZoom((value) => Math.max(value - 0.1, 1))}
                     aria-label="Zoom out"
                     className="block h-9 w-9 hover:bg-gray-50"
                   >
@@ -701,21 +672,18 @@ const TrackOrder = () => {
               </div>
 
               <p className="mt-3 text-xs leading-5 text-gray-500">
-                This is a visual route illustration, not a live GPS map.
-                Courier locations must come from a tracking integration.
+                Live carrier location and delivery estimates are not available
+                until a courier tracking provider is configured. The status
+                timeline below reflects saved order updates.
               </p>
 
               <div className="mt-3 rounded-lg border border-gray-200 p-3">
-                <p className="text-[10px] text-gray-500">
-                  Current Location
-                </p>
+                <p className="text-[10px] text-gray-500">Current Location</p>
                 <p className="text-xs font-semibold">
                   {order.location || "Not available"}
                 </p>
 
-                <p className="mt-3 text-[10px] text-gray-500">
-                  Destination
-                </p>
+                <p className="mt-3 text-[10px] text-gray-500">Destination</p>
                 <p className="text-xs font-semibold">
                   {order.destination || "Not available"}
                 </p>
@@ -742,10 +710,8 @@ const TrackOrder = () => {
           </div>
         </section>
 
-      
         <section className="pb-7">
           <div className="grid gap-4 lg:grid-cols-[1.6fr_0.8fr_0.8fr]">
-          
             <article className="rounded-xl border border-gray-200 p-4 sm:p-5">
               <h2 className="mb-4 font-serif text-xl font-bold">
                 Products in This Order
@@ -763,8 +729,7 @@ const TrackOrder = () => {
                         alt={item.name}
                         loading="lazy"
                         onError={(event) => {
-                          event.currentTarget.src =
-                            "/images/product-1.jpg";
+                          event.currentTarget.src = "/images/product-1.jpg";
                         }}
                         className="h-14 w-14 shrink-0 rounded-md bg-gray-100 object-cover"
                       />
@@ -777,7 +742,7 @@ const TrackOrder = () => {
                           {item.detail} | Qty: {item.quantity}
                         </p>
                         <p className="mt-1 text-xs font-semibold">
-                          {formatCurrency(item.price * item.quantity)}
+                          {money(item.price * item.quantity)}
                         </p>
                       </div>
 
@@ -798,7 +763,6 @@ const TrackOrder = () => {
               )}
             </article>
 
-        
             <article className="rounded-xl border border-gray-200 p-4 sm:p-5">
               <div className="flex items-center gap-3">
                 <span className="text-2xl text-[#075631]">⌖</span>
@@ -815,14 +779,11 @@ const TrackOrder = () => {
                 <p>{order.customer?.city || ""}</p>
                 <p>{order.customer?.country || "Country not available"}</p>
                 {order.customer?.phone && (
-                  <p className="mt-1">
-                    Phone: {order.customer.phone}
-                  </p>
+                  <p className="mt-1">Phone: {order.customer.phone}</p>
                 )}
               </div>
             </article>
 
-            
             <article className="rounded-xl border border-gray-200 p-4 sm:p-5">
               <div className="flex items-center gap-3">
                 <span className="text-2xl text-[#075631]">▤</span>
@@ -837,21 +798,15 @@ const TrackOrder = () => {
                 </DetailRow>
 
                 <DetailRow label="Shipping">
-                  {order.shippingCost > 0
-                    ? formatCurrency(order.shippingCost)
-                    : "Free"}
+                  {order.shippingCost > 0 ? money(order.shippingCost) : "Free"}
                 </DetailRow>
 
-                <DetailRow label="Tax">
-                  {formatCurrency(order.tax)}
-                </DetailRow>
+                <DetailRow label="Tax">{money(order.tax)}</DetailRow>
 
                 <div className="flex items-center justify-between gap-3 border-t pt-4">
-                  <span className="font-serif text-lg font-bold">
-                    Total
-                  </span>
+                  <span className="font-serif text-lg font-bold">Total</span>
                   <span className="font-serif text-xl font-bold text-[#075631]">
-                    {formatCurrency(order.total)}
+                    {money(order.total)}
                   </span>
                 </div>
               </div>
@@ -859,7 +814,6 @@ const TrackOrder = () => {
           </div>
         </section>
 
-      
         <section className="pb-10">
           <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="font-serif text-2xl font-bold sm:text-3xl">
@@ -877,16 +831,12 @@ const TrackOrder = () => {
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
             {recommendations.map((product) => {
               const sharedProduct = getSharedProduct(product.id);
-              const productName =
-                sharedProduct?.name ?? product.name;
-              const productImage =
-                sharedProduct?.image ?? product.image;
+              const productName = sharedProduct?.name ?? product.name;
+              const productImage = sharedProduct?.image ?? product.image;
               const productPrice = Number(
-                sharedProduct?.price ?? product.price ?? 0
+                sharedProduct?.price ?? product.price ?? 0,
               );
-              const isWishlisted = wishlist.includes(
-                String(product.id)
-              );
+              const isWishlisted = wishlist.includes(String(product.id));
 
               return (
                 <article
@@ -900,8 +850,7 @@ const TrackOrder = () => {
                         alt={productName}
                         loading="lazy"
                         onError={(event) => {
-                          event.currentTarget.src =
-                            "/images/product-1.jpg";
+                          event.currentTarget.src = "/images/product-1.jpg";
                         }}
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
@@ -909,9 +858,7 @@ const TrackOrder = () => {
 
                     <button
                       type="button"
-                      onClick={() =>
-                        handleWishlist(sharedProduct ?? product)
-                      }
+                      onClick={() => handleWishlist(sharedProduct ?? product)}
                       aria-label={
                         isWishlisted
                           ? "Remove from wishlist"
@@ -962,7 +909,9 @@ const TrackOrder = () => {
                             showToast(`${productName} added to cart.`);
                           } catch (error) {
                             console.error(error);
-                            showToast("Could not add this product to your cart.");
+                            showToast(
+                              "Could not add this product to your cart.",
+                            );
                           }
                         }}
                         aria-label={`Add ${productName} to cart`}

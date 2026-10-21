@@ -10,14 +10,11 @@ import {
   storyJourney,
   farmerStory,
   sustainability,
-  impactStats,
-  impactStatsAreDemo,
   globalPresence,
-  certifications,
   certificationSection,
   newsletterContent,
-  saveNewsletterSubscription,
 } from "../data/ourStoryData";
+import { subscribe } from "../services/newsletterService.js";
 
 const SectionLabel = ({ children }) => (
   <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#075631]">
@@ -57,7 +54,7 @@ const OurStory = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleNewsletterSubmit = (event) => {
+  const handleNewsletterSubmit = async (event) => {
     event.preventDefault();
     setNewsletterStatus({ type: "", message: "" });
 
@@ -66,7 +63,7 @@ const OurStory = () => {
     setIsSubmitting(true);
 
     try {
-      saveNewsletterSubscription(email);
+      await subscribe(email);
       setEmail("");
       setNewsletterStatus({
         type: "success",
@@ -185,9 +182,7 @@ const OurStory = () => {
                       />
                     </div>
 
-                    <h3 className="mt-3 text-sm font-semibold">
-                      {card.title}
-                    </h3>
+                    <h3 className="mt-3 text-sm font-semibold">{card.title}</h3>
                     <p className="mt-1 text-sm text-gray-600">
                       {card.subtitle}
                     </p>
@@ -201,24 +196,21 @@ const OurStory = () => {
         <section className="bg-white">
           <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16 lg:px-6 lg:py-20">
             <div className="mx-auto max-w-3xl text-center">
-              <SectionLabel>OUR JOURNEY</SectionLabel>
+              <SectionLabel>OUR APPROACH</SectionLabel>
 
               <h2 className="mt-3 font-serif text-3xl font-bold sm:text-4xl">
-                From a Local Idea to a Global Vision
+                From Product Discovery to Better Service
               </h2>
 
               <p className="mt-4 text-sm leading-7 text-gray-600 sm:text-base">
-                Every meaningful journey is shaped by ideas, relationships
-                and the people who make it possible.
+                Every meaningful journey is shaped by ideas, relationships and
+                the people who make it possible.
               </p>
             </div>
 
             <div className="relative mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
               {storyJourney.map((item, index) => (
-                <article
-                  key={item.year}
-                  className="relative text-center"
-                >
+                <article key={item.year} className="relative text-center">
                   {index !== storyJourney.length - 1 && (
                     <div className="absolute left-[60%] top-11 hidden w-[80%] border-t border-dashed border-gray-300 xl:block" />
                   )}
@@ -379,7 +371,7 @@ const OurStory = () => {
               <h2 className="mt-3 font-serif text-3xl font-bold sm:text-4xl">
                 A Vision for Meaningful Impact
               </h2>
-{/* 
+              {/* 
               {impactStatsAreDemo && (
                 <p className="mx-auto mt-3 max-w-2xl text-xs leading-5 text-amber-700">
                   Demo statistics from the supplied design. Verify the
@@ -389,32 +381,10 @@ const OurStory = () => {
             </div>
 
             <div className="mt-10 grid grid-cols-2 gap-y-6 lg:grid-cols-4">
-              {impactStats.map((item, index) => (
-                <div
-                  key={item.label}
-                  className={`flex items-center justify-center gap-3 p-5 ${
-                    index % 2 === 0 ? "border-r border-gray-200 lg:border-r" : ""
-                  } ${index < 2 ? "border-b border-gray-200 lg:border-b-0" : ""} ${
-                    index === 1 ? "lg:border-r" : ""
-                  } ${index === 3 ? "lg:border-r-0" : ""}`}
-                >
-                  <span
-                    className="text-3xl text-[#075631] sm:text-4xl"
-                    aria-hidden="true"
-                  >
-                    {item.icon}
-                  </span>
-
-                  <div>
-                    <h3 className="font-serif text-2xl font-bold sm:text-3xl">
-                      {item.value}
-                    </h3>
-                    <p className="mt-1 text-xs leading-5 text-gray-500">
-                      {item.label}
-                    </p>
-                  </div>
-                </div>
-              ))}
+              <p className="mx-auto mt-8 max-w-2xl text-center text-sm leading-6 text-gray-600">
+                MOLOG is preparing verified impact figures for publication. We
+                will share measurable results when they are approved.
+              </p>
             </div>
           </div>
         </section>
@@ -461,30 +431,11 @@ const OurStory = () => {
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5">
-                {certifications.map((item) => (
-                  <div
-                    key={item}
-                    className="flex flex-col items-center justify-center text-center"
-                  >
-                    <div
-                      className="flex h-12 w-12 items-center justify-center rounded-full border border-[#075631] text-xl font-bold text-[#075631]"
-                      aria-hidden="true"
-                    >
-                      ✓
-                    </div>
-
-                    <p className="mt-2 text-xs font-semibold">{item}</p>
-                  </div>
-                ))}
-              </div>
+              <p className="rounded-lg border border-gray-200 p-4 text-sm leading-6 text-gray-600">
+                Certification details will be listed here after MOLOG verifies
+                the applicable company and product credentials.
+              </p>
             </div>
-
-            <p className="mt-5 text-xs leading-5 text-gray-500">
-              Certification names are displayed as demo content from the
-              supplied design. Remove any certification that cannot be
-              verified for your company or product.
-            </p>
           </div>
         </section>
 
@@ -540,7 +491,9 @@ const OurStory = () => {
                     disabled={isSubmitting}
                     className="rounded-md bg-[#e4e8b8] px-6 py-3 text-sm font-bold text-[#073b25] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    {isSubmitting ? "Submitting..." : `${newsletterContent.buttonText} →`}
+                    {isSubmitting
+                      ? "Submitting..."
+                      : `${newsletterContent.buttonText} →`}
                   </button>
                 </form>
 
@@ -557,13 +510,6 @@ const OurStory = () => {
                     {newsletterStatus.message}
                   </p>
                 )}
-{/* 
-                <p className="mt-3 text-xs leading-5 text-white/75">
-                  Demo mode: this form saves the email in this browser only.
-                  It does not send emails or subscribe anyone to a mailing
-                  service.
-                </p> */}
-
               </div>
             </div>
           </div>

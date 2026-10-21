@@ -24,8 +24,7 @@ const FAQ = () => {
 
     return faqList.filter((faq) => {
       const matchesCategory =
-        activeCategory === "All FAQs" ||
-        faq.category === activeCategory;
+        activeCategory === "All FAQs" || faq.category === activeCategory;
 
       const matchesSearch =
         !normalizedSearch ||
@@ -45,16 +44,14 @@ const FAQ = () => {
     setOpenFaqs((current) =>
       current.includes(id)
         ? current.filter((faqId) => faqId !== id)
-        : [...current, id]
+        : [...current, id],
     );
   };
 
   const toggleAllFaqs = () => {
     if (isAllExpanded) {
       setOpenFaqs((current) =>
-        current.filter(
-          (id) => !filteredFaqs.some((faq) => faq.id === id)
-        )
+        current.filter((id) => !filteredFaqs.some((faq) => faq.id === id)),
       );
     } else {
       setOpenFaqs((current) => [
@@ -75,9 +72,7 @@ const FAQ = () => {
 
     if (!trimmedOrderNumber) return;
 
-    navigate(
-      `/track-order?order=${encodeURIComponent(trimmedOrderNumber)}`
-    );
+    navigate(`/track-order?order=${encodeURIComponent(trimmedOrderNumber)}`);
   };
 
   return (
@@ -104,8 +99,8 @@ const FAQ = () => {
             </h1>
 
             <p className="mt-4 max-w-2xl text-sm leading-7 text-white/90 sm:text-base lg:text-lg">
-              Find answers about our products, orders, shipping,
-              payments, returns and business enquiries.
+              Find answers about our products, orders, shipping, payments,
+              returns and business enquiries.
             </p>
 
             <form
@@ -198,10 +193,8 @@ const FAQ = () => {
         </div>
       </section>
 
-      
       <main className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-6">
         <div className="grid items-start gap-6 lg:grid-cols-[220px_minmax(0,1fr)] xl:grid-cols-[220px_minmax(0,1fr)_270px]">
-     
           <aside className="rounded-lg border border-gray-200 p-3">
             <h2 className="px-3 py-3 font-serif text-xl font-bold">
               FAQ Categories
@@ -242,7 +235,6 @@ const FAQ = () => {
             </div>
           </aside>
 
-      
           <section className="min-w-0">
             <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
@@ -281,9 +273,7 @@ const FAQ = () => {
                   <article
                     key={faq.id}
                     className={`overflow-hidden rounded-lg border transition ${
-                      isOpen
-                        ? "border-green-200 shadow-sm"
-                        : "border-gray-200"
+                      isOpen ? "border-green-200 shadow-sm" : "border-gray-200"
                     }`}
                   >
                     <button
@@ -356,7 +346,6 @@ const FAQ = () => {
             </div>
           </section>
 
-          
           <aside className="space-y-4 lg:col-span-2 xl:col-span-1">
             <div className="rounded-lg border border-gray-200 p-5">
               <div className="flex items-start gap-3">
@@ -418,7 +407,7 @@ const FAQ = () => {
                     >
                       {faqSupport.email}
                     </a>
-                    
+
                     <p className="mt-1 text-xs text-gray-500">
                       {faqSupport.responseTime}
                     </p>
@@ -436,14 +425,20 @@ const FAQ = () => {
                       {faqSupport.chatHours}
                     </p>
                     <p className="mt-1 text-xs text-gray-500">
-                      Replace this demo text when live chat is configured.
+                      Live chat is not currently available. Use the support form
+                      instead.
                     </p>
+                    <Link
+                      to="/support"
+                      className="mt-2 inline-block text-xs font-semibold text-[#075631] underline"
+                    >
+                      Contact support
+                    </Link>
                   </div>
                 </div>
               </div>
             </div>
 
-           
             <div className="rounded-lg border border-gray-200 p-5">
               <div className="flex items-start gap-3">
                 <span className="text-3xl text-[#073b25]" aria-hidden="true">
@@ -495,7 +490,6 @@ const FAQ = () => {
               </Link>
             </div>
 
-           
             <div className="relative min-h-45 overflow-hidden rounded-lg">
               <img
                 src="/images/faq-support.jpg"
@@ -524,15 +518,11 @@ const FAQ = () => {
         </div>
       </main>
 
-    
       <section className="border-y border-gray-200 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-7 sm:px-6 lg:px-6">
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             {faqFeatures.map((feature) => (
-              <div
-                key={feature.title}
-                className="flex items-center gap-3"
-              >
+              <div key={feature.title} className="flex items-center gap-3">
                 <span
                   className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-green-50 text-2xl text-[#073b25]"
                   aria-hidden="true"

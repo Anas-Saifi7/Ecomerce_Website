@@ -4,6 +4,7 @@ export const adminMenu = [
   ["Dashboard", "▦", "/admin"],
   ["Orders", "▣", "/admin/orders"],
   ["Products", "◇", "/admin/products"],
+  ["Inventory", "▤", "/admin/inventory"],
   ["Categories", "▱", "/admin/categories"],
   ["Customers", "♙", "/admin/customers"],
   ["Enquiries", "▧", "/admin/enquiries"],

@@ -1,8 +1,16 @@
 import React, { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [search, setSearch] = useState('')
+  const navigate = useNavigate()
+  const submitSearch = (event) => {
+    event.preventDefault()
+    const query = search.trim()
+    if (query) navigate(`/product?search=${encodeURIComponent(query)}`)
+    setIsMenuOpen(false)
+  }
 
   const navClass = ({ isActive }) =>
     `relative py-2 transition-colors duration-200
@@ -56,9 +64,7 @@ const Navbar = () => {
       <nav className="bg-white border-b border-gray-200">
 
         <div className="max-w-7xl mx-auto px-4 sm:px-5 h-16 flex items-center justify-between gap-4">
-          <Link 
-          // to="/" 
-          className="shrink-0" onClick={() => setIsMenuOpen(false)}>
+          <Link to="/" className="shrink-0" onClick={() => setIsMenuOpen(false)}>
             <h1 className="font-serif text-lg sm:text-xl font-bold text-gray-800">
               Halla Bol
             </h1>
@@ -102,15 +108,18 @@ const Navbar = () => {
 
           <div className="flex items-center gap-3 sm:gap-4">
 
-            <div className="hidden xl:flex items-center border border-gray-300 rounded-md px-3 py-2 w-56">
+            <form onSubmit={submitSearch} className="hidden xl:flex items-center border border-gray-300 rounded-md px-3 py-2 w-56">
               <input
                 type="text"
                 placeholder="Search products..."
                 className="w-full text-xs outline-none"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                aria-label="Search products"
               />
 
-              <span className="text-gray-500">🔍</span>
-            </div>
+              <button type="submit" className="text-gray-500" aria-label="Submit product search">🔍</button>
+            </form>
 
             <Link
               to="/account"
@@ -155,15 +164,18 @@ const Navbar = () => {
 
             <div className="px-5 py-5">
 
-              <div className="flex items-center border border-gray-300 rounded-md px-3 py-2 mb-4">
+              <form onSubmit={submitSearch} className="flex items-center border border-gray-300 rounded-md px-3 py-2 mb-4">
                 <input
                   type="text"
                   placeholder="Search products..."
                   className="w-full text-sm outline-none"
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  aria-label="Search products"
                 />
 
-                <span className="text-gray-500">🔍</span>
-              </div>
+                <button type="submit" className="text-gray-500" aria-label="Submit product search">🔍</button>
+              </form>
 
               <NavLink
                 to="/"

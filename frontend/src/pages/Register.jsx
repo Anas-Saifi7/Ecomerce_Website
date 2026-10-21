@@ -1,10 +1,11 @@
-
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const Register = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { register } = useAuth();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -26,7 +27,7 @@ const Register = () => {
     setError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -58,41 +59,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const registeredUsers = JSON.parse(
-        localStorage.getItem("Halla Bol_registered_users") || "[]"
-      );
-
-      if (!Array.isArray(registeredUsers)) {
-        throw new Error("Account information is invalid. Please try again.");
-      }
-
-      const existingUser = registeredUsers.find(
-        (user) => user.email?.trim().toLowerCase() === email
-      );
-
-      if (existingUser) {
-        setError("This email is already registered. Please log in.");
-        return;
-      }
-
-      const newUser = {
-        name,
-        email,
-        password,
-      };
-
-      registeredUsers.push(newUser);
-
-      localStorage.setItem(
-        "Halla Bol_registered_users",
-        JSON.stringify(registeredUsers)
-      );
-
-      // Keep the authentication key consistent with Login and ProtectedRoute.
-      localStorage.setItem(
-        "Halla_user",
-        JSON.stringify({ name, email })
-      );
+      await register({ name, email, password });
 
       const requestedPath = location.state?.from?.pathname;
 
@@ -105,7 +72,6 @@ const Register = () => {
 
       navigate(destination, { replace: true });
     } catch (err) {
-      console.error("Registration error:", err);
       setError(err.message || "Unable to create your account.");
     } finally {
       setLoading(false);
@@ -256,7 +222,8 @@ const Register = () => {
         </p>
 
         <p className="text-center text-[11px] text-gray-400 mt-6 leading-5">
-          By creating an account, you agree to our Terms of Service and Privacy Policy.
+          By creating an account, you agree to our Terms of Service and Privacy
+          Policy.
         </p>
       </div>
     </div>

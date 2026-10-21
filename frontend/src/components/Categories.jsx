@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import categories from "../data/categories.js";
+import { getCategories } from '../services/categoryService.js';
 
 const Categories = () => {
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    let active = true;
+    getCategories().then((data) => { if (active) setCategories(data.categories || []); }).catch(() => {});
+    return () => { active = false; };
+  }, []);
   return (
     <section className="w-full bg-white">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-5">
@@ -28,7 +34,7 @@ const Categories = () => {
           {categories.map((category) => (
             <Link
               to={`/categories/${category.slug}`}
-              key={category.id}
+              key={category._id}
               className="group overflow-hidden rounded-lg border border-gray-200 bg-white transition duration-300 hover:-translate-y-1 hover:shadow-lg"
             >
               <div className="h-32 overflow-hidden bg-gray-100 sm:h-40 lg:h-44">

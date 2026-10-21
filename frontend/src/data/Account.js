@@ -20,7 +20,7 @@ export const orders = [
       "/images/product-2.jpg",
       "/images/product-4.jpg",
     ],
-    total: "$139.70",
+    total: "₹ 139.70",
     status: "In Transit",
   },
   {
@@ -31,14 +31,14 @@ export const orders = [
       "/images/product-5.jpg",
       "/images/blog-green-tea.jpg",
     ],
-    total: "$85.00",
+    total: "₹ 85.00",
     status: "Delivered",
   },
   {
     id: "#M12011",
     date: "18 Oct 2024",
     images: ["/images/product-2.jpg", "/images/product-3.jpg"],
-    total: "$62.00",
+    total: "₹ 62.00",
     status: "Delivered",
   },
   {
@@ -49,7 +49,7 @@ export const orders = [
       "/images/category-5.jpg",
       "/images/blog-farmer.jpg",
     ],
-    total: "$120.00",
+    total: "₹ 120.00",
     status: "Cancelled",
   },
 ];
@@ -79,25 +79,25 @@ export const initialWishlist = [
   {
     id: 1,
     name: "Organic Turmeric Powder",
-    price: "$12.00",
+    price: "₹ 12.00",
     image: "/images/product-1.jpg",
   },
   {
     id: 2,
     name: "Mixed Indian Spices",
-    price: "$18.00",
+    price: "₹ 18.00",
     image: "/images/product-2.jpg",
   },
   {
     id: 3,
     name: "Handloom Silk Saree",
-    price: "$85.00",
+    price: "₹ 85.00",
     image: "/images/product-4.jpg",
   },
   {
     id: 4,
     name: "Traditional Pottery Set",
-    price: "$35.00",
+    price: "₹ 35.00",
     image: "/images/category-5.jpg",
   },
 ];

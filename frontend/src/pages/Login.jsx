@@ -1,10 +1,11 @@
-
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -23,7 +24,7 @@ const Login = () => {
     setError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -38,32 +39,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const registeredUsers = JSON.parse(
-        localStorage.getItem("Halla Bol_registered_users") || "[]"
-      );
-
-      if (!Array.isArray(registeredUsers)) {
-        throw new Error("Account information is invalid. Please try again.");
-      }
-
-      const matchedUser = registeredUsers.find(
-        (user) =>
-          user.email?.trim().toLowerCase() === email &&
-          user.password === password
-      );
-
-      if (!matchedUser) {
-        setError("Invalid email or password. Please register first.");
-        return;
-      }
-
-      const user = {
-        name: matchedUser.name,
-        email: matchedUser.email,
-      };
-
-     
-      localStorage.setItem("Halla_user", JSON.stringify(user));
+      await login(email, password);
 
       const requestedPath = location.state?.from?.pathname;
 
@@ -76,7 +52,6 @@ const Login = () => {
 
       navigate(destination, { replace: true });
     } catch (err) {
-      console.error("Login error:", err);
       setError(err.message || "Unable to log in. Please try again.");
     } finally {
       setLoading(false);

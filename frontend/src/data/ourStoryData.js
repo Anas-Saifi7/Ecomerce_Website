@@ -11,7 +11,6 @@ export const storyHero = {
     { icon: "♥", label: "A Sustainable Future" },
   ],
 };
-
 export const storyPurpose = {
   eyebrow: "OUR PURPOSE",
   title: "Rooted in India. For a Better World.",
@@ -43,40 +42,40 @@ export const storyPurpose = {
 
 export const storyJourney = [
   {
-    year: "2019",
+    year: "Discover",
     icon: "♧",
     title: "The Beginning",
-    text: "A simple idea to introduce authentic Indian products to more people.",
+    text: "Make products inspired by India easier to discover.",
   },
   {
-    year: "2020",
+    year: "Curate",
     icon: "♧",
     title: "Building Connections",
-    text: "Exploring partnerships with local farming and producer communities.",
+    text: "Present clear product information and sourcing details.",
   },
   {
-    year: "2021",
+    year: "Share",
     icon: "◇",
     title: "Expanding Products",
-    text: "Exploring categories including spices, herbs, wellness and handicrafts.",
+    text: "Bring regional products, craft and traditions into one catalog.",
   },
   {
-    year: "2022",
+    year: "Connect",
     icon: "◎",
     title: "Looking Beyond Borders",
-    text: "Developing a vision for international product discovery and trade.",
+    text: "Help customers and business buyers learn about the collection.",
   },
   {
-    year: "2023",
+    year: "Improve",
     icon: "↗",
     title: "Growing Together",
-    text: "Building relationships with customers, producers and business partners.",
+    text: "Keep improving product details, ordering and customer support.",
   },
   {
-    year: "2024+",
+    year: "Looking ahead",
     icon: "♥",
     title: "A Brighter Future",
-    text: "Working towards a more connected and responsible product ecosystem.",
+    text: "Grow the catalog with transparent, verifiable information.",
   },
 ];
 
@@ -155,48 +154,5 @@ export const newsletterContent = {
     "Get updates about product stories, producer communities and new product launches.",
   placeholder: "Enter your email address",
   buttonText: "Subscribe",
-  successMessage: "Thanks for your interest! Your demo subscription has been saved.",
+  successMessage: "Thanks for subscribing. Your email has been added to our newsletter list.",
 };
-
-export const newsletterStorageKey = "Halla Bol_story_newsletter";
-
-export function getNewsletterSubscriptions() {
-  try {
-    const stored = localStorage.getItem(newsletterStorageKey);
-    const parsed = stored ? JSON.parse(stored) : [];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-export function saveNewsletterSubscription(email) {
-  const normalizedEmail = email.trim().toLowerCase();
-
-  if (!normalizedEmail) {
-    throw new Error("Please enter your email address.");
-  }
-
-  const subscriptions = getNewsletterSubscriptions();
-
-  if (
-    subscriptions.some(
-      (subscription) => subscription.email === normalizedEmail
-    )
-  ) {
-    throw new Error("This email is already subscribed in the demo.");
-  }
-
-  const newSubscription = {
-    id: `newsletter-${Date.now()}`,
-    email: normalizedEmail,
-    subscribedAt: new Date().toISOString(),
-  };
-
-  localStorage.setItem(
-    newsletterStorageKey,
-    JSON.stringify([...subscriptions, newSubscription])
-  );
-
-  return newSubscription;
-}

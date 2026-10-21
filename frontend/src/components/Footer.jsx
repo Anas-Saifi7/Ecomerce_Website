@@ -1,7 +1,24 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { subscribe } from '../services/newsletterService.js'
 
 const Footer = () => {
+  const [email, setEmail] = useState('')
+  const [newsletterStatus, setNewsletterStatus] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const handleNewsletter = async (event) => {
+    event.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
+    setNewsletterStatus('')
+    try {
+      await subscribe(email)
+      setEmail('')
+      setNewsletterStatus('You are subscribed.')
+    } catch (error) {
+      setNewsletterStatus(error.message || 'Subscription could not be saved. Please try again.')
+    } finally { setSubmitting(false) }
+  }
   return (
     <footer className="bg-[#062d1d] text-white">
 
@@ -154,22 +171,27 @@ const Footer = () => {
               on new products and stories.
             </p>
 
-            <form className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-2">
+            <form onSubmit={handleNewsletter} className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-2">
 
               <input
                 type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                required
                 placeholder="Enter your email"
                 className="w-full min-w-0 bg-transparent border border-gray-500 rounded-md px-3 py-2.5 text-xs sm:text-sm text-white placeholder-gray-400 outline-none focus:border-[#e4e8b8] transition"
               />
 
               <button
                 type="submit"
+                disabled={submitting}
                 className="shrink-0 bg-[#e4e8b8] hover:bg-[#d8dda5] text-[#073b25] px-4 py-2.5 rounded-md text-xs sm:text-sm font-semibold transition"
               >
-                Subscribe →
+                {submitting ? 'Submitting…' : 'Subscribe →'}
               </button>
 
             </form>
+            {newsletterStatus && <p role="status" className="mt-2 text-xs text-gray-200">{newsletterStatus}</p>}
 
           </div>
 
@@ -198,7 +220,7 @@ const Footer = () => {
               </Link>
 
               <Link
-                to="/terms"
+                to="/terms-and-conditions"
                 className="hover:text-white transition"
               >
                 Terms & Conditions

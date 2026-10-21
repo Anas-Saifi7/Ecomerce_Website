@@ -1,67 +1,79 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import categories from "../data/categories.js";
-import allProducts from "../data/products.js";
 import { addToCart as addProductToCart } from "../utils/cart.js";
+import { getCategories } from "../services/categoryService.js";
+import { getProducts } from "../services/productService.js";
+import { mapApiProducts } from "../utils/productMapper.js";
+import { useCurrency } from "../context/CurrencyContext.jsx";
 
 const CategoryProducts = () => {
   const { slug } = useParams();
+  const { currency, formatPrice, formatMoney, getOldPrice } = useCurrency();
   const [sortBy, setSortBy] = useState("featured");
   const [message, setMessage] = useState("");
-
-  const category = categories.find(
-    (item) => item.slug === slug
-  );
-
-  const products = useMemo(() => {
-    if (!category) return [];
-
-    const matched = allProducts.filter(
-      (product) => product.categoryType === category.name
-    );
-
-    if (sortBy === "price-low") {
-      return [...matched].sort(
-        (a, b) => a.price - b.price
-      );
-    }
-
-    if (sortBy === "price-high") {
-      return [...matched].sort(
-        (a, b) => b.price - a.price
-      );
-    }
-
-    return matched;
-  }, [category, sortBy]);
+  const [category, setCategory] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    Promise.all([
+      getCategories(),
+      getProducts({
+        category: slug,
+        currency,
+        sort:
+          sortBy === "price-low"
+            ? "price_asc"
+            : sortBy === "price-high"
+              ? "price_desc"
+              : "featured",
+        limit: 50,
+      }),
+    ])
+      .then(([cats, result]) => {
+        if (!active) return;
+        setCategory(
+          (cats.categories || []).find((item) => item.slug === slug) || null,
+        );
+        setProducts(mapApiProducts(result.products || [], currency));
+      })
+      .catch((error) => {
+        if (active)
+          setLoadError(error.message || "Could not load this category.");
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [slug, sortBy, currency]);
 
   const handleAddToCart = (product) => {
     try {
-      addProductToCart(product, 1, "Standard");
+      addProductToCart(product, 1, "Standard", currency);
       setMessage(`${product.name} added to your cart.`);
 
       window.setTimeout(() => setMessage(""), 2500);
     } catch (error) {
       console.error("Add to cart failed:", error);
-      setMessage(
-        error.message || "Unable to update the cart."
-      );
+      setMessage(error.message || "Unable to update the cart.");
 
       window.setTimeout(() => setMessage(""), 2500);
     }
   };
 
-  if (!category) {
+  if (!loading && !category) {
     return (
       <div className="min-h-screen bg-white">
         <Navbar />
 
         <main className="mx-auto max-w-3xl px-5 py-20 text-center">
-          <h1 className="font-serif text-3xl font-bold">
-            Category Not Found
-          </h1>
+          <h1 className="font-serif text-3xl font-bold">Category Not Found</h1>
 
           <p className="mt-3 text-sm text-gray-500">
             This category may have been removed or the link may be incorrect.
@@ -80,9 +92,30 @@ const CategoryProducts = () => {
     );
   }
 
+  if (loading && !category) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <main className="mx-auto max-w-7xl px-5 py-16 text-center text-sm text-gray-500">
+          Loading category…
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white text-gray-900">
       <Navbar />
+
+      {loadError && (
+        <p
+          role="alert"
+          className="mx-auto max-w-7xl px-5 py-4 text-sm text-red-700"
+        >
+          {loadError}
+        </p>
+      )}
 
       {message && (
         <div
@@ -106,9 +139,7 @@ const CategoryProducts = () => {
         <div className="absolute inset-0 bg-black/40" />
 
         <div className="relative z-10 mx-auto w-full max-w-7xl px-5 py-10 sm:px-8 lg:px-5">
-          <p className="text-sm text-green-100">
-            {category.name}
-          </p>
+          <p className="text-sm text-green-100">{category.name}</p>
 
           <h1 className="mt-4 max-w-3xl font-serif text-4xl font-bold text-white sm:text-5xl">
             {category.name}
@@ -119,8 +150,7 @@ const CategoryProducts = () => {
           </p>
 
           <p className="mt-4 text-sm text-green-100">
-            {products.length}{" "}
-            {products.length === 1 ? "product" : "products"}
+            {products.length} {products.length === 1 ? "product" : "products"}
           </p>
         </div>
       </section>
@@ -139,7 +169,6 @@ const CategoryProducts = () => {
 
           <label className="flex items-center gap-3 text-sm text-gray-600">
             Sort by
-
             <select
               value={sortBy}
               onChange={(event) => setSortBy(event.target.value)}
@@ -152,7 +181,11 @@ const CategoryProducts = () => {
           </label>
         </div>
 
-        {products.length > 0 ? (
+        {loading ? (
+          <p className="py-12 text-center text-sm text-gray-500">
+            Loading products…
+          </p>
+        ) : products.length > 0 ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {products.map((product) => (
               <article
@@ -187,12 +220,12 @@ const CategoryProducts = () => {
 
                     <div className="mt-3 flex flex-wrap items-center gap-2">
                       <span className="text-lg font-bold text-[#073b25]">
-                        ${Number(product.price).toFixed(2)}
+                        {formatPrice(product)}
                       </span>
 
                       {product.oldPrice != null && (
                         <span className="text-sm text-gray-400 line-through">
-                          ${Number(product.oldPrice).toFixed(2)}
+                          {formatMoney(getOldPrice(product))}
                         </span>
                       )}
                     </div>
@@ -206,9 +239,7 @@ const CategoryProducts = () => {
                     onClick={() => handleAddToCart(product)}
                     className="w-full rounded-md bg-[#073b25] px-3 py-3 text-xs font-semibold text-white transition hover:bg-[#0b5435] disabled:cursor-not-allowed disabled:bg-gray-400 sm:text-sm"
                   >
-                    {product.inStock === false
-                      ? "Out of Stock"
-                      : "Add to Cart"}
+                    {product.inStock === false ? "Out of Stock" : "Add to Cart"}
                   </button>
                 </div>
               </article>

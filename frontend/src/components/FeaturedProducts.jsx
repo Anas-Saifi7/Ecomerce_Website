@@ -1,63 +1,19 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
-
-
-    // Demo data 
-const products = [
-   
-  {
-    name: 'Organic Turmeric Powder',
-    category: 'Natural & Pure',
-    // price: '$12.00',
-    rating: '4.8',
-    reviews: '120',
-    image: '/images/product-1.jpg',
-    // badge: 'Bestseller',
-  },
-  {
-    name: 'Mixed Indian Spices',
-    category: 'Premium Quality',
-    // price: '$18.00',
-    rating: '4.6',
-    reviews: '98',
-    image: '/images/product-2.jpg',
-  },
-  {
-    name: 'Pure Organic Honey',
-    category: '100% Natural',
-    // price: '$20.00',
-    rating: '4.9',
-    reviews: '150',
-    image: '/images/product-3.jpg',
-  },
-  {
-    name: 'Handloom Silk Saree',
-    category: 'Traditional Weave',
-    // price: '$85.00',
-    rating: '4.7',
-    reviews: '80',
-    image: '/images/product-4.jpg',
-  },
-  {
-    name: 'Handcrafted Wooden Decor',
-    category: 'Artisan Made',
-    // price: '$45.00',
-    rating: '4.5',
-    reviews: '60',
-    image: '/images/product-5.jpg',
-  },
-  {
-    name: 'Aromatherapy Essential Oils',
-    category: 'Natural Wellness',
-    // price: '$22.00',
-    rating: '4.8',
-    reviews: '110',
-    image: '/images/product-6.jpg',
-  },
-];
-
+import { getProducts } from '../services/productService.js'
+import { mapApiProducts } from '../utils/productMapper.js'
+import { useCurrency } from '../context/CurrencyContext.jsx'
 
 const FeaturedProducts = () => {
+  const [products, setProducts] = useState([])
+  const { formatPrice } = useCurrency()
+  useEffect(() => {
+    let active = true
+    getProducts({ featured: true, limit: 6 })
+      .then((data) => { if (active) setProducts(mapApiProducts(data.products || [])) })
+      .catch(() => {})
+    return () => { active = false }
+  }, [])
   return (
     <section className="w-full bg-[#fafaf8]">
 
@@ -92,16 +48,16 @@ const FeaturedProducts = () => {
           {products.map((product) => (
 
             <div
-              key={product.name}
+              key={product.id}
               className="group bg-white rounded-lg overflow-hidden border border-gray-200 
               hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
 
               <div className="relative overflow-hidden bg-gray-100">
-                <img
+                <Link to={`/product/${product.id}`} aria-label={`View ${product.name}`}><img
                   src={product.image}
                   alt={product.name}
                   loading="lazy"
-                  className="w-full h-40 sm:h-50 lg:h-50 object-cover group-hover:scale-105 transition-transformduration-500"/>
+                  className="w-full h-40 sm:h-50 lg:h-50 object-cover group-hover:scale-105 transition-transform duration-500"/></Link>
 
                 {product.badge && (
                   <span className="absolute top-2 left-2 bg-[#075631] text-white text-[9px] sm:text-[10px] px-2 py-1 rounded">
@@ -121,9 +77,9 @@ const FeaturedProducts = () => {
               </div>
 
               <div className="p-3">
-                <h3 className="font-semibold text-xs sm:text-sm text-gray-900 leading-5 line-clamp-2 min-h-10">
+                <Link to={`/product/${product.id}`}><h3 className="font-semibold text-xs sm:text-sm text-gray-900 leading-5 line-clamp-2 min-h-10">
                   {product.name}
-                </h3>
+                </h3></Link>
 
                 <p className="text-[10px] sm:text-[11px] text-gray-500 mt-1">
                   {product.category}
@@ -146,7 +102,7 @@ const FeaturedProducts = () => {
 
                 <div className="flex items-ceneter justify-between gap-2 mt-3">
                   <span className="flex flex-col sm:flex-row gap-3 mt-6 sm:mt-7">                                
-                    {product.price}
+                    {formatPrice(product)}
                   </span>
 
                 </div>

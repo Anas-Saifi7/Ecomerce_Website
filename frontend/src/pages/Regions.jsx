@@ -1,59 +1,55 @@
-import React, { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
-import { regions, regionCategories } from '../data/regions'
+import React, { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import { regions, regionCategories } from "../data/regions";
 
-const slugify = (value = '') =>
+const slugify = (value = "") =>
   value
     .toLowerCase()
     .trim()
-    .replace(/&/g, 'and')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 
 const Regions = () => {
-  const [activeCategory, setActiveCategory] = useState('All Regions')
-  const [sortBy, setSortBy] = useState('Popularity')
-  const [searchTerm, setSearchTerm] = useState('')
-  const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
-  const [viewMode, setViewMode] = useState('grid')
+  const [activeCategory, setActiveCategory] = useState("All Regions");
+  const [sortBy, setSortBy] = useState("Popularity");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const [viewMode, setViewMode] = useState("grid");
 
   const filteredRegions = useMemo(() => {
-    let result = [...regions]
+    let result = [...regions];
 
-    if (activeCategory !== 'All Regions') {
-      result = result.filter(
-        (region) => region.category === activeCategory
-      )
+    if (activeCategory !== "All Regions") {
+      result = result.filter((region) => region.category === activeCategory);
     }
 
-    const search = searchTerm.trim().toLowerCase()
+    const search = searchTerm.trim().toLowerCase();
 
     if (search) {
       result = result.filter((region) =>
         `${region.name} ${region.category} ${region.description}`
           .toLowerCase()
-          .includes(search)
-      )
+          .includes(search),
+      );
     }
 
-    if (sortBy === 'Name') {
-      result.sort((a, b) => a.name.localeCompare(b.name))
-    } else if (sortBy === 'Products') {
-      result.sort(
-        (a, b) => (b.productCount || 0) - (a.productCount || 0)
-      )
+    if (sortBy === "Name") {
+      result.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortBy === "Products") {
+      result.sort((a, b) => (b.productCount || 0) - (a.productCount || 0));
     }
 
-    return result
-  }, [activeCategory, searchTerm, sortBy])
+    return result;
+  }, [activeCategory, searchTerm, sortBy]);
 
   const categoryCount = (category) => {
-    if (category === 'All Regions') return regions.length
+    if (category === "All Regions") return regions.length;
 
-    return regions.filter((region) => region.category === category).length
-  }
+    return regions.filter((region) => region.category === category).length;
+  };
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
@@ -79,8 +75,8 @@ const Regions = () => {
             </h1>
 
             <p className="mt-5 max-w-2xl text-base leading-7 text-gray-100 sm:text-lg">
-              Discover authentic products, traditional crafts, regional
-              flavours and cultural heritage from every corner of India.
+              Discover authentic products, traditional crafts, regional flavours
+              and cultural heritage from every corner of India.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
@@ -101,10 +97,10 @@ const Regions = () => {
 
             <div className="mt-10 grid grid-cols-2 gap-5 sm:grid-cols-4">
               {[
-                ['✦', 'Authentic Sourcing'],
-                ['♡', 'Local Communities'],
-                ['◇', 'Regional Products'],
-                ['◎', 'Indian Heritage'],
+                ["✦", "Authentic Sourcing"],
+                ["♡", "Local Communities"],
+                ["◇", "Regional Products"],
+                ["◎", "Indian Heritage"],
               ].map(([icon, label]) => (
                 <div key={label} className="flex items-center gap-2">
                   <span className="text-2xl text-[#f4df91]">{icon}</span>
@@ -130,11 +126,10 @@ const Regions = () => {
             </h2>
 
             <p className="mt-3 max-w-2xl text-sm leading-6 text-gray-600 sm:text-base">
-              Select a region to learn about its famous places, culture,
-              food, agriculture and traditional products.
+              Select a region to learn about its famous places, culture, food,
+              agriculture and traditional products.
             </p>
           </div>
-          
 
           <button
             type="button"
@@ -143,12 +138,13 @@ const Regions = () => {
             className="mb-5 flex w-full items-center justify-between rounded-lg border border-gray-200 px-4 py-3 font-semibold lg:hidden"
           >
             <span>Filter by region</span>
-            <span>{mobileFilterOpen ? '−' : '+'}</span>
+            <span>{mobileFilterOpen ? "−" : "+"}</span>
           </button>
 
           <div className="grid items-start gap-7 lg:grid-cols-[240px_minmax(0,1fr)]">
-           
-            <aside className={`${mobileFilterOpen ? 'block' : 'hidden'} lg:block`}>
+            <aside
+              className={`${mobileFilterOpen ? "block" : "hidden"} lg:block`}
+            >
               <div className="rounded-xl border border-gray-200 bg-white p-4">
                 <h3 className="mb-4 font-serif text-xl font-bold text-[#073b25]">
                   Browse Regions
@@ -160,21 +156,21 @@ const Regions = () => {
                       type="button"
                       key={category}
                       onClick={() => {
-                        setActiveCategory(category)
-                        setMobileFilterOpen(false)
+                        setActiveCategory(category);
+                        setMobileFilterOpen(false);
                       }}
                       className={`flex w-full items-center justify-between gap-2 rounded-md px-3 py-3 text-left text-sm transition ${
                         activeCategory === category
-                          ? 'bg-[#073b25] text-white'
-                          : 'text-gray-700 hover:bg-[#eff7e9]'
+                          ? "bg-[#073b25] text-white"
+                          : "text-gray-700 hover:bg-[#eff7e9]"
                       }`}
                     >
                       <span>{category}</span>
                       <span
                         className={`rounded-full px-2 py-0.5 text-xs ${
                           activeCategory === category
-                            ? 'bg-white/15 text-white'
-                            : 'bg-gray-100 text-gray-600'
+                            ? "bg-white/15 text-white"
+                            : "bg-gray-100 text-gray-600"
                         }`}
                       >
                         {categoryCount(category)}
@@ -191,7 +187,7 @@ const Regions = () => {
                   loading="lazy"
                   className="absolute inset-0 h-full w-full object-cover"
                   onError={(event) => {
-                    event.currentTarget.style.display = 'none'
+                    event.currentTarget.style.display = "none";
                   }}
                 />
 
@@ -220,9 +216,7 @@ const Regions = () => {
               </div>
             </aside>
 
-         
             <div className="min-w-0">
-       
               <div className="mb-6 flex flex-col gap-4">
                 <label className="relative block">
                   <span className="sr-only">Search regions</span>
@@ -243,14 +237,15 @@ const Regions = () => {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <h3 className="font-serif text-xl font-bold text-gray-900 sm:text-2xl">
-                      {activeCategory === 'All Regions'
-                        ? 'All Indian Regions'
+                      {activeCategory === "All Regions"
+                        ? "All Indian Regions"
                         : activeCategory}
                     </h3>
 
                     <p className="mt-1 text-sm text-gray-500">
-                      {filteredRegions.length}{' '}
-                      {filteredRegions.length === 1 ? 'region' : 'regions'} found
+                      {filteredRegions.length}{" "}
+                      {filteredRegions.length === 1 ? "region" : "regions"}{" "}
+                      found
                     </p>
                   </div>
 
@@ -275,13 +270,13 @@ const Regions = () => {
 
                     <button
                       type="button"
-                      onClick={() => setViewMode('grid')}
+                      onClick={() => setViewMode("grid")}
                       aria-label="Grid view"
-                      aria-pressed={viewMode === 'grid'}
+                      aria-pressed={viewMode === "grid"}
                       className={`hidden h-10 w-10 items-center justify-center rounded-md border sm:flex ${
-                        viewMode === 'grid'
-                          ? 'border-[#073b25] bg-[#eff7e9] text-[#073b25]'
-                          : 'border-gray-200 text-gray-500'
+                        viewMode === "grid"
+                          ? "border-[#073b25] bg-[#eff7e9] text-[#073b25]"
+                          : "border-gray-200 text-gray-500"
                       }`}
                     >
                       ▦
@@ -289,13 +284,13 @@ const Regions = () => {
 
                     <button
                       type="button"
-                      onClick={() => setViewMode('list')}
+                      onClick={() => setViewMode("list")}
                       aria-label="List view"
-                      aria-pressed={viewMode === 'list'}
+                      aria-pressed={viewMode === "list"}
                       className={`hidden h-10 w-10 items-center justify-center rounded-md border sm:flex ${
-                        viewMode === 'list'
-                          ? 'border-[#073b25] bg-[#eff7e9] text-[#073b25]'
-                          : 'border-gray-200 text-gray-500'
+                        viewMode === "list"
+                          ? "border-[#073b25] bg-[#eff7e9] text-[#073b25]"
+                          : "border-gray-200 text-gray-500"
                       }`}
                     >
                       ☷
@@ -307,9 +302,9 @@ const Regions = () => {
               {filteredRegions.length > 0 ? (
                 <div
                   className={
-                    viewMode === 'grid'
-                      ? 'grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3'
-                      : 'grid grid-cols-1 gap-4'
+                    viewMode === "grid"
+                      ? "grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
+                      : "grid grid-cols-1 gap-4"
                   }
                 >
                   {filteredRegions.map((region) => (
@@ -317,16 +312,14 @@ const Regions = () => {
                       to={`/regions/${slugify(region.name)}`}
                       key={region.name}
                       className={`group overflow-hidden rounded-xl border border-gray-200 bg-white transition duration-300 hover:-translate-y-1 hover:border-[#cbd9ce] hover:shadow-lg ${
-                        viewMode === 'list'
-                          ? 'sm:flex sm:items-stretch'
-                          : ''
+                        viewMode === "list" ? "sm:flex sm:items-stretch" : ""
                       }`}
                     >
                       <div
                         className={`relative overflow-hidden bg-[#eff7e9] ${
-                          viewMode === 'list'
-                            ? 'h-52 sm:h-auto sm:w-64 sm:shrink-0'
-                            : 'h-48 sm:h-44'
+                          viewMode === "list"
+                            ? "h-52 sm:h-auto sm:w-64 sm:shrink-0"
+                            : "h-48 sm:h-44"
                         }`}
                       >
                         <img
@@ -335,7 +328,7 @@ const Regions = () => {
                           loading="lazy"
                           className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                           onError={(event) => {
-                            event.currentTarget.style.display = 'none'
+                            event.currentTarget.style.display = "none";
                           }}
                         />
 
@@ -381,9 +374,9 @@ const Regions = () => {
                   <button
                     type="button"
                     onClick={() => {
-                      setSearchTerm('')
-                      setActiveCategory('All Regions')
-                      setSortBy('Popularity')
+                      setSearchTerm("");
+                      setActiveCategory("All Regions");
+                      setSortBy("Popularity");
                     }}
                     className="mt-5 rounded-md bg-[#073b25] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#105335]"
                   >
@@ -400,11 +393,11 @@ const Regions = () => {
         <img
           src="/images/regions-cta.jpg"
           alt="region"
-           loading="lazy"
+          loading="lazy"
           aria-hidden="true"
           className="absolute inset-0 -z-20 h-full w-full object-cover"
           onError={(event) => {
-            event.currentTarget.style.display = 'none'
+            event.currentTarget.style.display = "none";
           }}
         />
 
@@ -437,7 +430,7 @@ const Regions = () => {
 
       <Footer />
     </div>
-  )
-}
+  );
+};
 
 export default Regions;

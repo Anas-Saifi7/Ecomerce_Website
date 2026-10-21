@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { createEnquiry } from "../services/enquiryService.js";
 
 import {
   supportOptions,
@@ -56,7 +57,7 @@ export default function Contact() {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (isSubmitting) return;
@@ -72,33 +73,20 @@ export default function Contact() {
     setIsSubmitting(true);
 
     try {
-      const savedMessages = JSON.parse(
-        localStorage.getItem("Halla Bol_contact_messages") || "[]"
-      );
-
-      if (!Array.isArray(savedMessages)) {
-        throw new Error("Invalid saved messages");
-      }
-
-      const newMessage = {
-        ...formData,
+      await createEnquiry({
+        type: "contact",
+        name: formData.name.trim(),
+        email: formData.email.trim(),
         phone: formData.phone
           ? `${formData.countryCode} ${formData.phone}`
           : "",
-        id: `contact-${Date.now()}`,
-        createdAt: new Date().toISOString(),
-        status: "new",
-      };
-
-      localStorage.setItem(
-        "halla bol_contact_messages",
-        JSON.stringify([newMessage, ...savedMessages])
-      );
-
+        subject: formData.subject.trim(),
+        message: formData.message.trim(),
+      });
       setStatus({
         type: "success",
         message:
-          "Thank you! Your message has been saved successfully in this browser demo.",
+          "Thank you. Your message has been received by our support team.",
       });
 
       setFormData(INITIAL_FORM);
@@ -107,8 +95,7 @@ export default function Contact() {
 
       setStatus({
         type: "error",
-        message:
-          "Your message could not be saved. Please check browser storage and try again.",
+        message: "Your message could not be sent. Please try again.",
       });
     } finally {
       setIsSubmitting(false);
@@ -120,7 +107,6 @@ export default function Contact() {
       <Navbar />
 
       <main>
-        
         <section className="relative flex min-h-80 items-center overflow-hidden sm:min-h-95 lg:min-h-110">
           <img
             src="/images/contact-hero.jpg"
@@ -161,7 +147,6 @@ export default function Contact() {
           </div>
         </section>
 
-       
         <section className="bg-[#fafaf7]">
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-gray-200 bg-gray-200 shadow-sm sm:grid-cols-2 lg:grid-cols-5">
@@ -290,10 +275,7 @@ export default function Contact() {
                           className="w-28 shrink-0 rounded-lg border border-gray-300 bg-white px-2 py-3 text-xs outline-none focus:border-[#075631] sm:w-32 sm:text-sm"
                         >
                           {countryCodes.map((country) => (
-                            <option
-                              key={country.value}
-                              value={country.value}
-                            >
+                            <option key={country.value} value={country.value}>
                               {country.label}
                             </option>
                           ))}
@@ -330,10 +312,7 @@ export default function Contact() {
                       >
                         <option value="">Select a subject</option>
                         {contactSubjects.map((subject) => (
-                          <option
-                            key={subject.value}
-                            value={subject.value}
-                          >
+                          <option key={subject.value} value={subject.value}>
                             {subject.label}
                           </option>
                         ))}
@@ -383,7 +362,7 @@ export default function Contact() {
                         </Link>{" "}
                         and{" "}
                         <Link
-                          to="/terms"
+                          to="/terms-and-conditions"
                           className="font-medium text-[#075631] underline"
                         >
                           Terms & Conditions
@@ -401,8 +380,8 @@ export default function Contact() {
                     </button>
 
                     <p className="text-xs leading-5 text-gray-400">
-                      Demo mode: this form saves submissions in this browser.
-                      It does not send an email yet.
+                      Messages are securely submitted to our support team. It
+                      does not send an email yet.
                     </p>
                   </form>
                 </div>
@@ -430,9 +409,7 @@ export default function Contact() {
                           <button
                             type="button"
                             aria-expanded={isOpen}
-                            onClick={() =>
-                              setOpenFaq(isOpen ? null : index)
-                            }
+                            onClick={() => setOpenFaq(isOpen ? null : index)}
                             className="flex w-full items-center justify-between gap-4 py-4 text-left text-sm font-medium sm:text-base"
                           >
                             <span className="flex items-start gap-3">
@@ -456,7 +433,6 @@ export default function Contact() {
                 </div>
               </div>
 
-           
               <div className="min-w-0">
                 <div className="rounded-xl border border-[#e0ead9] bg-[#eff7e9] p-5 sm:p-7">
                   <span className="text-3xl text-[#075631]">♧</span>
@@ -485,13 +461,13 @@ export default function Contact() {
                         <p className="mt-2 text-xs text-gray-500">
                           {card.line1}
                         </p>
-                        <p className="text-xs text-gray-500">
-                          {card.line2}
-                        </p>
+                        <p className="text-xs text-gray-500">{card.line2}</p>
                         <a
                           href={card.href}
                           target={
-                            card.href.startsWith("https://") ? "_blank" : undefined
+                            card.href.startsWith("https://")
+                              ? "_blank"
+                              : undefined
                           }
                           rel={
                             card.href.startsWith("https://")
@@ -506,22 +482,11 @@ export default function Contact() {
                     ))}
                   </div>
 
-                  <div className="mt-5 overflow-hidden rounded-xl border border-gray-200 bg-white">
-                    <iframe
-                      title="Office location map"
-                      src="https://www.google.com/maps?q=Sector+62,+Noida,+Uttar+Pradesh&output=embed"
-                      className="h-64 w-full border-0 sm:h-80"
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                    />
+                  <div className="mt-5 rounded-xl border border-gray-200 bg-white p-6 text-sm leading-6 text-gray-600">
+                    The store office location has not been confirmed. Please use
+                    the contact form for assistance.
                   </div>
-
-                  <p className="mt-3 text-xs leading-5 text-gray-500">
-                    Demo location shown. Replace it with your actual office
-                    address in the contact data and map URL.
-                  </p>
                 </div>
-
 
                 <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1">
                   {contactHighlights.map((item) => (

@@ -5,17 +5,9 @@ export default function LegalDocument({ data }) {
   return (
     <main className="min-h-screen bg-stone-50 px-4 py-10 text-stone-900 sm:px-6 lg:py-16">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-8 text-sm text-stone-500">
-          <Link to="/" className="transition hover:text-amber-800">
-            Home
-          </Link>
-          <span className="mx-2">/</span>
-          <span>{data.title}</span>
-        </div>
-
         <header className="mb-10 rounded-2xl bg-amber-50 px-6 py-10 sm:px-10">
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-amber-800">
-            MOLOG · Customer Information
+            Halla Bol · Customer Information
           </p>
 
           <h1 className="text-3xl font-bold tracking-tight sm:text-5xl">
@@ -52,7 +44,7 @@ export default function LegalDocument({ data }) {
             <p className="mb-8 leading-7 text-stone-600">
               Please read the following information carefully.
               It explains the policies and conditions relevant to
-              using MOLOG.
+              using Halla Bol.
             </p>
 
             {data.sections.map((section, index) => (

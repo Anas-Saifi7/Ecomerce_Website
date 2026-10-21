@@ -12,8 +12,8 @@ import {
   nonReturnableItems,
   returnFaqs,
   returnRefundImages,
-  saveReturnRequest,
 } from "../data/returnRefundData";
+import { createEnquiry } from "../services/enquiryService.js";
 
 const ReturnRefund = () => {
   const [openFaq, setOpenFaq] = useState(null);
@@ -38,7 +38,7 @@ const ReturnRefund = () => {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     setFormMessage({ type: "", text: "" });
@@ -60,11 +60,12 @@ const ReturnRefund = () => {
     setIsSubmitting(true);
 
     try {
-      saveReturnRequest({
-        orderNumber,
+      await createEnquiry({
+        type: "return",
+        name: email,
         email,
-        reason: form.reason,
-        details,
+        subject: `Return request — Order ${orderNumber} — ${form.reason}`,
+        message: details,
       });
 
       setForm({
@@ -76,12 +77,12 @@ const ReturnRefund = () => {
 
       setFormMessage({
         type: "success",
-        text: "Demo request saved successfully in this browser. It has not been sent to Halla Bol support.",
+        text: "Your return request was sent to our team for review. This is a request, not confirmation of a refund.",
       });
     } catch {
       setFormMessage({
         type: "error",
-        text: "Unable to save the request. Check your browser storage and try again.",
+        text: "Unable to send the request. Please try again.",
       });
     } finally {
       setIsSubmitting(false);
@@ -93,12 +94,11 @@ const ReturnRefund = () => {
       <Navbar />
 
       <main>
-       
         <section className="relative flex min-h-95 items-center overflow-hidden sm:min-h-110">
           <img
             src={returnRefundImages.hero}
             alt="Halla Bol returns and refunds"
-             loading="lazy"
+            loading="lazy"
             className="absolute inset-0 h-full w-full object-cover"
             onError={(event) => {
               event.currentTarget.style.display = "none";
@@ -233,8 +233,9 @@ const ReturnRefund = () => {
             </div>
 
             <p className="mt-6 text-center text-xs leading-5 text-gray-500">
-              Demo policy: the original design specifies a 7-day return
-              window. Confirm the actual Halla Bol policy before publishing.
+              Return eligibility and time limits must be confirmed against the
+              current store policy. Submitting a request does not guarantee a
+              return or refund.
             </p>
           </div>
         </section>
@@ -251,8 +252,8 @@ const ReturnRefund = () => {
               </h2>
 
               <p className="mt-4 text-sm leading-7 text-gray-600 sm:text-base">
-                Follow these steps to request a return or report a problem
-                with an order.
+                Follow these steps to request a return or report a problem with
+                an order.
               </p>
 
               <div className="mt-8 space-y-6">
@@ -303,8 +304,8 @@ const ReturnRefund = () => {
                 </h3>
 
                 <p className="mt-3 max-w-md text-sm leading-6 text-gray-200">
-                  If something does not feel right with your order, reach
-                  out to our customer support team for guidance.
+                  If something does not feel right with your order, reach out to
+                  our customer support team for guidance.
                 </p>
               </div>
             </div>
@@ -326,8 +327,8 @@ const ReturnRefund = () => {
 
                   <p className="mt-2 text-sm leading-6 text-gray-500">
                     Some items may not qualify for standard returns due to
-                    customization, hygiene requirements, product condition
-                    or other applicable restrictions.
+                    customization, hygiene requirements, product condition or
+                    other applicable restrictions.
                   </p>
                 </div>
               </div>
@@ -366,8 +367,8 @@ const ReturnRefund = () => {
                   </h2>
 
                   <p className="mt-3 max-w-2xl text-sm leading-7 text-gray-200 sm:text-base">
-                    Keep your order number and product details ready.
-                    Contact support to discuss the available resolution.
+                    Keep your order number and product details ready. Contact
+                    support to discuss the available resolution.
                   </p>
                 </div>
 
@@ -382,7 +383,7 @@ const ReturnRefund = () => {
           </div>
         </section>
 
-        {/* Demo return request form */}
+        {/* Return request form */}
         <section id="return-request" className="scroll-mt-24 bg-white">
           <div className="mx-auto max-w-4xl px-5 py-12 sm:px-8 sm:py-16">
             <div className="text-center">
@@ -395,8 +396,8 @@ const ReturnRefund = () => {
               </h2>
 
               <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-gray-600">
-                Enter your order details and reason for return. This
-                prototype stores the request in your browser for testing.
+                Enter your order details and reason for return. Our team will
+                review your request and follow up.
               </p>
             </div>
 
@@ -520,13 +521,12 @@ const ReturnRefund = () => {
                 disabled={isSubmitting}
                 className="w-full rounded-lg bg-[#073b25] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#052d1c] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
               >
-                {isSubmitting ? "Submitting..." : "Submit Demo Request →"}
+                {isSubmitting ? "Submitting..." : "Submit Return Request →"}
               </button>
 
               <p className="text-xs leading-5 text-gray-500">
-                Do not enter passwords, OTPs or payment card details. Demo
-                requests are stored only in this browser; no support agent
-                receives them.
+                Do not enter passwords, OTPs or payment card details. Refunds
+                are reviewed and processed separately after eligibility checks.
               </p>
             </form>
           </div>
@@ -556,9 +556,7 @@ const ReturnRefund = () => {
                   >
                     <button
                       type="button"
-                      onClick={() =>
-                        setOpenFaq(isOpen ? null : index)
-                      }
+                      onClick={() => setOpenFaq(isOpen ? null : index)}
                       aria-expanded={isOpen}
                       aria-controls={answerId}
                       className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition hover:bg-gray-50"
@@ -573,10 +571,7 @@ const ReturnRefund = () => {
                     </button>
 
                     {isOpen && (
-                      <div
-                        id={answerId}
-                        className="px-5 pb-5"
-                      >
+                      <div id={answerId} className="px-5 pb-5">
                         <p className="border-t border-gray-100 pt-4 text-sm leading-7 text-gray-500">
                           {faq.answer}
                         </p>

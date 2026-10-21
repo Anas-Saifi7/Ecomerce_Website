@@ -1,7 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { subscribe } from "../services/newsletterService.js";
+import { getPosts } from "../services/blogService.js";
 
 import {
   categories,
@@ -17,11 +19,50 @@ const Blog = () => {
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterMessage, setNewsletterMessage] = useState("");
+  const [apiArticles, setApiArticles] = useState([]);
+
+  useEffect(() => {
+    let active = true;
+    getPosts()
+      .then((result) => {
+        if (!active) return;
+        setApiArticles(
+          (result.posts || []).map((post) => ({
+            id: post._id,
+            title: post.title,
+            category: post.tags?.[0] || "Stories",
+            description: post.excerpt || post.content?.slice(0, 220) || "",
+            content: post.content,
+            image: post.image || "/images/blog-hero.jpg",
+            date: post.publishedAt
+              ? new Date(post.publishedAt).toLocaleDateString()
+              : "",
+            author: post.author,
+          })),
+        );
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const displayArticles = apiArticles.length ? apiArticles : articles;
+  const displayFeatured = apiArticles[0] || featuredArticle;
+  const displayPopular = apiArticles.length
+    ? apiArticles.slice(0, 3)
+    : popularArticles;
+  const displayCategories = apiArticles.length
+    ? [
+        "All Articles",
+        ...new Set(apiArticles.map((article) => article.category)),
+      ]
+    : categories;
 
   const filteredArticles = useMemo(() => {
     const query = search.trim().toLowerCase();
 
-    return articles.filter((article) => {
+    return displayArticles.filter((article) => {
       const matchesCategory =
         activeCategory === "All Articles" ||
         article.category === activeCategory;
@@ -37,7 +78,7 @@ const Blog = () => {
 
       return matchesCategory && searchableText.includes(query);
     });
-  }, [activeCategory, search]);
+  }, [activeCategory, search, displayArticles]);
 
   const handleCategory = (category) => {
     setActiveCategory(category);
@@ -48,8 +89,8 @@ const Blog = () => {
     setSearch(tag);
   };
 
-  // Demo newsletter signup using localStorage
-  const handleNewsletterSubmit = (e) => {
+  // Subscribe through the shared newsletter API.
+  const handleNewsletterSubmit = async (e) => {
     e.preventDefault();
 
     const email = newsletterEmail.trim().toLowerCase();
@@ -60,31 +101,12 @@ const Blog = () => {
     }
 
     try {
-      const savedEmails = JSON.parse(
-        localStorage.getItem("halla bol_blog_subscribers") || "[]"
-      );
-
-      if (!Array.isArray(savedEmails)) {
-        throw new Error("Invalid subscriber data");
-      }
-
-      if (savedEmails.includes(email)) {
-        setNewsletterMessage("This email is already subscribed.");
-        return;
-      }
-
-      savedEmails.push(email);
-
-      localStorage.setItem(
-        "hala Bol_subscribers",
-        JSON.stringify(savedEmails)
-      );
-
+      await subscribe(email);
       setNewsletterEmail("");
       setNewsletterMessage("Thank you! You have subscribed successfully.");
-    } catch {
+    } catch (error) {
       setNewsletterMessage(
-        "Unable to save your subscription. Please try again."
+        error.message || "Unable to save your subscription. Please try again.",
       );
     }
   };
@@ -121,7 +143,7 @@ const Blog = () => {
       <section className="relative flex min-h-75 items-center overflow-hidden sm:min-h-90 lg:min-h-105">
         <BlogImage
           src="/images/blog-hero.jpg"
-           loading="lazy"
+          loading="lazy"
           alt="Indian spices and traditional products"
           className="absolute inset-0 h-full w-full object-cover"
         />
@@ -164,7 +186,7 @@ const Blog = () => {
       >
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-5">
           <div className="flex gap-2 overflow-x-auto pb-1">
-            {categories.map((category) => (
+            {displayCategories.map((category) => (
               <button
                 key={category}
                 type="button"
@@ -185,16 +207,14 @@ const Blog = () => {
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-5">
         <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_310px]">
-         
           <div className="min-w-0">
-        
             {activeCategory === "All Articles" && !search.trim() && (
               <article className="mb-8 overflow-hidden rounded-xl border border-gray-200 bg-white">
                 <div className="grid md:grid-cols-2">
                   <div className="relative min-h-60 overflow-hidden bg-[#eff7e9] sm:min-h-75">
                     <BlogImage
-                      src={featuredArticle.image}
-                      alt={featuredArticle.title}
+                      src={displayFeatured.image}
+                      alt={displayFeatured.title}
                       className="absolute inset-0 h-full w-full object-cover transition duration-500 hover:scale-105"
                     />
 
@@ -206,25 +226,25 @@ const Blog = () => {
                   <div className="flex flex-col justify-center p-5 sm:p-7 lg:p-8">
                     <div className="mb-3 flex flex-wrap items-center gap-2 text-xs">
                       <span className="rounded-full bg-[#e4f1e6] px-3 py-1 font-medium text-[#075631]">
-                        {featuredArticle.category}
+                        {displayFeatured.category}
                       </span>
 
                       <span className="text-gray-400">
-                        {featuredArticle.date}
+                        {displayFeatured.date}
                       </span>
                     </div>
 
                     <h2 className="font-serif text-2xl font-bold leading-tight sm:text-3xl">
-                      {featuredArticle.title}
+                      {displayFeatured.title}
                     </h2>
 
                     <p className="mt-4 text-sm leading-6 text-gray-600">
-                      {featuredArticle.description}
+                      {displayFeatured.description}
                     </p>
 
                     <button
                       type="button"
-                      onClick={() => openArticle(featuredArticle)}
+                      onClick={() => openArticle(displayFeatured)}
                       className="mt-6 inline-flex w-fit items-center rounded-md bg-[#075631] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#064524]"
                     >
                       Read Full Story <span className="ml-2">→</span>
@@ -234,7 +254,6 @@ const Blog = () => {
               </article>
             )}
 
-           
             <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-[#075631]">
@@ -270,7 +289,6 @@ const Blog = () => {
               </div>
             )}
 
-          
             {filteredArticles.length > 0 ? (
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
                 {filteredArticles.map((article) => (
@@ -282,7 +300,7 @@ const Blog = () => {
                       <BlogImage
                         src={article.image}
                         alt={article.title}
-                         loading="lazy"
+                        loading="lazy"
                         className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                       />
 
@@ -336,18 +354,11 @@ const Blog = () => {
             )}
           </div>
 
-         
           <aside className="space-y-5">
-         
             <section className="rounded-xl border border-gray-200 bg-white p-5">
-              <h2 className="font-serif text-xl font-bold">
-                Search Articles
-              </h2>
+              <h2 className="font-serif text-xl font-bold">Search Articles</h2>
 
-              <form
-                className="mt-4 flex"
-                onSubmit={(e) => e.preventDefault()}
-              >
+              <form className="mt-4 flex" onSubmit={(e) => e.preventDefault()}>
                 <input
                   type="search"
                   value={search}
@@ -367,21 +378,21 @@ const Blog = () => {
               </form>
             </section>
 
-           
             <section className="rounded-xl border border-gray-200 bg-white p-5">
               <h2 className="mb-4 font-serif text-xl font-bold">
                 Popular Articles
               </h2>
 
               <div className="space-y-4">
-                {popularArticles.map((article) => (
+                {displayPopular.map((article) => (
                   <button
                     type="button"
                     key={article.id}
                     onClick={() => {
                       const match =
-                        articles.find((item) => item.id === article.id) ||
-                        featuredArticle;
+                        displayArticles.find(
+                          (item) => item.id === article.id,
+                        ) || displayFeatured;
 
                       openArticle(match);
                     }}
@@ -409,24 +420,24 @@ const Blog = () => {
               </div>
             </section>
 
-         
             <section className="rounded-xl border border-[#dcebd5] bg-[#eff7e9] p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h2 className="font-serif text-xl font-bold">
-                    Stay Updated
-                  </h2>
+                  <h2 className="font-serif text-xl font-bold">Stay Updated</h2>
 
                   <p className="mt-2 text-sm leading-6 text-gray-600">
-                    Get the latest stories, product news and updates from
-                    Halla Bol.
+                    Get the latest stories, product news and updates from Halla
+                    Bol.
                   </p>
                 </div>
 
                 <span className="text-3xl text-[#075631]">♧</span>
               </div>
 
-              <form onSubmit={handleNewsletterSubmit} className="mt-4 space-y-3">
+              <form
+                onSubmit={handleNewsletterSubmit}
+                className="mt-4 space-y-3"
+              >
                 <input
                   type="email"
                   value={newsletterEmail}
@@ -448,17 +459,13 @@ const Blog = () => {
                 </button>
 
                 {newsletterMessage && (
-                  <p
-                    role="status"
-                    className="text-xs leading-5 text-[#073b25]"
-                  >
+                  <p role="status" className="text-xs leading-5 text-[#073b25]">
                     {newsletterMessage}
                   </p>
                 )}
               </form>
             </section>
 
-         
             <section className="rounded-xl border border-gray-200 bg-white p-5">
               <h2 className="mb-4 font-serif text-xl font-bold">
                 Popular Tags
@@ -499,7 +506,6 @@ const Blog = () => {
         </div>
       </main>
 
-   
       <section className="border-y border-gray-200 bg-white">
         <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-5 py-8 sm:px-6 md:grid-cols-4 lg:px-5">
           {[
@@ -524,16 +530,11 @@ const Blog = () => {
               description: "We're here to help",
             },
           ].map((item) => (
-            <div
-              key={item.title}
-              className="flex items-center gap-3"
-            >
+            <div key={item.title} className="flex items-center gap-3">
               <span className="text-3xl text-[#073b25]">{item.icon}</span>
 
               <div>
-                <h3 className="text-xs font-bold sm:text-sm">
-                  {item.title}
-                </h3>
+                <h3 className="text-xs font-bold sm:text-sm">{item.title}</h3>
 
                 <p className="mt-1 text-[10px] leading-4 text-gray-500 sm:text-xs">
                   {item.description}
@@ -546,7 +547,6 @@ const Blog = () => {
 
       <Footer />
 
-    
       {selectedArticle && (
         <div
           className="fixed inset-0 z-100 flex items-center justify-center bg-black/70 p-4"
@@ -578,9 +578,7 @@ const Blog = () => {
                   {selectedArticle.category}
                 </span>
 
-                <span className="text-gray-500">
-                  {selectedArticle.date}
-                </span>
+                <span className="text-gray-500">{selectedArticle.date}</span>
               </div>
 
               <h2 className="mt-4 font-serif text-2xl font-bold leading-tight sm:text-4xl">

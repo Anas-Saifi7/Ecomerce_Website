@@ -26,12 +26,11 @@ const ShippingPolicy = () => {
       <Navbar />
 
       <main>
-       
         <section className="relative min-h-95 overflow-hidden sm:min-h-110">
           <img
             src={shippingPolicyImages.hero}
             alt="Halla Bol shipping and delivery"
-             loading="lazy"
+            loading="lazy"
             className="absolute inset-0 h-full w-full object-cover"
             onError={(event) => {
               event.currentTarget.style.display = "none";
@@ -58,7 +57,6 @@ const ShippingPolicy = () => {
           </div>
         </section>
 
-   
         <section className="bg-[#f5f7f2]">
           <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16">
             <div className="mx-auto max-w-4xl text-center">
@@ -111,11 +109,7 @@ const ShippingPolicy = () => {
                 points={orderProcessingPoints}
               />
 
-              <InfoCard
-                icon="🏠"
-                title="Delivery"
-                points={deliveryPoints}
-              />
+              <InfoCard icon="🏠" title="Delivery" points={deliveryPoints} />
             </div>
           </div>
         </section>
@@ -159,7 +153,7 @@ const ShippingPolicy = () => {
                 <img
                   src={shippingPolicyImages.delivery}
                   alt="Halla Bol shipping and global delivery"
-                   loading="lazy"
+                  loading="lazy"
                   className="absolute inset-0 h-full w-full object-cover"
                   onError={(event) => {
                     event.currentTarget.style.display = "none";
@@ -186,7 +180,7 @@ const ShippingPolicy = () => {
             </div>
           </div>
         </section>
-     
+
         <section className="bg-[#f5f7f2]">
           <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16">
             <div className="mx-auto max-w-4xl text-center">
@@ -228,8 +222,8 @@ const ShippingPolicy = () => {
 
                   <p className="mt-3 max-w-2xl text-sm leading-7 text-gray-200 sm:text-base">
                     If your shipment appears delayed, damaged or delivered
-                    incorrectly, please contact our support team with your
-                    order details.
+                    incorrectly, please contact our support team with your order
+                    details.
                   </p>
                 </div>
 

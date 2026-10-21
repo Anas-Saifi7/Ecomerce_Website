@@ -72,7 +72,7 @@ export const impactStories = [
     name: "Ramesh Kumar",
     role: "Farmer, Tamil Nadu",
     quote:
-      "Partnering with MOLOG has helped us get better prices for our organic spices and support our families.",
+      "Partnering with Halla Bol has helped us get better prices for our organic spices and support our families.",
     image:
       "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=80",
   },

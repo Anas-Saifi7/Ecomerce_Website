@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
-import products from '../data/products.js'
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import { getProducts } from "../services/productService.js";
+import { mapApiProducts } from "../utils/productMapper.js";
 
 import {
   getCart,
@@ -11,152 +12,143 @@ import {
   updateCartQuantity,
   clearCart,
   addToCart,
-} from '../utils/cart'
-
-const COUPON_CODE = 'WELCOME10'
-const COUPON_DISCOUNT_RATE = 0.10
-const MINIMUM_COUPON_ORDER = 50
-const FREE_SHIPPING_THRESHOLD = 100
-const SHIPPING_CHARGE = 10
-const TAX_RATE = 0.10
+} from "../utils/cart";
+import { useCurrency } from "../context/CurrencyContext.jsx";
+import { validateCoupon } from "../services/couponService.js";
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState([])
-  const [coupon, setCoupon] = useState('')
-  const [couponApplied, setCouponApplied] = useState(false)
-  const [couponMessage, setCouponMessage] = useState('')
-  const [couponError, setCouponError] = useState(false)
+  const { currency, formatMoney, getPrice } = useCurrency();
+  const [cartItems, setCartItems] = useState([]);
+  const [catalogProducts, setCatalogProducts] = useState([]);
+  const [coupon, setCoupon] = useState("");
+  const [couponApplied, setCouponApplied] = useState(null);
+  const [couponMessage, setCouponMessage] = useState("");
+  const [couponError, setCouponError] = useState(false);
 
   useEffect(() => {
     const loadCart = () => {
-      setCartItems(getCart())
-    }
+      setCartItems(getCart());
+    };
 
-    loadCart()
+    loadCart();
 
-    window.addEventListener('cartUpdated', loadCart)
+    window.addEventListener("cartUpdated", loadCart);
 
     return () => {
-      window.removeEventListener('cartUpdated', loadCart)
-    }
-  }, [])
+      window.removeEventListener("cartUpdated", loadCart);
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    getProducts({ limit: 12, currency })
+      .then((data) => {
+        if (active)
+          setCatalogProducts(mapApiProducts(data.products || [], currency));
+      })
+      .catch(() => {
+        if (active) setCatalogProducts([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, [currency]);
 
   const totalQuantity = cartItems.reduce(
     (total, item) => total + (Number(item.quantity) || 0),
-    0
-  )
+    0,
+  );
 
   const subtotal = cartItems.reduce(
-    (total, item) =>
-      total +
-      (Number(item.price) || 0) *
-        (Number(item.quantity) || 0),
-    0
-  )
-
-  const shipping =
-    subtotal === 0 || subtotal >= FREE_SHIPPING_THRESHOLD
-      ? 0
-      : SHIPPING_CHARGE
-
-  const tax = subtotal * TAX_RATE
-
-  const discount = couponApplied
-    ? subtotal * COUPON_DISCOUNT_RATE
-    : 0
-
-  const estimatedTotal = Math.max(
+    (total, item) => total + getPrice(item) * (Number(item.quantity) || 0),
     0,
-    subtotal + shipping + tax - discount
-  )
+  );
+
+  const discount = Number(couponApplied?.discount || 0);
+
+  const estimatedTotal = Math.max(0, subtotal - discount);
 
   const updateQuantity = (id, size, change) => {
     const item = cartItems.find(
       (cartItem) =>
         String(cartItem.id) === String(id) &&
-        (cartItem.size || 'Standard') === (size || 'Standard')
-    )
+        (cartItem.size || "Standard") === (size || "Standard"),
+    );
 
-    if (!item) return
+    if (!item) return;
 
-    const newQuantity = (Number(item.quantity) || 1) + change
+    const newQuantity = (Number(item.quantity) || 1) + change;
 
-    if (newQuantity < 1) return
+    if (newQuantity < 1) return;
 
-    updateCartQuantity(id, size || 'Standard', newQuantity)
-  }
+    updateCartQuantity(id, size || "Standard", newQuantity);
+  };
 
   const removeItem = (id, size) => {
-    removeFromCart(id, size || 'Standard')
+    removeFromCart(id, size || "Standard");
 
-    setCouponApplied(false)
-    setCouponMessage('')
-  }
+    setCouponApplied(false);
+    setCouponMessage("");
+  };
 
   const handleClearCart = () => {
-    clearCart()
+    clearCart();
 
-    setCoupon('')
-    setCouponApplied(false)
-    setCouponMessage('')
-    setCouponError(false)
-  }
+    setCoupon("");
+    setCouponApplied(false);
+    setCouponMessage("");
+    setCouponError(false);
+  };
 
-  const applyCoupon = () => {
-    const enteredCode = coupon.trim().toUpperCase()
+  const applyCoupon = async () => {
+    const enteredCode = coupon.trim().toUpperCase();
 
-    setCouponApplied(false)
-    setCouponMessage('')
-    setCouponError(false)
+    setCouponApplied(false);
+    setCouponMessage("");
+    setCouponError(false);
 
     if (!enteredCode) {
-      setCouponError(true)
-      setCouponMessage('Please enter a coupon code.')
-      return
+      setCouponError(true);
+      setCouponMessage("Please enter a coupon code.");
+      return;
     }
 
-    if (enteredCode !== COUPON_CODE) {
-      setCouponError(true)
-      setCouponMessage('Invalid coupon code. Please try again.')
-      return
-    }
-
-    if (subtotal < MINIMUM_COUPON_ORDER) {
-      setCouponError(true)
+    try {
+      const result = await validateCoupon({
+        code: enteredCode,
+        subtotal,
+        currency,
+      });
+      setCouponApplied(result.coupon);
+      setCoupon(result.coupon.code);
+      setCouponError(false);
       setCouponMessage(
-        `Minimum order of $${MINIMUM_COUPON_ORDER.toFixed(2)} is required.`
-      )
-      return
+        `Coupon applied. You saved ${formatMoney(result.coupon.discount)}.`,
+      );
+    } catch (error) {
+      setCouponError(true);
+      setCouponMessage(error.message || "Invalid coupon code.");
     }
-
-    setCouponApplied(true)
-    setCoupon(COUPON_CODE)
-    setCouponError(false)
-    setCouponMessage('Coupon applied successfully! You saved 10%.')
-  }
+  };
 
   const removeCoupon = () => {
-    setCoupon('')
-    setCouponApplied(false)
-    setCouponMessage('')
-    setCouponError(false)
-  }
+    setCoupon("");
+    setCouponApplied(false);
+    setCouponMessage("");
+    setCouponError(false);
+  };
 
-  // Show actual products from products.js.
-  const recommendedProducts = products
+  const recommendedProducts = catalogProducts
     .filter(
       (product) =>
-        !cartItems.some(
-          (item) => String(item.id) === String(product.id)
-        )
+        !cartItems.some((item) => String(item.id) === String(product.id)),
     )
-    .slice(0, 4)
+    .slice(0, 4);
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
       <Navbar />
 
-      {/* Hero */}
       <section className="relative overflow-hidden">
         <img
           src="/images/Carthero.jpg"
@@ -168,11 +160,11 @@ const Cart = () => {
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 py-10 sm:px-5 sm:py-14">
           <p className="mb-3 text-xs text-white/90 sm:text-sm">
-            <Link to="/" className="hover:underline">
+            {/* <Link to="/" className="hover:underline">
               Home
             </Link>
             {' / '}
-            Shopping Cart
+            Shopping Cart */}
           </p>
 
           <h1 className="font-serif text-4xl font-bold text-white sm:text-5xl">
@@ -187,7 +179,6 @@ const Cart = () => {
 
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-5 sm:py-8">
         <div className="grid gap-5 lg:grid-cols-[1.85fr_0.8fr]">
-          {/* Cart Items */}
           <section className="overflow-hidden rounded-lg border border-gray-200">
             <div className="flex items-center justify-between gap-4 border-b border-gray-200 px-4 py-4 sm:px-5">
               <h2 className="font-serif text-xl font-bold sm:text-2xl">
@@ -217,7 +208,7 @@ const Cart = () => {
                 <div>
                   {cartItems.map((item) => (
                     <CartItem
-                      key={`${item.id}-${item.size || 'Standard'}`}
+                      key={`${item.id}-${item.size || "Standard"}`}
                       item={item}
                       updateQuantity={updateQuantity}
                       removeItem={removeItem}
@@ -243,7 +234,6 @@ const Cart = () => {
             )}
           </section>
 
-          {/* Order Summary */}
           <aside className="h-fit space-y-3 lg:sticky lg:top-4">
             <section className="rounded-lg border border-gray-200 bg-[#fcfaf5] p-4 sm:p-5">
               <h2 className="font-serif text-xl font-bold sm:text-2xl">
@@ -253,37 +243,29 @@ const Cart = () => {
               <div className="mt-5 space-y-3 text-sm">
                 <SummaryRow
                   label={`Subtotal (${totalQuantity} ${
-                    totalQuantity === 1 ? 'item' : 'items'
+                    totalQuantity === 1 ? "item" : "items"
                   })`}
-                  value={`$${subtotal.toFixed(2)}`}
+                  value={formatMoney(subtotal)}
                 />
 
                 <div>
-                  <SummaryRow
-                    label="Shipping"
-                    value={
-                      shipping === 0
-                        ? 'FREE'
-                        : `$${shipping.toFixed(2)}`
-                    }
-                  />
+                  <SummaryRow label="Shipping" value="Calculated at checkout" />
 
                   <p className="mt-1 text-[10px] text-gray-500">
-                    {subtotal >= FREE_SHIPPING_THRESHOLD
-                      ? '✓ You qualify for free shipping!'
-                      : `Free shipping on orders above $${FREE_SHIPPING_THRESHOLD}.`}
+                    Shipping depends on your destination and is confirmed at
+                    checkout.
                   </p>
                 </div>
 
                 <SummaryRow
                   label="Tax (estimated)"
-                  value={`$${tax.toFixed(2)}`}
+                  value="Calculated at checkout"
                 />
 
                 {couponApplied && (
                   <SummaryRow
-                    label="Coupon Discount (10%)"
-                    value={`-$${discount.toFixed(2)}`}
+                    label="Coupon Discount"
+                    value={`−${formatMoney(discount)}`}
                     valueClass="text-green-700"
                   />
                 )}
@@ -295,7 +277,7 @@ const Cart = () => {
                 </span>
 
                 <span className="font-serif text-xl font-bold text-[#075631] sm:text-2xl">
-                  ${estimatedTotal.toFixed(2)}
+                  {formatMoney(estimatedTotal)}
                 </span>
               </div>
 
@@ -303,14 +285,14 @@ const Cart = () => {
                 to="/check-out"
                 onClick={(event) => {
                   if (cartItems.length === 0) {
-                    event.preventDefault()
+                    event.preventDefault();
                   }
                 }}
                 aria-disabled={cartItems.length === 0}
                 className={`mt-4 flex w-full items-center justify-center gap-2 rounded-md py-3 text-sm font-semibold transition ${
                   cartItems.length === 0
-                    ? 'pointer-events-none bg-gray-300 text-gray-500'
-                    : 'bg-[#075631] text-white hover:bg-[#053f25]'
+                    ? "pointer-events-none bg-gray-300 text-gray-500"
+                    : "bg-[#075631] text-white hover:bg-[#053f25]"
                 }`}
               >
                 🔒 Proceed to Checkout →
@@ -326,13 +308,13 @@ const Cart = () => {
                 type="button"
                 onClick={() => {
                   if (cartItems.length === 0) {
-                    alert('Your cart is empty.')
-                    return
+                    alert("Your cart is empty.");
+                    return;
                   }
 
                   alert(
-                    'PayPal payment integration will be connected with the backend later.'
-                  )
+                    "PayPal payment integration will be connected with the backend later.",
+                  );
                 }}
                 className="w-full rounded-md bg-[#ffc439] py-2.5 font-bold text-[#003087] transition hover:bg-[#f5b820]"
               >
@@ -349,26 +331,24 @@ const Cart = () => {
               <div className="flex items-center gap-2">
                 <span className="text-2xl text-[#075631]">◇</span>
 
-                <h3 className="text-sm font-semibold">
-                  Have a Coupon Code?
-                </h3>
+                <h3 className="text-sm font-semibold">Have a Coupon Code?</h3>
               </div>
 
               <form
                 className="mt-3 flex gap-2"
                 onSubmit={(event) => {
-                  event.preventDefault()
-                  applyCoupon()
+                  event.preventDefault();
+                  applyCoupon();
                 }}
               >
                 <input
                   type="text"
                   value={coupon}
                   onChange={(event) => {
-                    setCoupon(event.target.value)
-                    setCouponApplied(false)
-                    setCouponMessage('')
-                    setCouponError(false)
+                    setCoupon(event.target.value);
+                    setCouponApplied(false);
+                    setCouponMessage("");
+                    setCouponError(false);
                   }}
                   placeholder="Enter coupon code"
                   aria-label="Coupon code"
@@ -398,7 +378,7 @@ const Cart = () => {
                 <p
                   role="status"
                   className={`mt-2 text-xs ${
-                    couponError ? 'text-red-600' : 'text-green-700'
+                    couponError ? "text-red-600" : "text-green-700"
                   }`}
                 >
                   {couponMessage}
@@ -406,7 +386,7 @@ const Cart = () => {
               )}
 
               <p className="mt-2 text-[10px] text-gray-500">
-                Try WELCOME10 for 10% off orders of $50 or more.
+                Coupon eligibility is confirmed by the server.
               </p>
             </section>
 
@@ -427,7 +407,7 @@ const Cart = () => {
 
                 <TrustItem
                   icon="◎"
-                  title="Global Shipping"
+                  title="Shipping options"
                   text="Available destinations depend on shipping coverage."
                 />
               </div>
@@ -440,8 +420,8 @@ const Cart = () => {
           <div className="grid grid-cols-2 gap-5 lg:grid-cols-4">
             <TrustBarItem
               icon="🚚"
-              title="Free Shipping"
-              text="On orders above $100"
+              title="Shipping"
+              text="Charges confirmed at checkout"
             />
 
             <TrustBarItem
@@ -482,10 +462,7 @@ const Cart = () => {
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
               {recommendedProducts.map((product) => (
-                <RecommendationCard
-                  key={product.id}
-                  product={product}
-                />
+                <RecommendationCard key={product.id} product={product} />
               ))}
             </div>
           </section>
@@ -494,25 +471,24 @@ const Cart = () => {
 
       <Footer />
     </div>
-  )
-}
+  );
+};
 
 /* Cart item */
 const CartItem = ({ item, updateQuantity, removeItem }) => {
-  const price = Number(item.price) || 0
-  const quantity = Number(item.quantity) || 1
-  const total = price * quantity
-  const oldPrice = Number(item.oldPrice) || 0
+  const { getPrice, formatMoney } = useCurrency();
+  const price = getPrice(item);
+  const quantity = Number(item.quantity) || 1;
+  const total = price * quantity;
+  const oldPrice = Number(item.oldPrice) || 0;
 
-  const saving =
-    oldPrice > price ? (oldPrice - price) * quantity : 0
+  const saving = oldPrice > price ? (oldPrice - price) * quantity : 0;
 
-  const size = item.size || 'Standard'
-  const tags = Array.isArray(item.tags) ? item.tags : []
+  const size = item.size || "Standard";
+  const tags = Array.isArray(item.tags) ? item.tags : [];
 
   return (
     <div className="relative border-b border-gray-100 px-4 py-4 sm:px-5">
-      {/* Desktop */}
       <div className="hidden grid-cols-[1.8fr_0.7fr_0.8fr_0.7fr] items-center gap-4 md:grid">
         <div className="flex min-w-0 items-center gap-3">
           <img
@@ -553,11 +529,11 @@ const CartItem = ({ item, updateQuantity, removeItem }) => {
         </div>
 
         <div>
-          <p className="text-sm font-semibold">${price.toFixed(2)}</p>
+          <p className="text-sm font-semibold">{formatMoney(price)}</p>
 
           {oldPrice > price && (
             <p className="mt-1 text-xs text-gray-400 line-through">
-              ${oldPrice.toFixed(2)}
+              {formatMoney(oldPrice)}
             </p>
           )}
         </div>
@@ -569,17 +545,16 @@ const CartItem = ({ item, updateQuantity, removeItem }) => {
         />
 
         <div className="text-right">
-          <p className="text-sm font-semibold">${total.toFixed(2)}</p>
+          <p className="text-sm font-semibold">{formatMoney(total)}</p>
 
           {saving > 0 && (
             <p className="mt-1 text-xs text-green-700">
-              Save ${saving.toFixed(2)}
+              Save {formatMoney(saving)}
             </p>
           )}
         </div>
       </div>
 
-      {/* Mobile */}
       <div className="md:hidden">
         <div className="flex gap-3">
           <img
@@ -625,12 +600,12 @@ const CartItem = ({ item, updateQuantity, removeItem }) => {
             <div className="mt-3 flex items-center justify-between gap-2">
               <div>
                 <span className="text-sm font-semibold">
-                  ${price.toFixed(2)}
+                  {formatMoney(price)}
                 </span>
 
                 {oldPrice > price && (
                   <span className="ml-2 text-xs text-gray-400 line-through">
-                    ${oldPrice.toFixed(2)}
+                    {formatMoney(oldPrice)}
                   </span>
                 )}
               </div>
@@ -644,23 +619,16 @@ const CartItem = ({ item, updateQuantity, removeItem }) => {
 
             <div className="mt-3 flex justify-between">
               <span className="text-xs text-gray-500">Total</span>
-              <span className="text-sm font-bold">
-                ${total.toFixed(2)}
-              </span>
+              <span className="text-sm font-bold">{formatMoney(total)}</span>
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-/* Quantity controls */
-const QuantityControl = ({
-  quantity,
-  onDecrease,
-  onIncrease,
-}) => (
+const QuantityControl = ({ quantity, onDecrease, onIncrease }) => (
   <div className="inline-flex items-center overflow-hidden rounded-md border border-gray-300">
     <button
       type="button"
@@ -685,16 +653,13 @@ const QuantityControl = ({
       +
     </button>
   </div>
-)
+);
 
-/* Empty cart */
 const EmptyCart = () => (
   <div className="flex min-h-72 flex-col items-center justify-center p-8 text-center">
     <div className="mb-4 text-6xl">🛒</div>
 
-    <h3 className="font-serif text-2xl font-bold">
-      Your Cart is Empty
-    </h3>
+    <h3 className="font-serif text-2xl font-bold">Your Cart is Empty</h3>
 
     <p className="mt-2 max-w-md text-sm text-gray-500">
       Looks like you haven't added anything to your cart yet.
@@ -707,26 +672,25 @@ const EmptyCart = () => (
       Continue Shopping →
     </Link>
   </div>
-)
+);
 
-/* Recommended product */
 const RecommendationCard = ({ product }) => {
-  const price = Number(product.price) || 0
-  const rating = Number(product.rating) || 0
-  const reviews = Number(product.reviews) || 0
+  const { formatPrice, currency } = useCurrency();
+  const rating = Number(product.rating) || 0;
+  const reviews = Number(product.reviews) || 0;
 
-  const image = product.image?.startsWith('/')
+  const image = product.image?.startsWith("/")
     ? product.image
-    : `/images/${product.image || ''}`
+    : `/images/${product.image || ""}`;
 
   const handleAddToCart = () => {
     try {
-      addToCart(product, 1, 'Standard')
-      alert(`${product.name} added to your cart.`)
+      addToCart(product, 1, "Standard", currency);
+      alert(`${product.name} added to your cart.`);
     } catch (error) {
-      alert(error.message || 'Unable to add this product to your cart.')
+      alert(error.message || "Unable to add this product to your cart.");
     }
-  }
+  };
 
   return (
     <div className="group overflow-hidden rounded-lg border border-gray-200 bg-white transition hover:shadow-md">
@@ -746,29 +710,23 @@ const RecommendationCard = ({ product }) => {
           </h3>
 
           <p className="mt-1 text-[10px] text-gray-500">
-            {product.categoryType || 'Halla Bol Product'}
+            {product.categoryType || "Halla Bol Product"}
           </p>
 
           <div className="mt-1 flex items-center gap-1">
             <span className="text-xs text-yellow-500">★</span>
 
-            <span className="text-[10px] font-medium">
-              {rating.toFixed(1)}
-            </span>
+            <span className="text-[10px] font-medium">{rating.toFixed(1)}</span>
 
-            <span className="text-[10px] text-gray-400">
-              ({reviews})
-            </span>
+            <span className="text-[10px] text-gray-400">({reviews})</span>
           </div>
 
           <div className="mt-2 flex items-center justify-between gap-1">
             <span className="text-sm font-bold text-[#075631]">
-              ${price.toFixed(2)}
+              {formatPrice(product)}
             </span>
 
-            <span className="text-[10px] text-gray-500">
-              View →
-            </span>
+            <span className="text-[10px] text-gray-500">View →</span>
           </div>
         </div>
       </Link>
@@ -780,40 +738,31 @@ const RecommendationCard = ({ product }) => {
           disabled={product.inStock === false}
           className="w-full rounded-md bg-[#075631] px-2 py-2 text-xs font-semibold text-white transition hover:bg-[#053f25] disabled:cursor-not-allowed disabled:bg-gray-400"
         >
-          {product.inStock === false ? 'Out of Stock' : 'Add to Cart'}
+          {product.inStock === false ? "Out of Stock" : "Add to Cart"}
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-/* Summary row */
-const SummaryRow = ({
-  label,
-  value,
-  valueClass = '',
-}) => (
+const SummaryRow = ({ label, value, valueClass = "" }) => (
   <div className="flex justify-between gap-4">
     <span>{label}</span>
     <span className={`font-medium ${valueClass}`}>{value}</span>
   </div>
-)
+);
 
-/* Trust bar */
 const TrustBarItem = ({ icon, title, text }) => (
   <div className="flex items-center justify-center gap-3">
-    <span className="text-2xl text-[#075631] sm:text-3xl">
-      {icon}
-    </span>
+    <span className="text-2xl text-[#075631] sm:text-3xl">{icon}</span>
 
     <div>
       <h3 className="text-xs font-semibold sm:text-sm">{title}</h3>
       <p className="mt-1 text-[10px] text-gray-500">{text}</p>
     </div>
   </div>
-)
+);
 
-/* Trust item */
 const TrustItem = ({ icon, title, text }) => (
   <div className="flex items-start gap-3">
     <span className="shrink-0 text-2xl text-[#075631]">{icon}</span>
@@ -823,6 +772,6 @@ const TrustItem = ({ icon, title, text }) => (
       <p className="mt-1 text-[10px] text-gray-500">{text}</p>
     </div>
   </div>
-)
+);
 
-export default Cart
+export default Cart;
