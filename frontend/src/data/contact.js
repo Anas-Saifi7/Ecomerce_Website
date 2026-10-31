@@ -95,17 +95,17 @@ export const contactCards = [
 
 export const contactHighlights = [
   {
-    image: "/images/contact-spices.jpg",
+    image: "/images/contact-spices.webp",
     title: "Our Commitment",
     text: "We aim to bring authentic Indian products to customers while supporting farmers and local communities.",
   },
   {
-    image: "/images/contact-sustainable.jpg",
+    image: "/images/contact-sustainable.webp",
     title: "Sustainable & Ethical",
     text: "We value responsible sourcing, thoughtful products and sustainable business practices.",
   },
   {
-    image: "/images/contact-partner.jpg",
+    image: "/images/contact-partner.webp",
     title: "Partner With Us",
     text: "We welcome relevant business collaborations, supplier enquiries and global partnerships.",
   },

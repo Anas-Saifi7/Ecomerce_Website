@@ -79,6 +79,6 @@ export const shippingFaqs = [
 ];
 
 export const shippingPolicyImages = {
-  hero: "/images/shipping-policy-hero.jpg",
-  delivery: "/images/shipping-policy.jpg",
+  hero: "/images/shipping-policy-hero.webp",
+  delivery: "/images/shipping-policy.webp",
 };

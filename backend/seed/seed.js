@@ -13,64 +13,63 @@ const categoriesData = [
     name: 'Spices & Herbs',
     slug: 'spices-herbs',
     description: 'Authentic Indian spices and aromatic herbs.',
-    image: '/images/category-1.jpg',
+    image: '/images/category-1.webp',
     sortOrder: 1,
   },
   {
     name: 'Handicrafts',
     slug: 'handicrafts',
     description: 'Beautiful handmade treasures from Indian artisans.',
-    image: '/images/category-2.jpg',
+    image: '/images/category-2.webp',
     sortOrder: 2,
   },
   {
     name: 'Textiles & Fashion',
     slug: 'textiles-fashion',
     description: 'Traditional textiles, handloom and Indian fashion.',
-    image: '/images/category-3.jpg',
+    image: '/images/category-3.webp',
     sortOrder: 3,
   },
   {
     name: 'Wellness & Ayurveda',
     slug: 'wellness-ayurveda',
     description: 'Traditional wellness and everyday self-care products.',
-    image: '/images/category-4.jpg',
+    image: '/images/category-4.webp',
     sortOrder: 4,
   },
   {
     name: 'Home & Lifestyle',
     slug: 'home-lifestyle',
     description: 'Thoughtful products for beautiful living spaces.',
-    image: '/images/category-5.jpg',
+    image: '/images/category-5.webp',
     sortOrder: 5,
   },
   {
     name: 'Food & Beverages',
     slug: 'food-beverages',
     description: 'Indian food products, teas and natural ingredients.',
-    image: '/images/category-6.jpg',
+    image: '/images/category-6.webp',
     sortOrder: 6,
   },
   {
     name: 'Eco-Friendly Products',
     slug: 'eco-friendly',
     description: 'Practical alternatives for a more sustainable lifestyle.',
-    image: '/images/category-7.jpg',
+    image: '/images/category-7.webp',
     sortOrder: 7,
   },
   {
     name: 'Art & Cultural Products',
     slug: 'art-cultural',
     description: 'Discover the rich cultural heritage of India.',
-    image: '/images/category-8.jpg',
+    image: '/images/category-8.webp',
     sortOrder: 8,
   },
 ];
 
-/** Cycle product-1..6.jpg for products 7-12 (only those image files exist in frontend). */
 const productImage = (index) => {
   const n = ((index - 1) % 6) + 1;
-  return `/images/product-${n}.jpg`;
+  return `/images/product-${n}.webp`;
 };
 
 const productsData = [

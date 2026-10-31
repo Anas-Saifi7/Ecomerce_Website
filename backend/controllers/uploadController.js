@@ -1,28 +1,61 @@
 import asyncHandler from '../utils/asyncHandler.js';
 import AppError from '../utils/AppError.js';
-import crypto from 'crypto';
+import { v2 as cloudinary } from 'cloudinary';
 
 async function storeImage(file, folder) {
-  const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } = process.env;
-  if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
-    throw new AppError('Durable image storage is not configured. Configure the Cloudinary environment variables.', 503);
+  const {
+    CLOUDINARY_CLOUD_NAME,
+    CLOUDINARY_API_KEY,
+    CLOUDINARY_API_SECRET,
+  } = process.env;
+
+  if (
+    !CLOUDINARY_CLOUD_NAME ||
+    !CLOUDINARY_API_KEY ||
+    !CLOUDINARY_API_SECRET
+  ) {
+    throw new AppError(
+      'Durable image storage is not configured.',
+      503
+    );
   }
-  const timestamp = Math.floor(Date.now() / 1000);
-  const signature = crypto.createHash('sha1')
-    .update(`folder=molog/${folder}&timestamp=${timestamp}${CLOUDINARY_API_SECRET}`)
-    .digest('hex');
-  const payload = new FormData();
-  payload.append('file', new Blob([file.buffer], { type: file.mimetype }), file.originalname);
-  payload.append('api_key', CLOUDINARY_API_KEY);
-  payload.append('timestamp', String(timestamp));
-  payload.append('folder', `molog/${folder}`);
-  payload.append('signature', signature);
-  const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, { method: 'POST', body: payload });
-  const result = await response.json().catch(() => ({}));
-  if (!response.ok || !result.secure_url) {
-    throw new AppError(result.error?.message || 'Image storage provider rejected the upload', 502);
+
+  cloudinary.config({
+    cloud_name: CLOUDINARY_CLOUD_NAME,
+    api_key: CLOUDINARY_API_KEY,
+    api_secret: CLOUDINARY_API_SECRET,
+  });
+
+  try {
+    const result = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: `molog/${folder}`,
+          resource_type: 'image',
+        },
+        (error, uploadedImage) => {
+          if (error) return reject(error);
+          resolve(uploadedImage);
+        }
+      );
+
+      stream.end(file.buffer);
+    });
+
+    return {
+      filename: result.public_id,
+      url: result.secure_url,
+      mimetype: file.mimetype,
+      size: file.size,
+    };
+  } catch (error) {
+    console.error('CLOUDINARY UPLOAD ERROR:', error.message);
+
+    throw new AppError(
+      error.message || 'Cloudinary image upload failed.',
+      502
+    );
   }
-  return { filename: result.public_id, url: result.secure_url, mimetype: file.mimetype, size: file.size };
 }
 
 export const uploadImages = asyncHandler(async (req, res) => {
@@ -31,7 +64,13 @@ export const uploadImages = asyncHandler(async (req, res) => {
   }
 
   const folder = req.baseUrl.split('/').at(-1);
-  const files = await Promise.all(req.files.map((file) => storeImage(file, folder)));
 
-  res.status(201).json({ success: true, files });
+  const files = await Promise.all(
+    req.files.map((file) => storeImage(file, folder))
+  );
+
+  res.status(201).json({
+    success: true,
+    files,
+  });
 });

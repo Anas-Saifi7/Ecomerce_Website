@@ -136,9 +136,18 @@ const ExportInquiry = () => {
 
       <section className="relative min-h-110 sm:min-h-125 overflow-hidden">
         <img
-          src="/images/Export_SupportHero.jpg"
+          src="/images/Export_SupportHero.webp"
+          alt="Indian products for international export"
+          fetchPriority="high"
+          loading="eager"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+        />
+        <img
+          src="/images/Export_SupportHero.webp"
           alt="Halla Bol Export Inquiry"
-          className="absolute inset-0 w-full h-full object-fit-cover"
+          loading="lazy"
+          className="absolute inset-0 w-full h-full object-cover object-[center_30%]"
           onError={(e) => {
             e.currentTarget.style.display = "none";
           }}
@@ -217,8 +226,9 @@ const ExportInquiry = () => {
 
             <div className="rounded-2xl overflow-hidden bg-[#f5f7f2]">
               <img
-                src="/images/export-inquiry.jpg"
+                src="/images/export-inquiry.webp"
                 alt="Indian products for export"
+                loading="lazy"
                 className="w-full h-75 sm:h-100 object-cover"
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
@@ -345,7 +355,6 @@ const ExportInquiry = () => {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Buyer Information */}
               <div>
                 <h3 className="font-serif text-2xl font-bold">
                   Buyer Information

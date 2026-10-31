@@ -3,7 +3,7 @@ export const storyHero = {
   title: "From Indian Farms to Global Homes",
   description:
     "A journey inspired by the richness of India, the people behind every product, and a commitment to a better future.",
-  image: "/images/our-story-hero.jpg",
+  image: "/images/our-story-hero.webp",
   highlights: [
     { icon: "♧", label: "Authentic Products" },
     { icon: "♟", label: "Supporting Communities" },
@@ -18,22 +18,22 @@ export const storyPurpose = {
     "Halla Bol aims to connect customers with products inspired by India's farmers, artisans, regional traditions and natural resources. Our vision is to make product discovery more meaningful while encouraging responsible sourcing.",
   cards: [
     {
-      image: "/images/purpose-1.jpg",
+      image: "/images/purpose-1.webp",
       title: "Pure & Natural",
       subtitle: "Thoughtful Products",
     },
     {
-      image: "/images/purpose-2.jpg",
+      image: "/images/purpose-2.webp",
       title: "Empowering",
       subtitle: "Farmers & Producers",
     },
     {
-      image: "/images/purpose-3.jpg",
+      image: "/images/purpose-3.webp",
       title: "Preserving",
       subtitle: "Indian Heritage",
     },
     {
-      image: "/images/purpose-4.jpg",
+      image: "/images/purpose-4.webp",
       title: "A Sustainable",
       subtitle: "Tomorrow",
     },
@@ -80,7 +80,7 @@ export const storyJourney = [
 ];
 
 export const farmerStory = {
-  image: "/images/farmer-story.jpg",
+  image: "/images/farmer-story.webp",
   eyebrow: "OUR FARMERS & COMMUNITIES",
   title: "Empowering the Hands That Feed the World",
   description:
@@ -107,7 +107,7 @@ export const sustainability = {
     { icon: "♻", title: "Mindful", subtitle: "Packaging" },
     { icon: "◇", title: "Respect for", subtitle: "Biodiversity" },
   ],
-  image: "/images/purpose-4.jpg",
+  image: "/images/purpose-4.webp",
 };
 
 export const impactStats = [
@@ -126,7 +126,7 @@ export const globalPresence = {
   title: "Indian Goodness Across Borders",
   description:
     "Discover products inspired by India's regions, craftsmanship and traditions. Our ambition is to connect these stories with customers and businesses around the world.",
-  image: "/images/world-map.jpg",
+  image: "/images/world-map.webp",
   label: "India",
   buttonText: "Explore Our Products",
   buttonLink: "/product",

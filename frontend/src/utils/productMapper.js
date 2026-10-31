@@ -2,20 +2,38 @@ import { UPLOADS_BASE } from '../config/api.js';
 import { getProductOldPrice, getProductPrice } from './currency.js';
 
 const FALLBACK_IMAGES = [
-  '/images/product-1.jpg',
-  '/images/product-2.jpg',
-  '/images/product-3.jpg',
-  '/images/product-4.jpg',
-  '/images/product-5.jpg',
-  '/images/product-6.jpg',
+  "/images/product-1.webp",
+  "/images/product-2.webp",
+  "/images/product-3.webp",
+  "/images/product-4.webp",
+  "/images/product-5.webp",
+  "/images/product-6.webp",
 ];
 
+// export function resolveImageUrl(src, fallbackIndex = 0) {
+//   if (!src) return FALLBACK_IMAGES[fallbackIndex % FALLBACK_IMAGES.length];
+//   if (src.startsWith('http') || src.startsWith('/')) return src;
+//   if (src.startsWith('uploads/') || src.startsWith('uploads\\')) {
+//     return `${UPLOADS_BASE}/${src.replace(/\\/g, '/')}`;
+//   }
+//   return `/images/${src}`;
+// }
+
 export function resolveImageUrl(src, fallbackIndex = 0) {
-  if (!src) return FALLBACK_IMAGES[fallbackIndex % FALLBACK_IMAGES.length];
-  if (src.startsWith('http') || src.startsWith('/')) return src;
-  if (src.startsWith('uploads/') || src.startsWith('uploads\\')) {
-    return `${UPLOADS_BASE}/${src.replace(/\\/g, '/')}`;
+  if (!src) {
+    return FALLBACK_IMAGES[
+      Math.abs(fallbackIndex) % FALLBACK_IMAGES.length
+    ];
   }
+
+  if (/^https?:\/\//i.test(src) || src.startsWith("/")) {
+    return src;
+  }
+
+  if (src.startsWith("uploads/") || src.startsWith("uploads\\")) {
+    return `${UPLOADS_BASE}/${src.replace(/\\/g, "/")}`;
+  }
+
   return `/images/${src}`;
 }
 
@@ -68,7 +86,8 @@ export function mapApiProduct(product, currency = 'INR') {
       : Number(product.stock ?? 1) > 0,
     stock: Number(product.stock ?? 0),
     rating: product.ratingAvg ?? product.rating ?? 0,
-    reviews: product.ratingCount ?? product.reviews ?? 0,
+    // reviews: product.ratingCount ?? product.reviews ?? 0,
+    reviews: product.reviewCount ?? product.ratingCount ?? product.reviews ?? 0,
     sold: product.soldCount
       ? `${product.soldCount}+ sold`
       : product.sold || '',

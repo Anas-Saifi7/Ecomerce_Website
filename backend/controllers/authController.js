@@ -168,8 +168,8 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   await sendEmail({
     to: user.email,
     subject: 'Password Reset - Halla Bol',
-    text: `Reset your password using this link (valid 30 minutes): ${resetUrl}`,
-    html: `<p>Reset your password using this link (valid 30 minutes):</p><p><a href="${resetUrl}">${resetUrl}</a></p>`,
+    text: `Reset your password using this link (valid 5 minutes): ${resetUrl}`,
+    html: `<p>Reset your password using this link (valid 5 minutes):</p><p><a href="${resetUrl}">${resetUrl}</a></p>`,
   });
 
   res.status(200).json({

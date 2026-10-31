@@ -1,17 +1,24 @@
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 
 const sendEmail = async ({ to, subject, html, text }) => {
-  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM } = process.env;
+  const {
+    SMTP_HOST,
+    SMTP_PORT,
+    SMTP_USER,
+    SMTP_PASS,
+    SMTP_FROM,
+  } = process.env;
 
   if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
-    console.warn('Email not sent: SMTP_HOST, SMTP_USER, and SMTP_PASS must be configured.');
-    return { queued: false, logged: false };
+    throw new Error("Email service is not configured.");
   }
+
+  const port = Number(SMTP_PORT) || 587;
 
   const transporter = nodemailer.createTransport({
     host: SMTP_HOST,
-    port: Number(SMTP_PORT) || 587,
-    secure: Number(SMTP_PORT) === 465,
+    port,
+    secure: port === 465,
     auth: {
       user: SMTP_USER,
       pass: SMTP_PASS,
@@ -26,7 +33,7 @@ const sendEmail = async ({ to, subject, html, text }) => {
     text,
   });
 
-  return { queued: true, logged: false };
+  return { queued: true };
 };
 
 export default sendEmail;

@@ -11,9 +11,11 @@ const About = () => {
 
       <section className="relative min-h-98 sm:min-h-105 lg:h-88 overflow-hidden">
         <img
-          src="/images/about-hero.jpg"
+          src="/images/about-hero.webp"
           alt="Halla Bol"
-          loading="lazy"
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
           className="absolute inset-0 w-full h-full object-cover"
         />
 
@@ -42,9 +44,10 @@ const About = () => {
         <div className="grid lg:grid-cols-[1.05fr_1fr_0.7fr] gap-6 lg:gap-8 items-center">
           <div className="relative rounded-lg overflow-hidden h-70 sm:h-88 lg:h-73">
             <img
-              src="/images/about-story.jpg"
+              src="/images/about-story.webp"
               alt="Indian Farmer"
               loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover"
             />
 
@@ -180,9 +183,10 @@ const About = () => {
 
       <section className="relative overflow-hidden bg-[#063b26] text-white">
         <img
-          src="/images/about-impact.jpg"
+          src="/images/about-impact.webp"
           alt="Sustainable farming"
           loading="lazy"
+          decoding="async"
           className="absolute inset-0 w-full h-full object-cover opacity-45"
         />
 
@@ -257,7 +261,7 @@ const About = () => {
 
           <div className="relative">
             <img
-              src="/images/global-map.jpg"
+              src="/images/global-map.webp"
               alt="Illustration of a world map with India highlighted"
               loading="lazy"
               className="w-full h-auto object-contain"
@@ -269,7 +273,7 @@ const About = () => {
       <section className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-5 pb-10">
         <div className="relative rounded-lg overflow-hidden min-h-75 sm:min-h-90">
           <img
-            src="/images/farmers-community.jpg"
+            src="/images/farmers-community.webp"
             alt="Farmers and Communities"
             loading="lazy"
             className="absolute inset-0 w-full h-full object-cover"

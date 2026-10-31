@@ -8,108 +8,6 @@ export const ORDER_STORAGE_KEYS = [
   "orders",
 ];
 
-export const demoOrder = {
-  orderNumber: "M12567",
-  placedAt: "8 Oct 2026",
-  status: "In Transit",
-  trackingId: "DEMO123456789",
-  courier: "Demo Courier",
-  shippingMethod: "Standard Shipping",
-  estimatedDelivery: "15 Oct 2026",
-  location: "Mumbai, India",
-  destination: "New Delhi, India",
-  isDemo: true,
-
-  customer: {
-    name: "Sample Customer",
-    address: "Demo Address",
-    city: "New Delhi",
-    country: "India",
-    phone: "",
-  },
-
-  paymentMethod: "Online Payment",
-  shippingCost: 0,
-  tax: 12.7,
-  total: 139.7,
-
-  items: [
-    {
-      id: 1,
-      name: "Organic Turmeric Powder",
-      detail: "200g Pack",
-      quantity: 2,
-      price: 12,
-      image: "/images/product-1.jpg",
-    },
-    {
-      id: 2,
-      name: "Mixed Indian Spices",
-      detail: "500g Pack",
-      quantity: 1,
-      price: 18,
-      image: "/images/product-2.jpg",
-    },
-    {
-      id: 4,
-      name: "Handloom Silk Saree",
-      detail: "Traditional Weave",
-      quantity: 1,
-      price: 85,
-      image: "/images/product-4.jpg",
-    },
-  ],
-
-  trackingEvents: [
-    {
-      title: "Order Confirmed",
-      date: "8 Oct 2026",
-      time: "10:30 AM",
-      location: "New Delhi, India",
-      description: "Your sample order has been confirmed.",
-      icon: "✓",
-      completed: true,
-    },
-    {
-      title: "Packed",
-      date: "9 Oct 2026",
-      time: "2:15 PM",
-      location: "New Delhi, India",
-      description: "Your sample products have been packed.",
-      icon: "✓",
-      completed: true,
-    },
-    {
-      title: "Shipped",
-      date: "10 Oct 2026",
-      time: "9:20 AM",
-      location: "Mumbai, India",
-      description: "Sample shipment is on its way.",
-      icon: "▣",
-      completed: true,
-      active: true,
-    },
-    {
-      title: "Out for Delivery",
-      date: "Estimated",
-      time: "",
-      location: "New Delhi, India",
-      description: "The shipment will be marked out for delivery when applicable.",
-      icon: "◇",
-      completed: false,
-    },
-    {
-      title: "Delivered",
-      date: "Estimated",
-      time: "",
-      location: "New Delhi, India",
-      description: "The shipment will be marked delivered after successful delivery.",
-      icon: "⌂",
-      completed: false,
-    },
-  ],
-};
-
 export const fallbackRecommendations = [
   {
     id: 3,
@@ -117,7 +15,7 @@ export const fallbackRecommendations = [
     rating: "4.9",
     reviews: "150",
     price: 20,
-    image: "/images/product-3.jpg",
+    image: "/images/product-3.webp",
   },
   {
     id: 9,
@@ -125,7 +23,7 @@ export const fallbackRecommendations = [
     rating: "4.6",
     reviews: "95",
     price: 15,
-    image: "/images/blog-green-tea.jpg",
+    image: "/images/blog-green-tea.webp",
   },
   {
     id: 5,
@@ -133,7 +31,7 @@ export const fallbackRecommendations = [
     rating: "4.5",
     reviews: "60",
     price: 45,
-    image: "/images/product-5.jpg",
+    image: "/images/product-5.webp",
   },
   {
     id: 6,
@@ -141,7 +39,7 @@ export const fallbackRecommendations = [
     rating: "4.8",
     reviews: "110",
     price: 22,
-    image: "/images/product-6.jpg",
+    image: "/images/product-6.webp",
   },
   {
     id: 8,
@@ -149,7 +47,7 @@ export const fallbackRecommendations = [
     rating: "4.7",
     reviews: "75",
     price: 35,
-    image: "/images/category-5.jpg",
+    image: "/images/category-5.webp",
   },
   {
     id: 10,
@@ -157,12 +55,12 @@ export const fallbackRecommendations = [
     rating: "4.6",
     reviews: "68",
     price: 28,
-    image: "/images/product-5.jpg",
+    image: "/images/product-5.webp",
   },
 ];
 
 export function formatCurrency(value) {
-  return `$${Number(value || 0).toFixed(2)}`;
+  return `₹ ${Number(value || 0).toFixed(2)}`;
 }
 
 export function normalizeOrder(savedOrder) {
@@ -179,7 +77,7 @@ export function normalizeOrder(savedOrder) {
         detail: item.detail ?? item.size ?? item.subtitle ?? "Standard",
         quantity: Math.max(1, Number(item.quantity ?? 1)),
         price: Number(item.price ?? item.salePrice ?? 0),
-        image: item.image ?? "/images/product-1.jpg",
+        image: item.image ?? "/images/product-1.webp",
       }))
     : [];
 
@@ -259,7 +157,7 @@ export function getStoredOrders() {
       if (Array.isArray(parsed)) {
         collected.push(...parsed);
       } else if (parsed && typeof parsed === "object") {
-        // A single order, or an object containing an orders array.
+
         if (Array.isArray(parsed.orders)) {
           collected.push(...parsed.orders);
         } else {

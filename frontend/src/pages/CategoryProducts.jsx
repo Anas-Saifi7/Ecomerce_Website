@@ -17,6 +17,7 @@ const CategoryProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
+
   useEffect(() => {
     let active = true;
     setLoading(true);
@@ -130,6 +131,7 @@ const CategoryProducts = () => {
         <img
           src={category.image}
           alt={category.name}
+           loading="lazy"
           onError={(event) => {
             event.currentTarget.style.display = "none";
           }}
@@ -280,3 +282,6 @@ const CategoryProducts = () => {
 };
 
 export default CategoryProducts;
+
+
+

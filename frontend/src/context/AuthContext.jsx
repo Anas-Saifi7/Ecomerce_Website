@@ -35,7 +35,6 @@ function persistSession(token, user) {
   if (user) localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
   else localStorage.removeItem(STORAGE_KEYS.USER);
 
-  // Legacy key used by older pages
   if (user) localStorage.setItem('Halla_user', JSON.stringify(user));
   else localStorage.removeItem('Halla_user');
 }
@@ -51,51 +50,56 @@ export function AuthProvider({ children }) {
     persistSession(nextToken, nextUser);
   }, []);
 
-  const refreshUser = useCallback(async () => {
-    const currentToken = readStoredToken();
-    if (!currentToken) {
-      setUser(null);
-      setToken('');
-      return null;
-    }
+const refreshUser = useCallback(async () => {
+  try {
+    const data = await authService.getMe();
+    const nextUser = data.user;
 
-    try {
-      const data = await authService.getMe();
-      const nextUser = data.user;
-      applyAuth(currentToken, nextUser);
-      return nextUser;
-    } catch {
+    if (!nextUser) {
       applyAuth('', null);
       return null;
     }
-  }, [applyAuth]);
+    applyAuth(readStoredToken(), nextUser);
+
+    return nextUser;
+  } catch (error) {
+    applyAuth('', null);
+    return null;
+  }
+}, [applyAuth]);
 
   useEffect(() => {
-    let cancelled = false;
+  let cancelled = false;
 
-    (async () => {
-      const existing = readStoredToken();
-      if (!existing) {
-        if (!cancelled) setLoading(false);
-        return;
-      }
+  const initializeAuth = async () => {
+    try {
+     
+      const data = await authService.getMe();
 
-      try {
-        const data = await authService.getMe();
-        if (!cancelled) {
-          applyAuth(existing, data.user);
+      if (!cancelled) {
+        if (data.user) {
+          applyAuth(readStoredToken(), data.user);
+        } else {
+          applyAuth('', null);
         }
-      } catch {
-        if (!cancelled) applyAuth('', null);
-      } finally {
-        if (!cancelled) setLoading(false);
       }
-    })();
+    } catch {
+      if (!cancelled) {
+        applyAuth('', null);
+      }
+    } finally {
+      if (!cancelled) {
+        setLoading(false);
+      }
+    }
+  };
 
-    return () => {
-      cancelled = true;
-    };
-  }, [applyAuth]);
+  initializeAuth();
+
+  return () => {
+    cancelled = true;
+  };
+}, [applyAuth]);
 
   const login = useCallback(
     async (email, password) => {
@@ -142,7 +146,8 @@ export function AuthProvider({ children }) {
       user,
       token,
       loading,
-      isAuthenticated: Boolean(user && token),
+      // isAuthenticated: Boolean(user && token),
+      isAuthenticated: Boolean(user),
       isAdmin: Boolean(user && ['admin', 'manager'].includes(user.role)),
       login,
       register,

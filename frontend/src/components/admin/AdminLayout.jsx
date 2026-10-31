@@ -64,12 +64,7 @@ export default function AdminLayout() {
               <br />
               Tomorrow
             </p>
-            <Link
-              // to="/"
-              className="relative z-10 mt-5 inline-flex rounded-md border border-[#b8d8a9] px-4 py-2 text-xs transition hover:bg-white hover:text-[#073b25]"
-            >
-              View Website ↗
-            </Link>
+          
             <span className="absolute -bottom-5 -right-2 text-7xl opacity-40">
               🌿
             </span>

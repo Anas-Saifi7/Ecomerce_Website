@@ -117,7 +117,7 @@ const Account = () => {
     date: new Date(order.createdAt).toLocaleDateString(),
     images: (order.items || [])
       .slice(0, 3)
-      .map((item) => item.image || "/images/product-1.jpg"),
+      .map((item) => item.image || "/images/product-1.webp"),
     total: new Intl.NumberFormat(order.currency === "INR" ? "en-IN" : "en-US", {
       style: "currency",
       currency: order.currency,
@@ -945,6 +945,8 @@ const Account = () => {
                 <img
                   src={product.image}
                   alt={product.name}
+                  loading="lazy"
+                  decoding="async"
                   onError={(e) => {
                     e.currentTarget.style.display = "none";
                   }}
@@ -1218,13 +1220,17 @@ const Account = () => {
 
       <section className="relative h-64 overflow-hidden sm:h-72">
         <img
-          src="/images/account-hero.jpg"
+          src="/images/account-hero.webp"
           alt="My Account"
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
           className="absolute inset-0 h-full w-full object-cover"
           onError={(e) => {
             e.currentTarget.style.display = "none";
           }}
         />
+
         <div className="absolute inset-0 bg-black/55" />
         <div className="relative z-10 mx-auto flex h-full max-w-7xl items-center px-5 sm:px-8 lg:px-5">
           <div className="text-white">
@@ -1333,6 +1339,7 @@ const Account = () => {
             />
             <Input
               label="Phone Number"
+              type="number"
               name="phone"
               value={profileForm.phone}
               onChange={handleProfileChange}

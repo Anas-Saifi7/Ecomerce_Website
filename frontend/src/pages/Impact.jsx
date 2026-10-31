@@ -34,6 +34,7 @@ const Impact = () => {
           <img
             src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2000&q=90"
             alt="Indian countryside"
+            loading="lazy"
             className="absolute inset-0 h-full w-full object-cover"
           />
 

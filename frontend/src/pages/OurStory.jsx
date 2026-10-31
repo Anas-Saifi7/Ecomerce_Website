@@ -87,13 +87,14 @@ const OurStory = () => {
       <Navbar />
 
       <main>
-        <section className="relative flex min-h-130 items-center overflow-hidden sm:min-h-145 lg:min-h-155">
+        <section className="relative flex min-h-140 h-[72vh] max-h-180 items-center overflow-hidden">
           <img
             src={storyHero.image}
-            alt="Indian farming landscape"
-            loading="lazy"
-            className="absolute inset-0 h-full w-full object-fitcover"
+            alt="Indian farmer in a farming landscape"
+            loading="eager"
             fetchPriority="high"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover object-[center_30%]"
           />
 
           <div className="absolute inset-0 bg-linear-to-r from-black/75 via-black/45 to-black/15" />
@@ -371,13 +372,6 @@ const OurStory = () => {
               <h2 className="mt-3 font-serif text-3xl font-bold sm:text-4xl">
                 A Vision for Meaningful Impact
               </h2>
-              {/* 
-              {impactStatsAreDemo && (
-                <p className="mx-auto mt-3 max-w-2xl text-xs leading-5 text-amber-700">
-                  Demo statistics from the supplied design. Verify the
-                  figures before publishing them as actual company results.
-                </p>
-              )} */}
             </div>
 
             <div className="mt-10 grid grid-cols-2 gap-y-6 lg:grid-cols-4">
@@ -441,7 +435,7 @@ const OurStory = () => {
 
         <section className="relative overflow-hidden">
           <img
-            src="/images/newsletter-bg.jpg"
+            src="/images/newsletter-bg.webp"
             alt=""
             loading="lazy"
             className="absolute inset-0 h-full w-full object-cover"

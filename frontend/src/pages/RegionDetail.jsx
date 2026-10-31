@@ -113,6 +113,7 @@ const RegionDetail = () => {
         <img
           src={region.image}
           alt={details.name}
+           loading="lazy"
           className="absolute inset-0 -z-20 h-full w-full object-cover"
           onError={(event) => {
             event.currentTarget.style.display = "none";
@@ -273,6 +274,7 @@ const RegionDetail = () => {
                   src={item.image}
                   alt=""
                   className="h-16 w-16 rounded-lg bg-[#eff7e9] object-cover"
+                   loading="lazy"
                   onError={(event) => {
                     event.currentTarget.style.visibility = "hidden";
                   }}

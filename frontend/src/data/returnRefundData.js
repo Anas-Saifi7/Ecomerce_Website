@@ -108,6 +108,6 @@ export const returnFaqs = [
 ];
 
 export const returnRefundImages = {
-  hero: "/images/return-refund-hero.jpg",
-  process: "/images/return-refund.jpg",
+  hero: "/images/return-refund-hero.webp",
+  process: "/images/return-refund.webp",
 };

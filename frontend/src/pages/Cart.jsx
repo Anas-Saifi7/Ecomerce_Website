@@ -41,16 +41,42 @@ const Cart = () => {
 
   useEffect(() => {
     let active = true;
-    getProducts({ limit: 12, currency })
-      .then((data) => {
-        if (active)
-          setCatalogProducts(mapApiProducts(data.products || [], currency));
-      })
-      .catch(() => {
-        if (active) setCatalogProducts([]);
+    let idleId;
+    let timeoutId;
+
+    const loadRecommendations = () => {
+      getProducts({ limit: 8, currency })
+        .then((data) => {
+          if (active) {
+            setCatalogProducts(mapApiProducts(data.products || [], currency));
+          }
+        })
+        .catch(() => {
+          if (active) setCatalogProducts([]);
+        });
+    };
+
+    if (typeof window.requestIdleCallback === "function") {
+      idleId = window.requestIdleCallback(loadRecommendations, {
+        timeout: 1500,
       });
+    } else {
+      timeoutId = window.setTimeout(loadRecommendations, 250);
+    }
+
     return () => {
       active = false;
+
+      if (
+        idleId !== undefined &&
+        typeof window.cancelIdleCallback === "function"
+      ) {
+        window.cancelIdleCallback(idleId);
+      }
+
+      if (timeoutId !== undefined) {
+        window.clearTimeout(timeoutId);
+      }
     };
   }, [currency]);
 
@@ -151,8 +177,11 @@ const Cart = () => {
 
       <section className="relative overflow-hidden">
         <img
-          src="/images/Carthero.jpg"
+          src="/images/Carthero.webp"
           alt="Shopping Cart"
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
           className="absolute inset-0 h-full w-full object-cover"
         />
 
@@ -160,11 +189,11 @@ const Cart = () => {
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 py-10 sm:px-5 sm:py-14">
           <p className="mb-3 text-xs text-white/90 sm:text-sm">
-            {/* <Link to="/" className="hover:underline">
+            <Link to="/" className="hover:underline">
               Home
             </Link>
-            {' / '}
-            Shopping Cart */}
+            {" / "}
+            Shopping Cart
           </p>
 
           <h1 className="font-serif text-4xl font-bold text-white sm:text-5xl">
@@ -415,7 +444,6 @@ const Cart = () => {
           </aside>
         </div>
 
-        {/* Benefits */}
         <section className="mt-6 border-y border-gray-200 py-6">
           <div className="grid grid-cols-2 gap-5 lg:grid-cols-4">
             <TrustBarItem
@@ -444,7 +472,6 @@ const Cart = () => {
           </div>
         </section>
 
-        {/* Recommendations */}
         {recommendedProducts.length > 0 && (
           <section className="py-8">
             <div className="mb-4 flex items-center justify-between">
@@ -474,7 +501,6 @@ const Cart = () => {
   );
 };
 
-/* Cart item */
 const CartItem = ({ item, updateQuantity, removeItem }) => {
   const { getPrice, formatMoney } = useCurrency();
   const price = getPrice(item);
@@ -492,8 +518,12 @@ const CartItem = ({ item, updateQuantity, removeItem }) => {
       <div className="hidden grid-cols-[1.8fr_0.7fr_0.8fr_0.7fr] items-center gap-4 md:grid">
         <div className="flex min-w-0 items-center gap-3">
           <img
-            src={item.image}
-            alt={item.name}
+            src={item.image || "/images/product-placeholder.webp"}
+            alt={item.name || "Cart product"}
+            loading="lazy"
+            decoding="async"
+            width="96"
+            height="80"
             className="h-20 w-24 shrink-0 rounded-md object-cover"
           />
 
@@ -560,6 +590,7 @@ const CartItem = ({ item, updateQuantity, removeItem }) => {
           <img
             src={item.image}
             alt={item.name}
+            loading="lazy"
             className="h-24 w-24 shrink-0 rounded-md object-cover"
           />
 
@@ -697,9 +728,12 @@ const RecommendationCard = ({ product }) => {
       <Link to={`/product/${product.id}`}>
         <div className="overflow-hidden">
           <img
-            src={image}
-            alt={product.name}
+            src={image || "/images/product-placeholder.webp"}
+            alt={product.name || "Recommended product"}
             loading="lazy"
+            decoding="async"
+            width="320"
+            height="144"
             className="h-32 w-full object-cover transition duration-300 group-hover:scale-105 sm:h-36"
           />
         </div>

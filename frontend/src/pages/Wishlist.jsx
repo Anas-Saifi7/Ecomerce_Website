@@ -13,23 +13,23 @@ import { mapApiProducts } from "../utils/productMapper.js";
 const recommendations = [
   {
     name: "Traditional Spice Collection",
-    image: "/images/product-2.jpg",
+    image: "/images/product-2.webp",
   },
   {
     name: "Handcrafted Brass Decor",
-    image: "/images/product-5.jpg",
+    image: "/images/product-5.webp",
   },
   {
     name: "Organic Wellness",
-    image: "/images/product-6.jpg",
+    image: "/images/product-6.webp",
   },
   {
     name: "Textiles & Fashion",
-    image: "/images/product-4.jpg",
+    image: "/images/product-4.webp",
   },
   {
     name: "Home & Lifestyle",
-    image: "/images/product-5.jpg",
+    image: "/images/product-5.webp",
   },
 ];
 
@@ -208,7 +208,7 @@ const Wishlist = () => {
 
       <section className="relative min-h-70 sm:min-h-83 lg:h-88 overflow-hidden">
         <img
-          src="/images/wishlist-hero.jpg"
+          src="/images/wishlist-hero.webp"
           alt="My Wishlist"
           className="absolute inset-0 w-full h-full object-cover"
         />
@@ -467,7 +467,7 @@ const Wishlist = () => {
       <section className="relative overflow-hidden bg-[#f4f0df]">
         <div className="absolute inset-0">
           <img
-            src="/images/discover-products.jpg"
+            src="/images/discover-products.webp"
             alt=""
             className="w-full h-full object-cover opacity-50"
           />

@@ -57,8 +57,9 @@ const Regions = () => {
 
       <section className="relative isolate min-h-107 overflow-hidden sm:min-h-120">
         <img
-          src="/images/regions-hero.jpg"
+          src="/images/regions-hero.webp"
           alt="Discover the diverse regions of India"
+           loading="lazy"
           className="absolute inset-0 -z-20 h-full w-full object-cover"
         />
 
@@ -182,7 +183,7 @@ const Regions = () => {
 
               <div className="relative mt-5 h-72 overflow-hidden rounded-xl bg-[#073b25]">
                 <img
-                  src="/images/regions-story.jpg"
+                  src="/images/regions-story.webp"
                   alt="Indian cultural heritage"
                   loading="lazy"
                   className="absolute inset-0 h-full w-full object-cover"
@@ -391,7 +392,7 @@ const Regions = () => {
 
       <section className="relative isolate overflow-hidden bg-[#073b25]">
         <img
-          src="/images/regions-cta.jpg"
+          src="/images/regions-cta.webp"
           alt="region"
           loading="lazy"
           aria-hidden="true"

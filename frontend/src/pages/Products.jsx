@@ -198,7 +198,7 @@ const Products = () => {
   const [selectedTypes, setSelectedTypes] = useState([]);
 
   const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(500);
+  const [maxPrice, setMaxPrice] = useState(5000);
 
   const [inStock, setInStock] = useState(true);
   const [outOfStock, setOutOfStock] = useState(false);
@@ -206,6 +206,8 @@ const Products = () => {
   const [cartCount, setCartCount] = useState(0);
 
   const [page, setPage] = useState(1);
+
+  const [totalProducts, setTotalProducts] = useState(0);
 
   const categories = useMemo(
     () => countOptions(products.map((product) => product.category)),
@@ -231,24 +233,33 @@ const Products = () => {
     setPage(1);
   }, [searchParams]);
 
+
   useEffect(() => {
     let active = true;
+
     setProductsLoading(true);
-    fetchProducts({ limit: 50, currency })
+    setProductsError("");
+
+    fetchProducts({ page, limit: 12, currency })
       .then((data) => {
-        if (active) setProducts(mapApiProducts(data.products || [], currency));
+        if (!active) return;
+
+        setProducts(mapApiProducts(data.products || [], currency));
+        setTotalProducts(Number(data.total) || 0);
       })
       .catch((error) => {
-        if (active)
+        if (active) {
           setProductsError(error.message || "Unable to load products.");
+        }
       })
       .finally(() => {
         if (active) setProductsLoading(false);
       });
+
     return () => {
       active = false;
     };
-  }, [currency]);
+  }, [currency, page]);
 
   useEffect(() => {
     const updateCart = () => {
@@ -281,7 +292,7 @@ const Products = () => {
     setSelectedTypes([]);
 
     setMinPrice(0);
-    setMaxPrice(500);
+    setMaxPrice(5000);
 
     setInStock(true);
     setOutOfStock(false);
@@ -334,7 +345,7 @@ const Products = () => {
 
     if (selectedCategories.length > 0) {
       result = result.filter((product) =>
-        selectedCategories.includes(product.categoryType),
+        selectedCategories.includes(product.category),
       );
     }
 
@@ -403,19 +414,14 @@ const Products = () => {
     outOfStock,
   ]);
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredProducts.length / productsPerPage),
-  );
+
+  const totalPages = Math.max(1, Math.ceil(totalProducts / productsPerPage));
 
   const safePage = Math.min(page, totalPages);
 
   const startIndex = (safePage - 1) * productsPerPage;
 
-  const currentProducts = filteredProducts.slice(
-    startIndex,
-    startIndex + productsPerPage,
-  );
+  const currentProducts = filteredProducts;
 
   return (
     <div className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
@@ -423,8 +429,9 @@ const Products = () => {
 
       <section className="relative min-h-80 sm:min-h-90 lg:h-95 overflow-hidden">
         <img
-          src="/images/products-hero.jpg"
+          src="/images/products-hero.webp"
           alt="Indian Products"
+          loading="lazy"
           className="absolute inset-0 w-full h-full object-cover"
         />
 
@@ -545,7 +552,7 @@ const Products = () => {
                 <input
                   type="range"
                   min="0"
-                  max="500"
+                  max="5000"
                   value={minPrice}
                   onChange={(event) => {
                     const value = Number(event.target.value);
@@ -561,7 +568,7 @@ const Products = () => {
                 <input
                   type="range"
                   min="0"
-                  max="500"
+                  max="5000"
                   value={maxPrice}
                   onChange={(event) => {
                     const value = Number(event.target.value);
@@ -598,10 +605,10 @@ const Products = () => {
                   type="number"
                   value={maxPrice}
                   min={minPrice}
-                  max="500"
+                  max="5000"
                   onChange={(event) => {
                     const value = Math.min(
-                      500,
+                      5000,
                       Math.max(Number(event.target.value) || 0, minPrice),
                     );
 
@@ -687,18 +694,13 @@ const Products = () => {
             <div className="flex items-center justify-between gap-3 mb-4">
               <p className="text-xs sm:text-sm text-gray-600">
                 Showing{" "}
-                <strong>
-                  {filteredProducts.length === 0 ? 0 : startIndex + 1}
-                </strong>
+                <strong>{totalProducts === 0 ? 0 : startIndex + 1}</strong>
                 {" - "}
                 <strong>
-                  {Math.min(
-                    startIndex + productsPerPage,
-                    filteredProducts.length,
-                  )}
+                  {Math.min(startIndex + productsPerPage, totalProducts)}
                 </strong>
                 {" of "}
-                <strong>{filteredProducts.length}</strong> products
+                <strong>{totalProducts}</strong> products
               </p>
 
               <div className="hidden lg:flex items-center gap-2">
@@ -726,7 +728,7 @@ const Products = () => {
               selectedCertifications.length > 0 ||
               selectedTypes.length > 0 ||
               minPrice > 0 ||
-              maxPrice < 500 ||
+              maxPrice < 5000 ||
               !inStock ||
               outOfStock) && (
               <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -809,7 +811,7 @@ const Products = () => {
               </div>
             )}
 
-            {filteredProducts.length > 0 && (
+            {totalProducts > 0 && (
               <div className="flex items-center justify-center gap-1.5 mt-7 flex-wrap">
                 <button
                   type="button"

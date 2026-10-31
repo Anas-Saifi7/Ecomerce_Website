@@ -25,7 +25,7 @@ const formatMoney = (amount, currency) => {
 };
 
 const getProductImage = (image) => {
-  if (!image) return "/images/hero.jpg";
+  if (!image) return "/images/hero.webp";
   if (image.startsWith("/") || image.startsWith("http")) return image;
   return `/images/${image}`;
 };
@@ -621,11 +621,11 @@ const Checkout = () => {
     <div className="min-h-screen bg-white text-gray-900">
       <Navbar />
 
-      {/* Hero */}
       <section className="relative overflow-hidden">
         <img
-          src="/images/hero.jpg"
+          src="/images/hero.webp"
           alt="Halla Bol checkout"
+           loading="lazy"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black/55" />
@@ -641,7 +641,6 @@ const Checkout = () => {
         </div>
       </section>
 
-      {/* Checkout steps */}
       <section className="max-w-4xl mx-auto px-4 sm:px-5 py-5">
         <div className="flex items-center justify-between">
           <CheckoutStep
@@ -668,7 +667,6 @@ const Checkout = () => {
               </div>
             )}
 
-            {/* Shipping information */}
             <section className="border border-gray-200 rounded-xl p-4 sm:p-6">
               <SectionTitle
                 number="1"
@@ -811,7 +809,6 @@ const Checkout = () => {
               )}
             </section>
 
-            {/* Billing address */}
             <section className="border border-gray-200 rounded-xl p-4 sm:p-6 bg-[#fcfbf8]">
               <SectionTitle number="2" title="Billing Address" />
 
@@ -888,7 +885,6 @@ const Checkout = () => {
               )}
             </section>
 
-            {/* Shipping method */}
             <section className="border border-gray-200 rounded-xl p-4 sm:p-6">
               <SectionTitle number="3" title="Shipping Method" />
 
@@ -910,7 +906,7 @@ const Checkout = () => {
               </div>
             </section>
 
-            {/* Payment method */}
+           
             <section className="border border-gray-200 rounded-xl p-4 sm:p-6">
               <SectionTitle number="4" title="Payment Method" />
 
@@ -963,7 +959,6 @@ const Checkout = () => {
             </section>
           </div>
 
-          {/* Order summary */}
           <aside className="lg:sticky lg:top-4 h-fit space-y-4">
             <section className="border border-gray-200 rounded-xl p-4 sm:p-6 bg-[#fcfaf5]">
               <div className="flex items-start justify-between gap-3">
@@ -999,7 +994,7 @@ const Checkout = () => {
                       className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover shrink-0"
                       onError={(e) => {
                         e.currentTarget.onerror = null;
-                        e.currentTarget.src = "/images/hero.jpg";
+                        e.currentTarget.src = "/images/hero.webp";
                       }}
                     />
 
@@ -1082,7 +1077,6 @@ const Checkout = () => {
               </p>
             </section>
 
-            {/* Currency selector */}
             <section className="border border-gray-200 rounded-xl p-4 bg-white">
               <h3 className="font-semibold text-sm">Display Currency</h3>
               <p className="text-xs text-gray-500 mt-1">
@@ -1115,7 +1109,6 @@ const Checkout = () => {
               </div>
             </section>
 
-            {/* Coupon */}
             <section className="border border-gray-200 rounded-xl p-4 bg-[#fcfaf5]">
               <h3 className="font-semibold text-sm">Have a Coupon Code?</h3>
 
@@ -1150,7 +1143,6 @@ const Checkout = () => {
               )}
             </section>
 
-            {/* Place order */}
             <section className="border border-gray-200 rounded-xl p-4">
               <button
                 type="button"
@@ -1200,7 +1192,6 @@ const Checkout = () => {
               )}
             </section>
 
-            {/* Trust information */}
             <section className="bg-[#faf8ef] rounded-xl p-4">
               <div className="grid grid-cols-2 gap-4">
                 <TrustItem

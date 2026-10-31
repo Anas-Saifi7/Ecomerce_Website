@@ -12,7 +12,9 @@ const toQuery = (params = {}) => {
 };
 
 export const getProducts = (params) =>
-  get(`/products${toQuery(params)}`, { auth: String(params?.includeInactive) !== 'true' });
+  get(`/products${toQuery(params)}`, {
+    auth: String(params?.includeInactive) !== 'true',
+  });
 
 export const getProduct = (idOrSlug) =>
   get(`/products/${idOrSlug}`, { auth: false });

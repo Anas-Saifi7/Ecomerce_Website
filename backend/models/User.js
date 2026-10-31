@@ -1,59 +1,65 @@
-import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const addressSchema = new mongoose.Schema(
   {
-    label: { type: String, default: 'Home' },
+    label: { type: String, default: "Home" },
     fullName: { type: String, required: true, trim: true },
     phone: { type: String, required: true, trim: true },
     line1: { type: String, required: true, trim: true },
-    line2: { type: String, trim: true, default: '' },
+    line2: { type: String, trim: true, default: "" },
     city: { type: String, required: true, trim: true },
     state: { type: String, required: true, trim: true },
     postalCode: { type: String, required: true, trim: true },
-    country: { type: String, required: true, trim: true, default: 'India' },
+    country: { type: String, required: true, trim: true, default: "India" },
     isDefault: { type: Boolean, default: false },
   },
-  { _id: true }
+  { _id: true },
 );
 
 const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, 'Name is required'],
+      required: [true, "Name is required"],
       trim: true,
       maxlength: 100,
     },
     email: {
       type: String,
-      required: [true, 'Email is required'],
+      required: [true, "Email is required"],
       unique: true,
       lowercase: true,
       trim: true,
-      match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email'],
+      match: [/^\S+@\S+\.\S+$/, "Please provide a valid email"],
     },
     password: {
       type: String,
-      required: [true, 'Password is required'],
+      required: [true, "Password is required"],
       minlength: 6,
       select: false,
     },
     role: {
       type: String,
-      enum: ['customer', 'admin', 'manager'],
-      default: 'customer',
+      enum: ["customer", "admin", "manager"],
+      default: "customer",
+    },
+
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
     },
     phone: {
       type: String,
       trim: true,
-      default: '',
+      default: "",
     },
     addresses: [addressSchema],
     wishlist: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
+        ref: "Product",
       },
     ],
     preferences: {
@@ -79,18 +85,20 @@ const userSchema = new mongoose.Schema(
         return ret;
       },
     },
-  }
+  },
 );
 
-userSchema.pre('save', async function hashPassword() {
-  if (!this.isModified('password')) return;
+userSchema.pre("save", async function hashPassword() {
+  if (!this.isModified("password")) return;
   this.password = await bcrypt.hash(this.password, 12);
 });
 
-userSchema.methods.matchPassword = async function matchPassword(enteredPassword) {
+userSchema.methods.matchPassword = async function matchPassword(
+  enteredPassword,
+) {
   return bcrypt.compare(enteredPassword, this.password);
 };
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 
 export default User;

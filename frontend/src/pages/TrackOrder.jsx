@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
@@ -15,6 +15,10 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { useWishlist } from "../context/WishlistContext.jsx";
 
 import { formatCurrency, normalizeOrder } from "../data/trackOrderData";
+
+import { io } from "socket.io-client";
+import { API_BASE_URL } from "../config/api.js";
+import { STORAGE_KEYS } from "../components/config/storageKeys.js";
 
 const TrackOrder = () => {
   const [searchParams] = useSearchParams();
@@ -37,6 +41,10 @@ const TrackOrder = () => {
   const [copied, setCopied] = useState(false);
   const [toast, setToast] = useState("");
   const [zoom, setZoom] = useState(1);
+  
+  const socketRef = useRef(null);
+
+
   const money = (amount) =>
     new Intl.NumberFormat(order?.currency === "USD" ? "en-US" : "en-IN", {
       style: "currency",
@@ -64,69 +72,144 @@ const TrackOrder = () => {
     };
   }, [order?.currency]);
 
+
+  useEffect(() => {
+  return () => {
+    socketRef.current?.disconnect();
+    socketRef.current = null;
+  };
+}, []);
+  
   const showToast = (message) => {
     setToast(message);
   };
+  
+const handleTrack = async (event) => {
+  event.preventDefault();
 
-  const handleTrack = async (event) => {
-    event.preventDefault();
+  const query = orderNumber.trim();
 
-    const query = orderNumber.trim();
+  if (!query) {
+    setSearchError("Please enter your order number.");
+    setSearched(false);
+    return;
+  }
 
-    if (!query) {
-      setSearchError("Please enter your order number.");
-      setSearched(false);
-      return;
+  try {
+    if (!isAuthenticated && !email.trim()) {
+      throw new Error("Enter the email address used for this order.");
     }
 
-    try {
-      if (!isAuthenticated && !email.trim())
-        throw new Error("Enter the email address used for this order.");
-      const response = isAuthenticated
-        ? await getOrder(query)
-        : await fetchTrackedOrder(query, email.trim());
-      const raw = response.order;
-      const mapped = normalizeOrder({
-        ...raw,
-        total: raw.pricing?.total,
-        shippingCost: raw.pricing?.shipping,
-        tax: raw.pricing?.tax,
-        paymentMethod: raw.payment?.method,
-        trackingEvents: (raw.tracking || []).map((event) => ({
-          title: event.status,
-          description: event.note,
-          date: new Date(event.at).toLocaleDateString(),
-          time: new Date(event.at).toLocaleTimeString(),
-          location: "",
-          completed: true,
-          active: event.status === raw.status,
-          icon: "◇",
-        })),
-        items: (raw.items || []).map((item) => {
-          const product =
-            item.product && typeof item.product === "object"
-              ? item.product
-              : null;
-          return {
-            ...item,
-            id: product?._id || item.product,
-            name: item.name || product?.name,
-            image: item.image || product?.image || product?.images?.[0],
-            detail: item.size,
-            price: item.price,
-          };
-        }),
-      });
-      setOrder(mapped);
-      setOrderNumber(mapped.orderNumber);
-      setSearchError("");
-      setSearched(true);
-      setToast("");
-    } catch (err) {
-      setSearchError(err.message || "Order could not be found.");
-      setSearched(false);
+    const response = isAuthenticated
+      ? await getOrder(query)
+      : await fetchTrackedOrder(query, email.trim());
+
+    const raw = response.order;
+
+    const mapped = normalizeOrder({
+      ...raw,
+      total: raw.pricing?.total,
+      shippingCost: raw.pricing?.shipping,
+      tax: raw.pricing?.tax,
+      paymentMethod: raw.payment?.method,
+      trackingEvents: (raw.tracking || []).map((event) => ({
+        title: event.status,
+        description: event.note,
+        date: new Date(event.at).toLocaleDateString(),
+        time: new Date(event.at).toLocaleTimeString(),
+        location: "",
+        completed: true,
+        active: event.status === raw.status,
+        icon: "◇",
+      })),
+      items: (raw.items || []).map((item) => {
+        const product =
+          item.product && typeof item.product === "object"
+            ? item.product
+            : null;
+
+        return {
+          ...item,
+          id: product?._id || item.product,
+          name: item.name || product?.name,
+          image: item.image || product?.image || product?.images?.[0],
+          detail: item.size,
+          price: item.price,
+        };
+      }),
+    });
+
+    setOrder(mapped);
+    setOrderNumber(mapped.orderNumber);
+    setSearchError("");
+    setSearched(true);
+    setToast("");
+
+    // Close any previous order socket.
+    socketRef.current?.disconnect();
+    socketRef.current = null;
+
+    // Connect only for authenticated users.
+    if (isAuthenticated && raw._id) {
+      const token =
+        localStorage.getItem(STORAGE_KEYS.TOKEN) ||
+        localStorage.getItem(STORAGE_KEYS.ADMIN_TOKEN) ||
+        "";
+
+      if (token) {
+        const socketUrl = API_BASE_URL.replace(
+          /\/api\/v1\/?$/,
+          ""
+        );
+
+        const socket = io(socketUrl, {
+          auth: { token },
+        });
+
+        socketRef.current = socket;
+
+        socket.on("connect", () => {
+          socket.emit("order:join", String(raw._id));
+        });
+
+        socket.on("order:updated", (update) => {
+          if (String(update.orderId) !== String(raw._id)) {
+            return;
+          }
+
+          const updatedTrackingEvents = (update.tracking || []).map(
+            (event) => ({
+              title: event.status,
+              description: event.note,
+              date: new Date(event.at).toLocaleDateString(),
+              time: new Date(event.at).toLocaleTimeString(),
+              location: "",
+              completed: true,
+              active: event.status === update.status,
+              icon: "◇",
+            })
+          );
+
+          setOrder((current) => ({
+            ...current,
+            status: update.status,
+            trackingEvents: updatedTrackingEvents,
+          }));
+        });
+
+        socket.on("connect_error", (error) => {
+          console.error(
+            "Order tracking socket error:",
+            error.message
+          );
+        });
+      }
     }
-  };
+  } catch (err) {
+    setSearchError(err.message || "Order could not be found.");
+    setSearched(false);
+  }
+};
 
   const handleCopyTracking = async () => {
     if (!order?.trackingId) {
@@ -288,9 +371,9 @@ const TrackOrder = () => {
       <section className="relative overflow-hidden bg-[#073b25]">
         <div className="relative min-h-110 sm:min-h-120">
           <img
-            src="/images/track-order-hero.jpg"
+            src="/images/track-order-hero.webp"
             alt="Track your Halla Bol order"
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover object-[center_30%]"
             onError={(event) => {
               event.currentTarget.style.display = "none";
             }}
@@ -593,7 +676,7 @@ const TrackOrder = () => {
 
               <div className="hidden">
                 <img
-                  src="/images/tracking-map.jpg"
+                  src="/images/tracking-map.webp"
                   alt=""
                   className="absolute inset-0 h-full w-full object-cover"
                   style={{
@@ -729,7 +812,7 @@ const TrackOrder = () => {
                         alt={item.name}
                         loading="lazy"
                         onError={(event) => {
-                          event.currentTarget.src = "/images/product-1.jpg";
+                          event.currentTarget.src = "/images/product-1.webp";
                         }}
                         className="h-14 w-14 shrink-0 rounded-md bg-gray-100 object-cover"
                       />
@@ -850,7 +933,7 @@ const TrackOrder = () => {
                         alt={productName}
                         loading="lazy"
                         onError={(event) => {
-                          event.currentTarget.src = "/images/product-1.jpg";
+                          event.currentTarget.src = "/images/product-1.webp";
                         }}
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />

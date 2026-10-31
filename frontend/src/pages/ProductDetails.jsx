@@ -13,6 +13,8 @@ import { useCurrency } from "../context/CurrencyContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import { createReview, getProductReviews } from "../services/reviewService.js";
 
+import { useWishlist } from "../context/WishlistContext.jsx";
+
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -35,6 +37,7 @@ const ProductDetails = () => {
   const [addedMessage, setAddedMessage] = useState("");
   const [isAdding, setIsAdding] = useState(false);
 
+  const [isWishlisted, setIsWishlisted] = useState(false);
   // Reset state whenever product changes
   useEffect(() => {
     let active = true;
@@ -236,12 +239,30 @@ const ProductDetails = () => {
                 </div>
               )}
 
-              <button
+              {/* update this */}
+              {/* <button
                 type="button"
                 aria-label="Add to wishlist"
                 className="absolute top-4 right-4 w-11 h-11 bg-white/95 rounded-full flex items-center justify-center text-xl shadow hover:text-red-500 transition"
               >
                 ♡
+              </button> */}
+
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  onWishlist(product);
+                }}
+                className={`absolute top-3 right-3 w-9 h-9 rounded-full bg-white/95 flex items-center justify-center text-lg shadow transition ${
+                  isWishlisted
+                    ? "text-red-500"
+                    : "text-gray-700 hover:text-red-500"
+                }`}
+                aria-label={`Add ${product.name} to wishlist`}
+              >
+                {isWishlisted ? "♥" : "♡"}
               </button>
             </div>
 
@@ -306,7 +327,6 @@ const ProductDetails = () => {
 
             <div className="flex items-center flex-wrap gap-3 mt-6">
               <span className="text-3xl font-bold text-[#075631]">
-                {/* $ */}
                 {formatPrice(product)}
               </span>
 
@@ -721,7 +741,7 @@ const ProductDetails = () => {
 
                     <div className="mt-3">
                       <span className="font-bold text-[#075631]">
-                        ${Number(item.price || 0).toFixed(2)}
+                        ₹ {Number(item.price || 0).toFixed(2)}
                       </span>
 
                       {item.oldPrice && (

@@ -81,8 +81,9 @@ const FAQ = () => {
 
       <section className="relative flex min-h-90 items-center overflow-hidden sm:min-h-100 lg:min-h-108">
         <img
-          src="/images/faq-hero.jpg"
-          alt="XYZ customer support"
+          src="/images/faq-hero.webp"
+          alt="Halla Bol customer support"
+           loading="lazy"
           className="absolute inset-0 h-full w-full object-cover"
         />
 
@@ -492,7 +493,7 @@ const FAQ = () => {
 
             <div className="relative min-h-45 overflow-hidden rounded-lg">
               <img
-                src="/images/faq-support.jpg"
+                src="/images/faq-support.webp"
                 alt="Halla Bol products and customer support"
                 loading="lazy"
                 className="absolute inset-0 h-full w-full object-cover"

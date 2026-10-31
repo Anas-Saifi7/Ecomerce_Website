@@ -33,7 +33,7 @@ const Blog = () => {
             category: post.tags?.[0] || "Stories",
             description: post.excerpt || post.content?.slice(0, 220) || "",
             content: post.content,
-            image: post.image || "/images/blog-hero.jpg",
+            image: post.image || "/images/blog-hero.webp",
             date: post.publishedAt
               ? new Date(post.publishedAt).toLocaleDateString()
               : "",
@@ -124,12 +124,21 @@ const Blog = () => {
     setActiveCategory("All Articles");
   };
 
-  const BlogImage = ({ src, alt, className = "" }) => (
+  const BlogImage = ({
+    src,
+    alt,
+    className = "",
+    loading = "lazy",
+    fetchPriority,
+  }) => (
     <img
       src={src}
       alt={alt}
-      loading="lazy"
+      loading={loading}
+      fetchPriority={fetchPriority}
+      decoding="async"
       onError={(e) => {
+        e.currentTarget.onerror = null;
         e.currentTarget.style.display = "none";
       }}
       className={className}
@@ -142,9 +151,10 @@ const Blog = () => {
 
       <section className="relative flex min-h-75 items-center overflow-hidden sm:min-h-90 lg:min-h-105">
         <BlogImage
-          src="/images/blog-hero.jpg"
-          loading="lazy"
+          src="/images/blog-hero.webp"
           alt="Indian spices and traditional products"
+          loading="eager"
+          fetchPriority="high"
           className="absolute inset-0 h-full w-full object-cover"
         />
 
@@ -402,6 +412,7 @@ const Blog = () => {
                       <BlogImage
                         src={article.image}
                         alt={article.title}
+                        loading="lazy"
                         className="h-full w-full object-cover transition group-hover:scale-105"
                       />
                     </div>
@@ -568,6 +579,7 @@ const Blog = () => {
               <BlogImage
                 src={selectedArticle.image}
                 alt={selectedArticle.title}
+                loading="lazy"
                 className="h-full w-full object-cover"
               />
             </div>

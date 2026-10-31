@@ -9,6 +9,20 @@ import Product from "../models/Product.js";
 import Coupon from "../models/Coupon.js";
 import Settings from "../models/Settings.js";
 
+const emitOrderUpdate = (req, order) => {
+  const io = req.app.get("io");
+
+  if (!io || !order?._id) return;
+
+  io.to(`order:${order._id}`).emit("order:updated", {
+    orderId: order._id.toString(),
+    orderNumber: order.orderNumber,
+    status: order.status,
+    tracking: order.tracking,
+    updatedAt: order.updatedAt,
+  });
+};
+
 export const createOrderValidators = [
   body("items")
     .isArray({ min: 1 })
@@ -364,6 +378,7 @@ export const cancelOrder = asyncHandler(async (req, res) => {
     },
     { new: true, runValidators: true },
   );
+
   if (!cancelledOrder)
     throw new AppError("Order cannot be cancelled at this stage", 409);
 
@@ -372,6 +387,8 @@ export const cancelOrder = asyncHandler(async (req, res) => {
       $inc: { stock: item.quantity, soldCount: -item.quantity },
     });
   }
+
+  emitOrderUpdate(req, cancelledOrder);
 
   res.status(200).json({ success: true, order: cancelledOrder });
 });
@@ -409,6 +426,8 @@ export const requestReturn = asyncHandler(async (req, res) => {
       "Return request already exists or order status changed",
       409,
     );
+
+  emitOrderUpdate(req, returnRequest);
 
   res.status(200).json({ success: true, order: returnRequest });
 });
@@ -524,6 +543,9 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
         $inc: { stock: item.quantity, soldCount: -item.quantity },
       });
     }
+
+    emitOrderUpdate(req, cancelledOrder);
+
     return res.status(200).json({ success: true, order: cancelledOrder });
   }
 
@@ -536,6 +558,9 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
   if (status === "cancelled") order.cancelledAt = new Date();
 
   await order.save();
+
+  emitOrderUpdate(req, order);
+
   res.status(200).json({ success: true, order });
 });
 
@@ -635,6 +660,8 @@ export const refundOrder = asyncHandler(async (req, res) => {
     note: `Refund of ${amount} ${order.currency} processed`,
   });
   await order.save();
+
+  emitOrderUpdate(req, order);
 
   res.status(200).json({ success: true, order });
 });

@@ -1,16 +1,16 @@
-import React, { useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import React, { useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [search, setSearch] = useState('')
-  const navigate = useNavigate()
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
   const submitSearch = (event) => {
-    event.preventDefault()
-    const query = search.trim()
-    if (query) navigate(`/product?search=${encodeURIComponent(query)}`)
-    setIsMenuOpen(false)
-  }
+    event.preventDefault();
+    const query = search.trim();
+    if (query) navigate(`/product?search=${encodeURIComponent(query)}`);
+    setIsMenuOpen(false);
+  };
 
   const navClass = ({ isActive }) =>
     `relative py-2 transition-colors duration-200
@@ -18,30 +18,30 @@ const Navbar = () => {
     after:bg-[#073b25] after:transition-all after:duration-300
     ${
       isActive
-        ? 'text-[#073b25] after:w-full'
-        : 'text-gray-700 after:w-0 hover:text-[#073b25] hover:after:w-full'
-    }`
+        ? "text-[#073b25] after:w-full"
+        : "text-gray-700 after:w-0 hover:text-[#073b25] hover:after:w-full"
+    }`;
 
   const mobileNavClass = ({ isActive }) =>
     `block border-b border-gray-100 py-3 font-medium transition-colors duration-200 ${
       isActive
-        ? 'text-[#073b25] border-l-4 border-l-[#073b25] pl-3 bg-green-50'
-        : 'text-gray-700 hover:text-[#073b25] hover:bg-gray-50'
-    }`
+        ? "text-[#073b25] border-l-4 border-l-[#073b25] pl-3 bg-green-50"
+        : "text-gray-700 hover:text-[#073b25] hover:bg-gray-50"
+    }`;
 
   return (
     <header className="w-full">
-
       <div className="bg-[#073b25] text-white text-[11px]">
         <div className="max-w-7xl mx-auto px-4 sm:px-5 py-2 flex items-center justify-between gap-3">
-
           <p className="truncate">
             Bringing Authentic Products from India to the World
           </p>
 
           <div className="hidden md:flex items-center gap-3 whitespace-nowrap">
-
-            <Link to="/export-inquiry" className="hover:text-[#dfe8b5] transition">
+            <Link
+              to="/export-inquiry"
+              className="hover:text-[#dfe8b5] transition"
+            >
               Export Inquiry
             </Link>
 
@@ -56,15 +56,17 @@ const Navbar = () => {
             <Link to="/support" className="hover:text-[#dfe8b5] transition">
               Support
             </Link>
-
           </div>
         </div>
       </div>
- 
-      <nav className="bg-white border-b border-gray-200">
 
+      <nav className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-5 h-16 flex items-center justify-between gap-4">
-          <Link to="/" className="shrink-0" onClick={() => setIsMenuOpen(false)}>
+          <Link
+            to="/"
+            className="shrink-0"
+            onClick={() => setIsMenuOpen(false)}
+          >
             <h1 className="font-serif text-lg sm:text-xl font-bold text-gray-800">
               Halla Bol
             </h1>
@@ -75,7 +77,6 @@ const Navbar = () => {
           </Link>
 
           <div className="hidden lg:flex items-center gap-5 xl:gap-7 text-sm font-medium">
-
             <NavLink to="/" end className={navClass}>
               Home
             </NavLink>
@@ -103,12 +104,13 @@ const Navbar = () => {
             <NavLink to="/contact" className={navClass}>
               Contact
             </NavLink>
-
           </div>
 
           <div className="flex items-center gap-3 sm:gap-4">
-
-            <form onSubmit={submitSearch} className="hidden xl:flex items-center border border-gray-300 rounded-md px-3 py-2 w-56">
+            <form
+              onSubmit={submitSearch}
+              className="hidden xl:flex items-center border border-gray-300 rounded-md px-3 py-2 w-56"
+            >
               <input
                 type="text"
                 placeholder="Search products..."
@@ -118,13 +120,20 @@ const Navbar = () => {
                 aria-label="Search products"
               />
 
-              <button type="submit" className="text-gray-500" aria-label="Submit product search">🔍</button>
+              <button
+                type="submit"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center text-gray-500"
+                aria-label="Submit product search"
+              >
+                🔍
+              </button>
             </form>
 
             <Link
               to="/account"
               title="Account"
-              className="text-xl hover:text-[#073b25] transition"
+              aria-label="Account"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center text-xl hover:text-[#073b25] transition"
             >
               👤
             </Link>
@@ -137,7 +146,6 @@ const Navbar = () => {
               ♡
             </Link>
 
-      
             <Link
               to="/cart"
               title="Cart"
@@ -149,22 +157,24 @@ const Navbar = () => {
             <button
               type="button"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden text-2xl text-gray-800 ml-1"
-              aria-label="Toggle menu"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center lg:hidden text-2xl text-gray-800 ml-1"
+              aria-label={
+                isMenuOpen ? "Close navigation menu" : "Open navigation menu"
+              }
               aria-expanded={isMenuOpen}
             >
-              {isMenuOpen ? '✕' : '☰'}
+              {isMenuOpen ? "✕" : "☰"}
             </button>
-
           </div>
         </div>
 
         {isMenuOpen && (
           <div className="lg:hidden border-t border-gray-200 bg-white">
-
             <div className="px-5 py-5">
-
-              <form onSubmit={submitSearch} className="flex items-center border border-gray-300 rounded-md px-3 py-2 mb-4">
+              <form
+                onSubmit={submitSearch}
+                className="flex items-center border border-gray-300 rounded-md px-3 py-2 mb-4"
+              >
                 <input
                   type="text"
                   placeholder="Search products..."
@@ -174,7 +184,13 @@ const Navbar = () => {
                   aria-label="Search products"
                 />
 
-                <button type="submit" className="text-gray-500" aria-label="Submit product search">🔍</button>
+                <button
+                  type="submit"
+                  className="text-gray-500"
+                  aria-label="Submit product search"
+                >
+                  🔍
+                </button>
               </form>
 
               <NavLink
@@ -235,7 +251,6 @@ const Navbar = () => {
               </NavLink>
 
               <div className="pt-5 flex flex-wrap gap-4 text-xs text-gray-500">
-
                 <Link
                   to="/export-inquiry"
                   onClick={() => setIsMenuOpen(false)}
@@ -259,15 +274,13 @@ const Navbar = () => {
                 >
                   Support
                 </Link>
-
               </div>
             </div>
           </div>
         )}
-
       </nav>
     </header>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

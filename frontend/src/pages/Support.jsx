@@ -14,6 +14,8 @@ import {
 } from "../data/supportData";
 import { createEnquiry } from "../services/enquiryService.js";
 
+import { Search } from "lucide-react";
+
 const initialFormData = {
   name: "",
   email: "",
@@ -95,7 +97,7 @@ const Support = () => {
             src={supportImages.hero}
             alt="Halla Bol customer support"
             loading="lazy"
-            className="absolute inset-0 h-full w-full object-fit-cover"
+            className="absolute inset-0 h-full w-full object-cover object-[center_30%]"
             onError={(event) => {
               event.currentTarget.style.display = "none";
             }}
@@ -109,7 +111,7 @@ const Support = () => {
                 Halla Bol Customer Care
               </p>
 
-              <h1 className="font-serif text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
+              <h1 className="font-serif text-xl font-bold leading-tight sm:text-3xl lg:text-4xl">
                 How Can We Help?
               </h1>
 
@@ -118,10 +120,17 @@ const Support = () => {
                 shipping, or contact our support team.
               </p>
 
-              <div className="relative mt-8 max-w-2xl">
+              <div className="relative mt-8 w-56 sm:w-64">
                 <label htmlFor="support-search" className="sr-only">
                   Search support questions
                 </label>
+
+                <span
+                  aria-hidden="true"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                >
+                  <Search size={18} />
+                </span>
 
                 <input
                   id="support-search"
@@ -132,15 +141,8 @@ const Support = () => {
                     setOpenFaq(null);
                   }}
                   placeholder="Search for help..."
-                  className="w-full rounded-xl bg-white px-5 py-4 pr-14 text-sm text-gray-900 shadow-lg outline-none sm:text-base"
+                  className="w-full rounded-xl bg-white py-3 pl-10 pr-3 text-sm text-gray-900 shadow-md outline-none focus:ring-2 focus:ring-green-700"
                 />
-
-                <span
-                  aria-hidden="true"
-                  className="absolute right-5 top-1/2 -translate-y-1/2 text-xl text-gray-400"
-                >
-                  ⌕
-                </span>
               </div>
             </div>
           </div>

@@ -109,8 +109,9 @@ export default function Contact() {
       <main>
         <section className="relative flex min-h-80 items-center overflow-hidden sm:min-h-95 lg:min-h-110">
           <img
-            src="/images/contact-hero.jpg"
+            src="/images/contact-hero.webp"
             alt="Indian products and spices"
+             loading="lazy"
             className="absolute inset-0 h-full w-full object-cover"
           />
 
@@ -178,11 +179,10 @@ export default function Contact() {
           </div>
         </section>
 
-        {/* Main content */}
         <section className="bg-white">
           <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
             <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-10">
-              {/* Form and FAQ */}
+          
               <div className="min-w-0">
                 <div
                   id="contact-form"
@@ -386,7 +386,6 @@ export default function Contact() {
                   </form>
                 </div>
 
-                {/* FAQ */}
                 <div className="mt-6 rounded-xl border border-gray-200 p-5 sm:p-7">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <h2 className="font-serif text-xl font-bold sm:text-2xl">
@@ -498,7 +497,7 @@ export default function Contact() {
                         src={item.image}
                         alt={item.title}
                         loading="lazy"
-                        className="h-44 w-full object-fit-cover sm:h-48"
+                        className="h-44 w-full object-cover object-[center_30%] sm:h-48"
                       />
                       <div className="p-5">
                         <span className="text-xl text-[#075631]">♧</span>

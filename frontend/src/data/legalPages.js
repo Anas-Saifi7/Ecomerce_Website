@@ -1,4 +1,3 @@
-
 export const privacyPolicy = {
   title: "Privacy Policy",
   subtitle:

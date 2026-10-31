@@ -104,7 +104,7 @@ export const supportSubjects = [
 ];
 
 export const supportImages = {
-  hero: "/images/Export_SupportHero.jpg",
+  hero: "/images/Export_SupportHero.webp",
 };
 
 export const SUPPORT_STORAGE_KEY = "Halla Bol_support_enquiries";

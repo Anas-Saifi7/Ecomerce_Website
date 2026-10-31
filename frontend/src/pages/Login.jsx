@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import { FcGoogle } from "react-icons/fc";
 
 const Login = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
@@ -57,6 +59,21 @@ const Login = () => {
       setLoading(false);
     }
   };
+
+const handleGoogleLogin = () => {
+  const requestedPath = location.state?.from?.pathname;
+
+  const destination =
+    requestedPath &&
+    requestedPath !== "/login" &&
+    requestedPath !== "/register"
+      ? requestedPath
+      : "/check-out";
+
+  window.location.assign(
+    `${API_URL.replace(/\/+$/, "")}/auth/google?returnTo=${encodeURIComponent(destination)}`
+  );
+};
 
   return (
     <div className="min-h-screen bg-[#f5f7f2] flex items-center justify-center px-4 py-6">
@@ -162,15 +179,14 @@ const Login = () => {
           <div className="flex-1 h-px bg-gray-200" />
         </div>
 
-        <button
-          type="button"
-          onClick={() =>
-            setError("Google sign-in has not been configured yet.")
-          }
-          className="w-full border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium py-3 rounded-lg transition text-sm"
-        >
-          Continue with Google
-        </button>
+       <button
+  type="button"
+  onClick={handleGoogleLogin}
+  className="w-full flex items-center justify-center gap-3 border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium py-3 rounded-lg transition text-sm"
+>
+  <FcGoogle size={20} />
+  <span>Continue with Google</span>
+</button>
 
         <p className="text-center text-sm text-gray-500 mt-7">
           Don't have an account?{" "}
