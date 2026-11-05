@@ -10,15 +10,6 @@ const FALLBACK_IMAGES = [
   "/images/product-6.webp",
 ];
 
-// export function resolveImageUrl(src, fallbackIndex = 0) {
-//   if (!src) return FALLBACK_IMAGES[fallbackIndex % FALLBACK_IMAGES.length];
-//   if (src.startsWith('http') || src.startsWith('/')) return src;
-//   if (src.startsWith('uploads/') || src.startsWith('uploads\\')) {
-//     return `${UPLOADS_BASE}/${src.replace(/\\/g, '/')}`;
-//   }
-//   return `/images/${src}`;
-// }
-
 export function resolveImageUrl(src, fallbackIndex = 0) {
   if (!src) {
     return FALLBACK_IMAGES[

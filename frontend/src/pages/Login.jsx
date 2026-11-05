@@ -60,20 +60,20 @@ const Login = () => {
     }
   };
 
-const handleGoogleLogin = () => {
-  const requestedPath = location.state?.from?.pathname;
+  const handleGoogleLogin = () => {
+    const requestedPath = location.state?.from?.pathname;
 
-  const destination =
-    requestedPath &&
-    requestedPath !== "/login" &&
-    requestedPath !== "/register"
-      ? requestedPath
-      : "/check-out";
+    const destination =
+      requestedPath &&
+      requestedPath !== "/login" &&
+      requestedPath !== "/register"
+        ? requestedPath
+        : "/check-out";
 
-  window.location.assign(
-    `${API_URL.replace(/\/+$/, "")}/auth/google?returnTo=${encodeURIComponent(destination)}`
-  );
-};
+    window.location.assign(
+      `${API_URL.replace(/\/+$/, "")}/auth/google?returnTo=${encodeURIComponent(destination)}`,
+    );
+  };
 
   return (
     <div className="min-h-screen bg-[#f5f7f2] flex items-center justify-center px-4 py-6">
@@ -179,14 +179,14 @@ const handleGoogleLogin = () => {
           <div className="flex-1 h-px bg-gray-200" />
         </div>
 
-       <button
-  type="button"
-  onClick={handleGoogleLogin}
-  className="w-full flex items-center justify-center gap-3 border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium py-3 rounded-lg transition text-sm"
->
-  <FcGoogle size={20} />
-  <span>Continue with Google</span>
-</button>
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          className="w-full flex items-center justify-center gap-3 border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium py-3 rounded-lg transition text-sm"
+        >
+          <FcGoogle size={20} />
+          <span>Continue with Google</span>
+        </button>
 
         <p className="text-center text-sm text-gray-500 mt-7">
           Don't have an account?{" "}

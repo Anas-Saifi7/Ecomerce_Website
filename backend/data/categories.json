@@ -2,103 +2,103 @@
   {
     "name": "Indian Spices",
     "slug": "indian-spices",
-    "description": "Discover MOLOG's curated indian spices made for thoughtful everyday living.",
+    "description": "Discover Halla Bol's curated indian spices made for thoughtful everyday living.",
     "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80",
     "isActive": true
   },
   {
     "name": "Herbal Seasonings",
     "slug": "herbal-seasonings",
-    "description": "Discover MOLOG's curated herbal seasonings made for thoughtful everyday living.",
+    "description": "Discover Halla Bol's curated herbal seasonings made for thoughtful everyday living.",
     "image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=900&q=80",
     "isActive": true
   },
   {
     "name": "Whole Spices",
     "slug": "whole-spices",
-    "description": "Discover MOLOG's curated whole spices made for thoughtful everyday living.",
+    "description": "Discover Halla Bol's curated whole spices made for thoughtful everyday living.",
     "image": "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=900&q=80",
     "isActive": true
   },
   {
     "name": "Ground Spices",
     "slug": "ground-spices",
-    "description": "Discover MOLOG's curated ground spices made for thoughtful everyday living.",
+    "description": "Discover Halla Bol's curated ground spices made for thoughtful everyday living.",
     "image": "https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?auto=format&fit=crop&w=900&q=80",
     "isActive": true
   },
   {
     "name": "Tea & Infusions",
     "slug": "tea-infusions",
-    "description": "Discover MOLOG's curated tea & infusions made for thoughtful everyday living.",
+    "description": "Discover Halla Bol's curated tea & infusions made for thoughtful everyday living.",
     "image": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=900&q=80",
     "isActive": true
   },
   {
     "name": "Coffee & Cocoa",
     "slug": "coffee-cocoa",
-    "description": "Discover MOLOG's curated coffee & cocoa made for thoughtful everyday living.",
+    "description": "Discover Halla Bol's curated coffee & cocoa made for thoughtful everyday living.",
     "image": "https://images.unsplash.com/photo-1529139574466-a303027c1d8a?auto=format&fit=crop&w=900&q=80",
     "isActive": true
   },
   {
     "name": "Traditional Snacks",
     "slug": "traditional-snacks",
-    "description": "Discover MOLOG's curated traditional snacks made for thoughtful everyday living.",
+    "description": "Discover Halla Bol's curated traditional snacks made for thoughtful everyday living.",
     "image": "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=900&q=80",
     "isActive": true
   },
   {
     "name": "Pickles & Chutneys",
     "slug": "pickles-chutneys",
-    "description": "Discover MOLOG's curated pickles & chutneys made for thoughtful everyday living.",
+    "description": "Discover Halla Bol's curated pickles & chutneys made for thoughtful everyday living.",
     "image": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=900&q=80",
     "isActive": true
   },
   {
     "name": "Handwoven Textiles",
     "slug": "handwoven-textiles",
-    "description": "Discover MOLOG's curated handwoven textiles made for thoughtful everyday living.",
+    "description": "Discover Halla Bol's curated handwoven textiles made for thoughtful everyday living.",
     "image": "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=900&q=80",
     "isActive": true
   },
   {
     "name": "Cotton Clothing",
     "slug": "cotton-clothing",
-    "description": "Discover MOLOG's curated cotton clothing made for thoughtful everyday living.",
+    "description": "Discover Halla Bol's curated cotton clothing made for thoughtful everyday living.",
     "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80",
     "isActive": true
   },
   {
     "name": "Silk Accessories",
     "slug": "silk-accessories",
-    "description": "Discover MOLOG's curated silk accessories made for thoughtful everyday living.",
+    "description": "Discover Halla Bol's curated silk accessories made for thoughtful everyday living.",
     "image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=900&q=80",
     "isActive": true
   },
   {
     "name": "Scarves & Stoles",
     "slug": "scarves-stoles",
-    "description": "Discover MOLOG's curated scarves & stoles made for thoughtful everyday living.",
+    "description": "Discover Halla Bol's curated scarves & stoles made for thoughtful everyday living.",
     "image": "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=900&q=80",
     "isActive": true
   },
   {
     "name": "Wooden Handicrafts",
     "slug": "wooden-handicrafts",
-    "description": "Discover MOLOG's curated wooden handicrafts made for thoughtful everyday living.",
+    "description": "Discover Halla Bol's curated wooden handicrafts made for thoughtful everyday living.",
     "image": "https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?auto=format&fit=crop&w=900&q=80",
     "isActive": true
   },
 {
   "name": "Metal Crafts",
   "slug": "metal-crafts",
-  "description": "Discover MOLOG's curated metal crafts made for thoughtful everyday living."
+  "description": "Discover Halla Bol's curated metal crafts made for thoughtful everyday living."
 },
 {
   "name": "Ceramic Crafts",
   "slug": "ceramic-crafts",
-  "description": "Discover MOLOG's curated ceramic crafts.",
+  "description": "Discover Halla Bol's curated ceramic crafts.",
   "image": "https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?auto=format&fit=crop&w=900&q=80",
   "isActive": true
 }

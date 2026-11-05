@@ -30,7 +30,7 @@ async function storeImage(file, folder) {
     const result = await new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
-          folder: `molog/${folder}`,
+          folder: `Halla Bol/${folder}`,
           resource_type: 'image',
         },
         (error, uploadedImage) => {

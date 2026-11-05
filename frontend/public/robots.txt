@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://molog-ecomerce.in/sitemap.xml
+Sitemap: https://Halla Bol-ecomerce.in/sitemap.xml

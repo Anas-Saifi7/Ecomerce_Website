@@ -122,7 +122,7 @@ const Navbar = () => {
 
               <button
                 type="submit"
-                className="inline-flex min-h-11 min-w-11 items-center justify-center text-gray-500"
+                className="inline-flex items-center justify-center text-gray-500"
                 aria-label="Submit product search"
               >
                 🔍

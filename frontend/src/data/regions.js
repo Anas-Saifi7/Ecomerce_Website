@@ -1,266 +1,339 @@
 export const regionCategories = [
-  'All Regions',
-  'North India',
-  'South India',
-  'East India',
-  'West India',
-  'Central India',
-  'Northeast India',
-  'Himalayan Region',
-  'Island Regions',
-]
+  "All Regions",
+  "North India",
+  "South India",
+  "East India",
+  "West India",
+  "Central India",
+  "Northeast India",
+  "Himalayan Region",
+  "Island Regions",
+];
 
 export const regions = [
   {
-    name: 'Andhra Pradesh',
-    slug: 'andhra-pradesh',
-    category: 'South India',
-    image: 'https://images.unsplash.com/photo-1606293926075-69a00dbfde81?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for Kalamkari, handlooms, spices and traditional crafts.',
+    name: "Andhra Pradesh",
+    slug: "andhra-pradesh",
+    category: "South India",
+    image:
+      "https://images.unsplash.com/photo-1606293926075-69a00dbfde81?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for Kalamkari, handlooms, spices and traditional crafts.",
   },
   {
-    name: 'Arunachal Pradesh',
-    slug: 'arunachal-pradesh',
-    category: 'Northeast India',
-    image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for indigenous crafts, weaving, bamboo and natural products.',
+    name: "Arunachal Pradesh",
+    slug: "arunachal-pradesh",
+    category: "Northeast India",
+    image:
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for indigenous crafts, weaving, bamboo and natural products.",
   },
   {
-    name: 'Assam',
-    slug: 'assam',
-    category: 'Northeast India',
-    image: 'https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&w=800&q=80',
-    description: 'Famous for Assam tea, Muga silk, bamboo crafts and local produce.',
+    name: "Assam",
+    slug: "assam",
+    category: "Northeast India",
+    image:
+      "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Famous for Assam tea, Muga silk, bamboo crafts and local produce.",
   },
   {
-    name: 'Bihar',
-    slug: 'bihar',
-    category: 'East India',
-    image: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for Madhubani art, Sikki crafts, textiles and traditional foods.',
+    name: "Bihar",
+    slug: "bihar",
+    category: "East India",
+    image:
+      "https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for Madhubani art, Sikki crafts, textiles and traditional foods.",
   },
   {
-    name: 'Chhattisgarh',
-    slug: 'chhattisgarh',
-    category: 'Central India',
-    image: 'https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for tribal art, bell metal crafts, forest produce and handlooms.',
+    name: "Chhattisgarh",
+    slug: "chhattisgarh",
+    category: "Central India",
+    image:
+      "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for tribal art, bell metal crafts, forest produce and handlooms.",
   },
   {
-    name: 'Goa',
-    slug: 'goa',
-    category: 'West India',
-    image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80',
-    description: 'Famous for cashews, coconut products, local foods and artisan crafts.',
+    name: "Goa",
+    slug: "goa",
+    category: "West India",
+    image:
+      "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Famous for cashews, coconut products, local foods and artisan crafts.",
   },
   {
-    name: 'Gujarat',
-    slug: 'gujarat',
-    category: 'West India',
-    image: 'https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for Bandhani, Patola textiles, embroidery and handicrafts.',
+    name: "Gujarat",
+    slug: "gujarat",
+    category: "West India",
+    image:
+      "https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for Bandhani, Patola textiles, embroidery and handicrafts.",
   },
   {
-    name: 'Haryana',
-    slug: 'haryana',
-    category: 'North India',
-    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for agricultural products, traditional textiles and local crafts.',
+    name: "Haryana",
+    slug: "haryana",
+    category: "North India",
+    image:
+      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for agricultural products, traditional textiles and local crafts.",
   },
   {
-    name: 'Himachal Pradesh',
-    slug: 'himachal-pradesh',
-    category: 'Himalayan Region',
-    image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80',
-    description: 'Famous for woollen textiles, apples, honey and herbal products.',
+    name: "Himachal Pradesh",
+    slug: "himachal-pradesh",
+    category: "Himalayan Region",
+    image:
+      "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Famous for woollen textiles, apples, honey and herbal products.",
   },
   {
-    name: 'Jharkhand',
-    slug: 'jharkhand',
-    category: 'East India',
-    image: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for tribal art, Dokra metalwork, forest products and handcrafts.',
+    name: "Jharkhand",
+    slug: "jharkhand",
+    category: "East India",
+    image:
+      "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for tribal art, Dokra metalwork, forest products and handcrafts.",
+  },
+
+  {
+    name: "Karnataka",
+    slug: "karnataka",
+    category: "South India",
+    image:
+      "https://images.unsplash.com/photo-1759675408229-c613d95b1d0e?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D",
+    description:
+      "Famous for Mysore silk, sandalwood crafts, coffee and spices.",
   },
   {
-    name: 'Karnataka',
-    slug: 'karnataka',
-    category: 'South India',
-    image: 'https://images.unsplash.com/photo-1600100397608-f0108a7b5b12?auto=format&fit=crop&w=800&q=80',
-    description: 'Famous for Mysore silk, sandalwood crafts, coffee and spices.',
+    name: "Kerala",
+    slug: "kerala",
+    category: "South India",
+    image:
+      "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for spices, coconut products, Ayurveda and handloom textiles.",
   },
   {
-    name: 'Kerala',
-    slug: 'kerala',
-    category: 'South India',
-    image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for spices, coconut products, Ayurveda and handloom textiles.',
+    name: "Madhya Pradesh",
+    slug: "madhya-pradesh",
+    category: "Central India",
+    image:
+      "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for Chanderi textiles, tribal art, crafts and natural products.",
   },
   {
-    name: 'Madhya Pradesh',
-    slug: 'madhya-pradesh',
-    category: 'Central India',
-    image: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for Chanderi textiles, tribal art, crafts and natural products.',
+    name: "Maharashtra",
+    slug: "maharashtra",
+    category: "West India",
+    image:
+      "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Famous for Paithani textiles, Warli art, foods and artisan products.",
   },
   {
-    name: 'Maharashtra',
-    slug: 'maharashtra',
-    category: 'West India',
-    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?auto=format&fit=crop&w=800&q=80',
-    description: 'Famous for Paithani textiles, Warli art, foods and artisan products.',
+    name: "Manipur",
+    slug: "manipur",
+    category: "Northeast India",
+    image:
+      "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for handloom textiles, bamboo crafts and traditional products.",
   },
   {
-    name: 'Manipur',
-    slug: 'manipur',
-    category: 'Northeast India',
-    image: 'https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for handloom textiles, bamboo crafts and traditional products.',
+    name: "Meghalaya",
+    slug: "meghalaya",
+    category: "Northeast India",
+    image:
+      "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for bamboo and cane crafts, honey, textiles and local produce.",
   },
   {
-    name: 'Meghalaya',
-    slug: 'meghalaya',
-    category: 'Northeast India',
-    image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for bamboo and cane crafts, honey, textiles and local produce.',
+    name: "Mizoram",
+    slug: "mizoram",
+    category: "Northeast India",
+    image:
+      "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Famous for traditional weaving, bamboo crafts and regional produce.",
   },
   {
-    name: 'Mizoram',
-    slug: 'mizoram',
-    category: 'Northeast India',
-    image: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80',
-    description: 'Famous for traditional weaving, bamboo crafts and regional produce.',
+    name: "Nagaland",
+    slug: "nagaland",
+    category: "Northeast India",
+    image:
+      "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for handwoven textiles, woodcraft and community-made products.",
   },
   {
-    name: 'Nagaland',
-    slug: 'nagaland',
-    category: 'Northeast India',
-    image: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for handwoven textiles, woodcraft and community-made products.',
+    name: "Odisha",
+    slug: "odisha",
+    category: "East India",
+    image:
+      "https://images.unsplash.com/photo-1514222134-b57cbb8ce073?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Famous for Pattachitra art, applique work, silver filigree and handlooms.",
   },
   {
-    name: 'Odisha',
-    slug: 'odisha',
-    category: 'East India',
-    image: 'https://images.unsplash.com/photo-1514222134-b57cbb8ce073?auto=format&fit=crop&w=800&q=80',
-    description: 'Famous for Pattachitra art, applique work, silver filigree and handlooms.',
+    name: "Punjab",
+    slug: "punjab",
+    category: "North India",
+    image:
+      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for Phulkari embroidery, grains, traditional foods and textiles.",
   },
   {
-    name: 'Punjab',
-    slug: 'punjab',
-    category: 'North India',
-    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for Phulkari embroidery, grains, traditional foods and textiles.',
+    name: "Rajasthan",
+    slug: "rajasthan",
+    category: "North India",
+    image:
+      "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Famous for block printing, blue pottery, jewellery and handicrafts.",
   },
   {
-    name: 'Rajasthan',
-    slug: 'rajasthan',
-    category: 'North India',
-    image: 'https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=800&q=80',
-    description: 'Famous for block printing, blue pottery, jewellery and handicrafts.',
+    name: "Sikkim",
+    slug: "sikkim",
+    category: "Himalayan Region",
+    image:
+      "https://images.unsplash.com/photo-1464278533981-50106e6176b1?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for large cardamom, tea, woven crafts and regional products.",
   },
   {
-    name: 'Sikkim',
-    slug: 'sikkim',
-    category: 'Himalayan Region',
-    image: 'https://images.unsplash.com/photo-1464278533981-50106e6176b1?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for large cardamom, tea, woven crafts and regional products.',
+    name: "Tamil Nadu",
+    slug: "tamil-nadu",
+    category: "South India",
+    image:
+      "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Famous for Kanchipuram silk, bronze crafts, textiles and temple art.",
   },
   {
-    name: 'Tamil Nadu',
-    slug: 'tamil-nadu',
-    category: 'South India',
-    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=800&q=80',
-    description: 'Famous for Kanchipuram silk, bronze crafts, textiles and temple art.',
+    name: "Telangana",
+    slug: "telangana",
+    category: "South India",
+    image:
+      "https://images.unsplash.com/photo-1566552881560-0be862a7c445?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for Pochampally ikat, Bidriware, pearls and traditional foods.",
   },
   {
-    name: 'Telangana',
-    slug: 'telangana',
-    category: 'South India',
-    image: 'https://images.unsplash.com/photo-1566552881560-0be862a7c445?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for Pochampally ikat, Bidriware, pearls and traditional foods.',
+    name: "Tripura",
+    slug: "tripura",
+    category: "Northeast India",
+    image:
+      "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for bamboo crafts, cane products, handlooms and local produce.",
   },
   {
-    name: 'Tripura',
-    slug: 'tripura',
-    category: 'Northeast India',
-    image: 'https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for bamboo crafts, cane products, handlooms and local produce.',
+    name: "Uttar Pradesh",
+    slug: "uttar-pradesh",
+    category: "North India",
+    image:
+      "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Famous for Banarasi silk, Chikankari, brassware, carpets and perfumes.",
   },
   {
-    name: 'Uttar Pradesh',
-    slug: 'uttar-pradesh',
-    category: 'North India',
-    image: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=800&q=80',
-    description: 'Famous for Banarasi silk, Chikankari, brassware, carpets and perfumes.',
+    name: "Uttarakhand",
+    slug: "uttarakhand",
+    category: "Himalayan Region",
+    image:
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for herbs, honey, woollens, local grains and handmade products.",
   },
   {
-    name: 'Uttarakhand',
-    slug: 'uttarakhand',
-    category: 'Himalayan Region',
-    image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for herbs, honey, woollens, local grains and handmade products.',
+    name: "West Bengal",
+    slug: "west-bengal",
+    category: "East India",
+    image:
+      "https://images.unsplash.com/photo-1558431382-27e303142255?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Famous for Bengal handlooms, terracotta, tea and traditional sweets.",
   },
   {
-    name: 'West Bengal',
-    slug: 'west-bengal',
-    category: 'East India',
-    image: 'https://images.unsplash.com/photo-1558431382-27e303142255?auto=format&fit=crop&w=800&q=80',
-    description: 'Famous for Bengal handlooms, terracotta, tea and traditional sweets.',
+    name: "Andaman and Nicobar Islands",
+    slug: "andaman-and-nicobar-islands",
+    category: "Island Regions",
+    image:
+      "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for island produce, coconut products and local handicrafts.",
   },
   {
-    name: 'Andaman and Nicobar Islands',
-    slug: 'andaman-and-nicobar-islands',
-    category: 'Island Regions',
-    image: 'https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for island produce, coconut products and local handicrafts.',
+    name: "Chandigarh",
+    slug: "chandigarh",
+    category: "North India",
+    image:
+      "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=800&q=80",
+    description:
+      "A planned city with regional markets, crafts and products from North India.",
   },
   {
-    name: 'Chandigarh',
-    slug: 'chandigarh',
-    category: 'North India',
-    image: 'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=800&q=80',
-    description: 'A planned city with regional markets, crafts and products from North India.',
+    name: "Dadra and Nagar Haveli and Daman and Diu",
+    slug: "dadra-and-nagar-haveli-and-daman-and-diu",
+    category: "West India",
+    image:
+      "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for coastal products, bamboo crafts and regional artisan traditions.",
   },
   {
-    name: 'Dadra and Nagar Haveli and Daman and Diu',
-    slug: 'dadra-and-nagar-haveli-and-daman-and-diu',
-    category: 'West India',
-    image: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for coastal products, bamboo crafts and regional artisan traditions.',
+    name: "Delhi",
+    slug: "delhi",
+    category: "North India",
+    image:
+      "https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=800&q=80",
+    description:
+      "A major marketplace for textiles, spices, artisan goods and regional foods.",
   },
   {
-    name: 'Delhi',
-    slug: 'delhi',
-    category: 'North India',
-    image: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=800&q=80',
-    description: 'A major marketplace for textiles, spices, artisan goods and regional foods.',
+    name: "Jammu and Kashmir",
+    slug: "jammu-and-kashmir",
+    category: "Himalayan Region",
+    image:
+      "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Famous for saffron, Pashmina, carpets, dry fruits and papier-mache crafts.",
   },
   {
-    name: 'Jammu and Kashmir',
-    slug: 'jammu-and-kashmir',
-    category: 'Himalayan Region',
-    image: 'https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=800&q=80',
-    description: 'Famous for saffron, Pashmina, carpets, dry fruits and papier-mache crafts.',
+    name: "Ladakh",
+    slug: "ladakh",
+    category: "Himalayan Region",
+    image:
+      "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for pashmina, apricots, woollens and Himalayan artisan products.",
   },
   {
-    name: 'Ladakh',
-    slug: 'ladakh',
-    category: 'Himalayan Region',
-    image: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for pashmina, apricots, woollens and Himalayan artisan products.',
+    name: "Lakshadweep",
+    slug: "lakshadweep",
+    category: "Island Regions",
+    image:
+      "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for coconut-based products, marine heritage and island produce.",
   },
   {
-    name: 'Lakshadweep',
-    slug: 'lakshadweep',
-    category: 'Island Regions',
-    image: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for coconut-based products, marine heritage and island produce.',
+    name: "Puducherry",
+    slug: "puducherry",
+    category: "South India",
+    image:
+      "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Known for handmade paper, textiles, crafts and distinctive local foods.",
   },
-  {
-    name: 'Puducherry',
-    slug: 'puducherry',
-    category: 'South India',
-    image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80',
-    description: 'Known for handmade paper, textiles, crafts and distinctive local foods.',
-  },
-]
+];

@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "Halla Bol / MOLOG e-commerce API",
+  "description": "Halla Bol / Halla Bol e-commerce API",
   "main": "server.js",
   "type": "module",
   "scripts": {
@@ -12,7 +12,7 @@
   },
   "keywords": [
     "hallabol",
-    "molog",
+    "Halla Bol",
     "ecommerce"
   ],
   "author": "Anas",

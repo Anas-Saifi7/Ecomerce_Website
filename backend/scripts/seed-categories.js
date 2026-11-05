@@ -59,7 +59,7 @@ async function seedCategories() {
           $set: {
             name: item.name,
             image: item.image,
-            description: `${item.name} products from MOLOG`,
+            description: `${item.name} products from Halla Bol`,
             isActive: true,
             sortOrder: i + 1,
           },

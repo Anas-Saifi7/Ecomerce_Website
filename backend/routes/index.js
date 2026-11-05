@@ -13,7 +13,7 @@ import newsletterRoutes from './newsletterRoutes.js';
 import wishlistRoutes from './wishlistRoutes.js';
 import adminRoutes from './adminRoutes.js';
 import settingsRoutes from './settingsRoutes.js';
-// import pageRoutes from './pageRoutes.js';
+import pageRoutes from './pageRoutes.js';
 import uploadRoutes from './uploadRoutes.js';
 
 const router = express.Router();

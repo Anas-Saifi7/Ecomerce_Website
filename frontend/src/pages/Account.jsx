@@ -1113,7 +1113,7 @@ const Account = () => {
     >
       <div className="max-w-xl space-y-4 rounded-xl border border-gray-200 p-5">
         <p className="text-xs text-gray-500">
-          MOLOG does not store card numbers or CVVs. Choose an available payment
+          Halla Bol does not store card numbers or CVVs. Choose an available payment
           method at checkout; online payments are handled by Razorpay.
         </p>
         <Link

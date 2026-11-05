@@ -30,7 +30,7 @@ const categorySlugs = [
   'art-cultural',
 ];
 
-// 2. Demo product names for each category
+
 const productsByCategory = {
   'spices-herbs': [
     'Kashmiri Saffron',
@@ -164,9 +164,9 @@ function generateProducts(categoryMap) {
         products.push({
           name,
           slug,
-          subtitle: `${variation} from MOLOG`,
+          subtitle: `${variation} from Halla Bol`,
           description:
-            `${name} is a demo product for the MOLOG ` +
+            `${name} is a demo product for the Halla Bol ` +
             `e-commerce website. Replace this description ` +
             `with verified product information before launch.`,
           benefits: [
@@ -181,7 +181,7 @@ function generateProducts(categoryMap) {
           certifications: [],
           tags: [
             categorySlug,
-            'molog',
+            'Halla Bol',
             'demo-product',
           ],
           image: imageUrl,

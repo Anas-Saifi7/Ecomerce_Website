@@ -20,6 +20,8 @@ import { io } from "socket.io-client";
 import { API_BASE_URL } from "../config/api.js";
 import { STORAGE_KEYS } from "../components/config/storageKeys.js";
 
+ import { toast } from "react-toastify";
+
 const TrackOrder = () => {
   const [searchParams] = useSearchParams();
   const { isAuthenticated, user } = useAuth();
@@ -44,6 +46,13 @@ const TrackOrder = () => {
   
   const socketRef = useRef(null);
 
+
+
+const handleLoginClick = () => {
+  if (isAuthenticated) {
+    toast.info("You are already logged in!");
+  }
+};
 
   const money = (amount) =>
     new Intl.NumberFormat(order?.currency === "USD" ? "en-US" : "en-IN", {
@@ -149,7 +158,6 @@ const handleTrack = async (event) => {
     socketRef.current?.disconnect();
     socketRef.current = null;
 
-    // Connect only for authenticated users.
     if (isAuthenticated && raw._id) {
       const token =
         localStorage.getItem(STORAGE_KEYS.TOKEN) ||
@@ -370,15 +378,7 @@ const handleTrack = async (event) => {
 
       <section className="relative overflow-hidden bg-[#073b25]">
         <div className="relative min-h-110 sm:min-h-120">
-          <img
-            src="/images/track-order-hero.webp"
-            alt="Track your Halla Bol order"
-            className="absolute inset-0 h-full w-full object-cover object-[center_30%]"
-            onError={(event) => {
-              event.currentTarget.style.display = "none";
-            }}
-          />
-
+       
           <div className="absolute inset-0 bg-black/55" />
 
           <div className="relative z-10 mx-auto flex min-h-110 max-w-7xl items-center px-4 py-12 sm:min-h-120 sm:px-6 lg:px-5">
@@ -440,13 +440,30 @@ const handleTrack = async (event) => {
                 >
                   Track Order <span className="ml-2">→</span>
                 </button>
-
+{/*                 
                 <Link
                   to="/login"
                   className="flex items-center justify-center gap-2 rounded-lg border border-[#075631] px-5 py-3.5 text-sm font-semibold text-[#075631] transition hover:bg-[#eff7e9] lg:w-64"
                 >
                   ♙ Login to View All Orders
-                </Link>
+                </Link> */}
+
+{isAuthenticated ? (
+  <button
+    onClick={handleLoginClick}
+    className="flex items-center justify-center gap-2 rounded-lg border border-[#075631] px-5 py-3.5 text-sm font-semibold text-[#075631] transition hover:bg-[#eff7e9] lg:w-64"
+  >
+    ♙ You are Already Logged In
+  </button>
+) : (
+  <Link
+    to="/login"
+    className="flex items-center justify-center gap-2 rounded-lg border border-[#075631] px-5 py-3.5 text-sm font-semibold text-[#075631] transition hover:bg-[#eff7e9] lg:w-64"
+  >
+    ♙ Login to View All Orders
+  </Link>
+)}
+
               </form>
 
               {searchError ? (
@@ -498,6 +515,7 @@ const handleTrack = async (event) => {
               </p>
             </div>
 
+         {/* find Issue  */}
             <button
               type="button"
               onClick={handlePrintInvoice}
@@ -854,9 +872,10 @@ const handleTrack = async (event) => {
                 </h2>
               </div>
 
+{/* // find Issue  */}
               <div className="mt-5 space-y-1 text-xs leading-5 text-gray-600 sm:text-sm">
                 <p className="font-semibold text-gray-900">
-                  {order.customer?.name || "Customer"}
+                  {order.customer?.fullname || "Customer"}
                 </p>
                 <p>{order.customer?.address || "Address not available"}</p>
                 <p>{order.customer?.city || ""}</p>
@@ -879,7 +898,7 @@ const handleTrack = async (event) => {
                 <DetailRow label="Payment Method">
                   {order.paymentMethod || "Not available"}
                 </DetailRow>
-
+                {/* // find Issue */}
                 <DetailRow label="Shipping">
                   {order.shippingCost > 0 ? money(order.shippingCost) : "Free"}
                 </DetailRow>

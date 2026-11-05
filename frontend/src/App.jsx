@@ -35,7 +35,7 @@ const TermsAndConditions = lazy(
 const Impact = lazy(() => import("./pages/Impact.jsx"));
 const ContentPage = lazy(() => import("./pages/ContentPage.jsx"));
 
-// Lazy-loaded admin pages
+//  admin pages
 const Dashboard = lazy(() => import("./pages/admin/Dashboard.jsx"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin.jsx"));
 const AdminOrders = lazy(() => import("./pages/admin/AdminOrders.jsx"));
@@ -49,7 +49,6 @@ const AdminResources = lazy(
   () => import("./pages/admin/AdminResources.jsx")
 );
 
-// Keep shared components eager-loaded
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import AdminProtectedRoute from "./components/AdminProtectedRoute.jsx";
 import AdminLayout from "./components/admin/AdminLayout.jsx";

@@ -122,7 +122,7 @@ const Impact = () => {
               </p>
 
               <h2 className="mt-4 font-serif text-4xl font-bold sm:text-5xl">
-                Stories from the MOLOG Blog
+                Stories from the Halla Bol Blog
               </h2>
 
               <p className="mt-5 max-w-md text-sm leading-7 text-gray-600 sm:text-base">

@@ -247,7 +247,7 @@ const Checkout = () => {
   const shippingCost = rates
     ? countryIsIndia
       ? Math.max(0, subtotal - discount) >= Number(rates.freeAbove)
-        ? 0
+        ? 49
         : Number(rates.domestic)
       : Number(rates.international)
     : 0;
@@ -474,7 +474,7 @@ const Checkout = () => {
           order_id: response.razorpay.orderId,
           amount: response.razorpay.amount,
           currency: response.razorpay.currency,
-          name: "MOLOG",
+          name: "Halla Bol",
           description: `Order ${order.orderNumber}`,
           prefill: {
             name: user?.name || address.fullName,
@@ -625,7 +625,7 @@ const Checkout = () => {
         <img
           src="/images/hero.webp"
           alt="Halla Bol checkout"
-           loading="lazy"
+          loading="lazy"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black/55" />
@@ -896,7 +896,7 @@ const Checkout = () => {
                 </p>
                 <p className="mt-1 text-xs text-gray-600">
                   Shipping charges and free-shipping eligibility are based on
-                  the delivery address and store settings.
+                  the delivery address.
                 </p>
                 <p className="mt-2 font-semibold text-[#075631]">
                   {storeSettings
@@ -906,7 +906,6 @@ const Checkout = () => {
               </div>
             </section>
 
-           
             <section className="border border-gray-200 rounded-xl p-4 sm:p-6">
               <SectionTitle number="4" title="Payment Method" />
 
@@ -919,42 +918,65 @@ const Checkout = () => {
               </p>
 
               <div className="grid md:grid-cols-2 gap-4 mt-5">
-                {onlinePaymentsEnabled && (
-                  <PaymentOption
-                    value="upi"
-                    selected={paymentMethod}
-                    setSelected={setPaymentMethod}
-                    title="UPI / Net Banking"
-                    description="UPI, Google Pay, PhonePe, Paytm"
-                    logos="GPay • PhonePe • Paytm"
-                  />
-                )}
-                {onlinePaymentsEnabled && (
-                  <PaymentOption
-                    value="card"
-                    selected={paymentMethod}
-                    setSelected={setPaymentMethod}
-                    title="Credit / Debit Card"
-                    description="Card payment option"
-                    logos="VISA • RuPay • AMEX"
-                  />
-                )}
+                <PaymentOption
+                  value="upi"
+                  selected={paymentMethod}
+                  setSelected={setPaymentMethod}
+                  title="UPI / Net Banking"
+                  description="Google Pay, PhonePe, Paytm"
+                  logos="GPay • PhonePe • Paytm"
+                />
+
+                <PaymentOption
+                  value="card"
+                  selected={paymentMethod}
+                  setSelected={setPaymentMethod}
+                  title="Credit / Debit Card"
+                  description="Secure card payment"
+                  logos="VISA • RuPay • AMEX"
+                />
+
                 {codAvailable && (
                   <PaymentOption
                     value="cod"
                     selected={paymentMethod}
                     setSelected={setPaymentMethod}
                     title="Cash on Delivery"
-                    description="Pay when the order arrives"
+                    description="Pay when your order arrives"
                     logos="COD"
                   />
                 )}
-                {storeSettings && !onlinePaymentsEnabled && !codAvailable && (
-                  <p className="text-sm text-amber-800">
-                    No payment methods are configured for this country and
-                    currency.
+              </div>
+
+              <p className="text-xs text-gray-500 mt-3">
+                {onlinePaymentsEnabled
+                  ? "Online payments are securely processed through Razorpay."
+                  : "UPI and Card are displayed for preview. Configure Razorpay to activate online payments."}
+              </p>
+            </section>
+
+            <section className="rounded-xl border border-gray-200 p-4 sm:p-6">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🚚</span>
+                <div>
+                  <h2 className="text-xl font-bold">Estimated Delivery</h2>
+                  <p className="text-sm text-gray-500">
+                    Expected delivery within 5 business days
                   </p>
-                )}
+                </div>
+              </div>
+
+              <div className="mt-4 rounded-lg bg-green-50 p-4">
+                <p className="font-semibold text-green-800">
+                  📅 Expected Delivery
+                </p>
+                <p className="mt-2 text-sm text-green-900">
+                  After placing your order, your estimated delivery date will
+                  appear in Order Confirmation.
+                </p>
+                <p className="mt-2 text-xs text-gray-500">
+                  Delivery hours: 9 AM - 6 PM
+                </p>
               </div>
             </section>
           </div>

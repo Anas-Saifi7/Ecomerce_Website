@@ -55,18 +55,26 @@ const Categories = () => {
               className="group overflow-hidden rounded-lg border border-gray-200 bg-white transition duration-300 hover:-translate-y-1 hover:shadow-lg"
             >
               <div className="h-32 overflow-hidden bg-gray-100 sm:h-40 lg:h-44">
+
                 <img
-                  src={category.image}
-                  alt={category.name || "Product category"}
+                  src={category.image || "/images/category-placeholder.webp"}
+                  alt={category.name}
                   loading="lazy"
                   decoding="async"
                   width="400"
                   height="300"
                   onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = "/images/category-placeholder.webp";
+                    const img = e.currentTarget;
+
+                    if (img.dataset.fallbackApplied === "true") {
+                      img.style.visibility = "hidden";
+                      return;
+                    }
+
+                    img.dataset.fallbackApplied = "true";
+                    img.onerror = null;
+                    img.src = "/images/category-placeholder.webp";
                   }}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
               </div>
 

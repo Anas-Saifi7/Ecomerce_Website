@@ -89,7 +89,7 @@ const Blog = () => {
     setSearch(tag);
   };
 
-  // Subscribe through the shared newsletter API.
+
   const handleNewsletterSubmit = async (e) => {
     e.preventDefault();
 

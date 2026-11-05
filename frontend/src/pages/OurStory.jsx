@@ -374,10 +374,10 @@ const OurStory = () => {
               </h2>
             </div>
 
-            <div className="mt-10 grid grid-cols-2 gap-y-6 lg:grid-cols-4">
-              <p className="mx-auto mt-8 max-w-2xl text-center text-sm leading-6 text-gray-600">
-                MOLOG is preparing verified impact figures for publication. We
-                will share measurable results when they are approved.
+            <div className="mt-10">
+              <p className="mx-auto max-w-2xl text-center text-sm leading-6 text-gray-600">
+                Halla Bol is preparing verified impact figures for publication.
+                We will share measurable results when they are approved.
               </p>
             </div>
           </div>
@@ -426,8 +426,8 @@ const OurStory = () => {
               </div>
 
               <p className="rounded-lg border border-gray-200 p-4 text-sm leading-6 text-gray-600">
-                Certification details will be listed here after MOLOG verifies
-                the applicable company and product credentials.
+                Certification details will be listed here after Halla Bol
+                verifies the applicable company and product credentials.
               </p>
             </div>
           </div>

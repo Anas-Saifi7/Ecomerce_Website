@@ -141,7 +141,6 @@ const orderSchema = new mongoose.Schema(
     deliveredAt: Date,
     cancelledAt: Date,
 
-    // Estimated delivery information
     estimatedDeliveryDate: {
       type: Date,
       default: null,

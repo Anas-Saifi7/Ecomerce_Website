@@ -33,7 +33,7 @@ const configs = {
       excerpt: "",
       content: "",
       image: "",
-      author: "MOLOG",
+      author: "Halla Bol",
       tags: [],
       isPublished: false,
     },
@@ -79,7 +79,7 @@ const configs = {
       code: "",
       type: "percent",
       value: 10,
-      currency: "ANY",
+      currency: "INR",
       minOrder: 0,
       isActive: true,
     },
@@ -241,7 +241,7 @@ export default function AdminResources({ type }) {
       <header>
         <h1 className="font-serif text-3xl text-[#073b25]">{title}</h1>
         <p className="mt-1 text-sm text-gray-500">
-          Manage records saved in the MOLOG store database.
+          Manage records saved in the Halla Bol store database.
         </p>
       </header>
       {error && (
@@ -383,7 +383,7 @@ export default function AdminResources({ type }) {
               a.href = URL.createObjectURL(
                 new Blob([csv], { type: "text/csv" }),
               );
-              a.download = "molog-newsletter.csv";
+              a.download = "halla-bol-newsletter.csv";
               a.click();
               URL.revokeObjectURL(a.href);
             }}
