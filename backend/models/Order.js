@@ -135,10 +135,22 @@ const orderSchema = new mongoose.Schema(
       processedAt: Date,
       razorpayRefundId: { type: String, default: '' },
     },
+    
     confirmedAt: Date,
     shippedAt: Date,
     deliveredAt: Date,
     cancelledAt: Date,
+
+    // Estimated delivery information
+    estimatedDeliveryDate: {
+      type: Date,
+      default: null,
+    },
+    deliveryTimeWindow: {
+      type: String,
+      default: "9 AM - 6 PM",
+    },
+
   },
   { timestamps: true }
 );

@@ -107,7 +107,13 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    priceUSD: {
+  type: Number,
+  required: [true, 'USD price is required'],
+  min: 0,
+},
   },
+
   {
     timestamps: true,
     toJSON: { virtuals: true },
